@@ -1,0 +1,13 @@
+# robots.txt for Luxia-IT
+# Block internal artefacts from indexing. They live in the repository for
+# maintainers but must not appear in search results.
+
+User-agent: *
+Allow: /
+Disallow: /Luxia-IT%20Strategy.dc.html
+Disallow: /Luxia-IT+Strategy.dc.html
+Disallow: /github.md
+Disallow: /.env
+Disallow: /.env.example
+Disallow: /_headers
+Disallow: /nginx.sample.conf

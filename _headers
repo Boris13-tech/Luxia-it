@@ -1,0 +1,19 @@
+# Netlify / Cloudflare Pages header rules for Luxia-IT
+# https://docs.netlify.com/routing/headers/
+
+/*
+  # Prevent MIME sniffing
+  X-Content-Type-Options: nosniff
+  # Only ever load in a first-party context. The site is not designed to be framed.
+  X-Frame-Options: DENY
+  # Strong referrer policy. Query strings are not leaked to third parties.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # HTTPS-only, subdomains, preloadable
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  # Reduce browser permission surface
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  # Restrict cross-origin isolation for the WebGL hero
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  # Content-Security-Policy. Allow-lists only the sources the site actually uses.
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; font-src 'self' https://fonts.gstatic.com data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://esm.sh https://unpkg.com; connect-src 'self' https://esm.sh https://unpkg.com; object-src 'none'; upgrade-insecure-requests

@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-e22f44ae-e1ef-4b64-9584-5d75362c65a2/styles.css">
+<link rel="stylesheet" href="page-shell.css">
+<script src="contact.js" defer></script>
+<title>Luxia-IT | Contact</title>
+<meta name="description" content="Discuss a project, talk to an expert, or start a training conversation. A senior engineer usually replies within two working days.">
+<meta property="og:title" content="Luxia-IT | Contact">
+<meta property="og:description" content="Discuss a project, talk to an expert, or start a training conversation. A senior engineer usually replies within two working days.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="Contact.dc.html">
+<meta http-equiv="content-language" content="en">
+
+</helmet>
+<header class="top"><div class="inner">
+  <a class="brand" href="Home.dc.html">LUXIA-IT</a>
+  <nav>
+    <a href="WhatWeDo.dc.html">What we do</a>
+    <a href="Products.dc.html">Products</a>
+    <a href="Consulting.dc.html">Consulting</a>
+    <a href="Academy.dc.html">Academy</a>
+    <a href="Industries.dc.html">Industries</a>
+    <a href="Insights.dc.html">Insights</a>
+    <a href="About.dc.html">About</a>
+    <a href="Careers.dc.html">Careers</a>
+  </nav>
+  <div class="r"><span class="lang"><b>EN</b> / FR</span>
+    <a class="btn btn-primary" href="Contact.dc.html">Talk to an expert</a></div>
+</div></header>
+
+<section class="p-hero"><div class="wrap">
+  <div class="breadcrumb"><a href="Home.dc.html">Home</a> / Contact</div>
+  <span class="kicker" style="margin-bottom:24px">Contact</span>
+  <h1>Tell us what<br>you are <em>building.</em></h1>
+  <p class="sub">Tell us the shape of the problem. A senior engineer usually replies within two working days.</p>
+</div></section>
+<hr class="hr-fade"/>
+
+<section class="section"><div class="wrap">
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:start">
+    <div>
+      <span class="kicker">Send a message</span>
+      <h2 style="margin-top:20px;font-size:32px">Tell us what you need.</h2>
+
+      <div id="form-endpoint-notice" role="note" style="margin-top:calc(1.5*var(--leading));padding:14px 18px;border:1px dashed color-mix(in srgb,var(--color-text) 30%,transparent);border-radius:8px;font-size:13px;color:color-mix(in srgb,var(--color-text) 70%,transparent);line-height:1.55">The contact endpoint is configured at deployment. Until it is in place, please write to <a href="mailto:contact@legrand-tech.com" style="color:var(--color-accent)">contact@legrand-tech.com</a> directly. Submissions from this page do not transmit until the endpoint is wired.</div>
+      <form id="contact-form" novalidate style="display:grid;gap:16px;margin-top:calc(1*var(--leading))">
+        <div id="contact-status" role="status" aria-live="polite" style="display:none;padding:14px 18px;border:1px solid var(--color-accent);border-radius:8px;background:color-mix(in srgb,var(--color-accent) 8%,transparent);color:var(--color-accent);font-size:13.5px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="field"><label for="c-name">Name</label><input class="input" id="c-name" name="name" required placeholder="Your full name" autocomplete="name"/></div>
+          <div class="field"><label for="c-org">Company</label><input class="input" id="c-org" name="company" placeholder="Company or organisation" autocomplete="organization"/></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="field"><label for="c-email">Email</label><input class="input" id="c-email" name="email" type="email" required placeholder="you@company.com" autocomplete="email"/></div>
+          <div class="field"><label for="c-role">Role</label><input class="input" id="c-role" name="role" placeholder="CTO, CIO, founder…" autocomplete="organization-title"/></div>
+        </div>
+        <div class="field"><label>What can we help with?</label>
+          <div class="seg" style="display:flex;flex-wrap:wrap">
+            <label class="seg-opt"><input type="radio" name="topic" value="project" checked/>Discuss a project</label>
+            <label class="seg-opt"><input type="radio" name="topic" value="consult"/>Talk to an expert</label>
+            <label class="seg-opt"><input type="radio" name="topic" value="product"/>Product partnership</label>
+            <label class="seg-opt"><input type="radio" name="topic" value="training"/>Training inquiry</label>
+            <label class="seg-opt"><input type="radio" name="topic" value="press"/>General</label>
+          </div>
+        </div>
+        <div class="field"><label for="c-msg">Tell us more</label><textarea id="c-msg" name="message" class="input" rows="6" placeholder="The problem, the constraints, and the timeline. Anything that helps us reply properly."></textarea></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:8px">
+          <div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent);max-width:44ch;line-height:1.55">This form is read by a person at Luxia-IT. The details you enter are used to reply to you and are not shared with third parties. Retention is covered in the privacy notice.</div>
+          <button type="submit" class="btn btn-primary" style="padding:12px 22px">Send message →</button>
+        </div>
+      </form>
+    </div>
+
+    <aside style="display:grid;gap:20px">
+      <div style="border:1px solid var(--color-divider);border-radius:12px;padding:24px 28px">
+        <div class="pill accent" style="margin-bottom:14px">Direct</div>
+        <h4 style="font-family:var(--font-heading);font-weight:500;font-size:18px;margin:0 0 10px">Reach us directly.</h4>
+        <div style="font-family:ui-monospace,Menlo,monospace;font-size:13px;color:color-mix(in srgb,var(--color-text) 78%,transparent);line-height:1.9">
+          contact@legrand-tech.com<br>calendly.com/legrand-tech
+        </div>
+        <div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 45%,transparent);margin-top:12px;line-height:1.5">During the brand transition, the contact details on this page are still those of Legrand-Tech, the parent ecosystem.</div>
+      </div>
+
+      <div style="border:1px solid var(--color-divider);border-radius:12px;padding:24px 28px">
+        <div class="pill" style="margin-bottom:14px">By topic</div>
+        <div style="display:grid;gap:10px;font-size:14px">
+          <div><span style="color:var(--color-accent);font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;margin-right:10px">01</span>Discuss a project. A specific brief, timeline, and budget.</div>
+          <div><span style="color:var(--color-accent);font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;margin-right:10px">02</span>Talk to an expert. An early conversation, no brief yet.</div>
+          <div><span style="color:var(--color-accent);font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;margin-right:10px">03</span>Product partnership. A joint build or design partnership.</div>
+          <div><span style="color:var(--color-accent);font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;margin-right:10px">04</span>Training inquiry. A private cohort or executive briefing.</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--color-divider);border-radius:12px;padding:24px 28px">
+        <div class="pill" style="margin-bottom:14px">Location</div>
+        <div style="font-size:14px;color:color-mix(in srgb,var(--color-text) 78%,transparent);line-height:1.6">Paris is our first market. We work with clients across France and the EU. Both English-speaking and French-speaking teams.</div>
+      </div>
+    </aside>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="grid">
+    <div class="col brand-col">
+      <div class="brand" style="pointer-events:none">LUXIA-IT</div>
+      <p>A technology company that builds products, transforms businesses, and develops the talent behind the technology.</p>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 45%,transparent);letter-spacing:.05em">Part of the Legrand-Tech ecosystem</div>
+    </div>
+    <div class="col"><h6>What we do</h6>
+      <a href="Products.dc.html">Products &amp; Solutions</a>
+      <a href="Consulting.dc.html">Technology Consulting</a>
+      <a href="Academy.dc.html">Luxia Academy</a>
+      <a href="Industries.dc.html">Industries</a></div>
+    <div class="col"><h6>Company</h6>
+      <a href="About.dc.html">About</a>
+      <a href="Insights.dc.html">Insights</a>
+      <a href="Careers.dc.html">Careers</a>
+      <a href="Contact.dc.html">Contact</a></div>
+    <div class="col"><h6>Get in touch</h6>
+      <a href="Contact.dc.html">Talk to an expert</a>
+      <a href="Contact.dc.html">Discuss a project</a>
+      <a href="Contact.dc.html">Training inquiry</a>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent);padding-top:10px">contact@legrand-tech.com</div></div>
+  </div>
+  <div class="base"><div>© 2026 Luxia-IT · Part of Legrand-Tech</div><div>EN / FR · Legal · Privacy · Cookies</div></div>
+</div></footer>
+</x-dc>
+</body>
+</html>
