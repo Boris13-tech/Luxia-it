@@ -2,11 +2,11 @@
 
 import './page.css';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 export default function HomePage() {
-  const menuRef = useRef(null);
-
   useEffect(() => {
     // Load hero-fx.js as a module script (it uses dynamic import('three'))
     const script = document.createElement('script');
@@ -25,35 +25,10 @@ export default function HomePage() {
     };
   }, []);
 
-  function toggleMenu() {
-    if (menuRef.current) {
-      menuRef.current.classList.toggle('open');
-    }
-  }
-
   return (
     <>
       {/* ========= TOP NAV ========= */}
-      <header className="top">
-        <div className="inner">
-          <Link className="brand" href="/"><img src="/logo Luxia-IT.png" alt="Luxia-IT" style={{height:'24px',width:'auto'}} /></Link>
-          <nav ref={menuRef}>
-            <Link href="/what-we-do">What we do</Link>
-            <Link href="/products">Products</Link>
-            <Link href="/consulting">Consulting</Link>
-            <Link href="/academy">Academy</Link>
-            <Link href="/industries">Industries</Link>
-            <Link href="/insights">Insights</Link>
-            <Link href="/about">About</Link>
-            <Link href="/careers">Careers</Link>
-          </nav>
-          <div className="r">
-            <span className="lang"><b>EN</b> / FR</span>
-            <Link className="btn btn-primary" href="/contact">Talk to an expert</Link>
-            <button className="mburger" type="button" onClick={toggleMenu}>Menu</button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* ========= HERO ========= */}
       <div className="hero-shell">
@@ -374,42 +349,7 @@ export default function HomePage() {
       </section>
 
       {/* ========= FOOTER ========= */}
-      <footer>
-        <div className="wrap">
-          <div className="grid">
-            <div className="col brand-col">
-              <div className="brand" style={{pointerEvents:'none'}}>LUXIA-IT</div>
-              <p>A technology company that builds products, transforms businesses, and develops the talent behind the technology.</p>
-              <div style={{fontFamily:'ui-monospace,Menlo,monospace',fontSize:'11px',color:'color-mix(in srgb,var(--color-text) 45%,transparent)',letterSpacing:'.05em'}}>Part of the Legrand-Tech ecosystem</div>
-            </div>
-            <div className="col">
-              <h6>What we do</h6>
-              <Link href="/products">Products &amp; Solutions</Link>
-              <Link href="/consulting">Technology Consulting</Link>
-              <Link href="/academy">Luxia Academy</Link>
-              <Link href="/industries">Industries</Link>
-            </div>
-            <div className="col">
-              <h6>Company</h6>
-              <Link href="/about">About</Link>
-              <Link href="/insights">Insights</Link>
-              <Link href="/careers">Careers</Link>
-              <Link href="/contact">Contact</Link>
-            </div>
-            <div className="col">
-              <h6>Get in touch</h6>
-              <Link href="/contact">Talk to an expert</Link>
-              <Link href="/contact">Discuss a project</Link>
-              <Link href="/contact">Training inquiry</Link>
-              <div style={{fontFamily:'ui-monospace,Menlo,monospace',fontSize:'11.5px',color:'color-mix(in srgb,var(--color-text) 55%,transparent)',paddingTop:'10px'}}>contact@legrand-tech.com</div>
-            </div>
-          </div>
-          <div className="base">
-            <div>© 2026 Luxia-IT · Part of Legrand-Tech</div>
-            <div>EN / FR · Legal · Privacy · Cookies</div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

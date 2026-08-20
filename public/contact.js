@@ -8,7 +8,10 @@
   const form = document.getElementById('contact-form');
   if (!form) return;
   const status = document.getElementById('contact-status');
+  const submitBtn = document.getElementById('submit-btn');
   const SUBMIT_ENDPOINT = ''; // For example '/api/contact'. Configure at deploy time.
+
+  if (submitBtn) submitBtn.disabled = false;
 
   const show = (msg, ok) => {
     if (!status) return;

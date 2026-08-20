@@ -63,7 +63,7 @@ export default function ContactPage() {
                 <div className="field"><label htmlFor="c-msg">Tell us more</label><textarea id="c-msg" name="message" className="input" rows="6" placeholder="The problem, the constraints, and the timeline. Anything that helps us reply properly."></textarea></div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap', paddingTop: '8px' }}>
                   <div style={{ fontSize: '12px', color: 'color-mix(in srgb,var(--color-text) 55%,transparent)', maxWidth: '44ch', lineHeight: 1.55 }}>This form is read by a person at Luxia-IT. The details you enter are used to reply to you and are not shared with third parties. Retention is covered in the privacy notice.</div>
-                  <button type="submit" className="btn btn-primary" style={{ padding: '12px 22px' }}>Send message →</button>
+                  <button type="submit" id="submit-btn" disabled className="btn btn-primary" style={{ padding: '12px 22px' }}>Send message →</button>
                 </div>
               </form>
             </div>
