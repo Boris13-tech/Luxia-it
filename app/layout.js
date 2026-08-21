@@ -9,8 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   const importMap = JSON.stringify({
     imports: {
-      three: '/lib/three.module.js',
-    },
+      "three": "/lib/three.module.js",
+      "three/addons/": "/lib/"
+    }
   });
 
   return (
