@@ -3,19 +3,12 @@
 
 :root{--leading:28px;--half:14px;--edge:clamp(20px,5vw,72px);--measure:60ch}
 html{scroll-behavior:smooth}
-body{margin:0;
-  background:
-    radial-gradient(1200px 720px at 82% -160px, color-mix(in srgb,var(--color-accent-900) 75%,transparent), transparent 60%),
-    radial-gradient(1100px 800px at -10% 100%, color-mix(in srgb,black 30%,transparent), transparent 55%),
-    var(--color-bg);
-  text-wrap:pretty;min-height:100vh
-}
+body{margin:0;background:var(--color-bg);text-wrap:pretty;min-height:100vh;color:var(--color-text)}
 .wrap{max-width:1240px;margin:0 auto;padding:0 var(--edge)}
 a{color:inherit}
 
 /* nav */
-.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px) saturate(1.2);
-  background:color-mix(in srgb,var(--color-bg) 78%,transparent);border-bottom:1px solid var(--color-divider)}
+.top{position:sticky;top:0;z-index:20;background:var(--color-bg);border-bottom:1px solid var(--color-divider);}
 .top .inner{display:flex;align-items:center;gap:24px;padding:14px var(--edge);max-width:1240px;margin:0 auto}
 .brand{display:inline-flex;align-items:center;text-decoration:none}
 .brand img{height:24px;width:auto;display:block}
@@ -102,3 +95,4 @@ footer .base{display:flex;justify-content:space-between;padding-top:24px;border-
 .dlist .row .t{font-family:var(--font-heading);font-weight:500;font-size:16px}
 .dlist .row .t small{font-family:"Inter";font-weight:400;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-left:10px}
 .dlist .row .m{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent)}
+

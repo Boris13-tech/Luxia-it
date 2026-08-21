@@ -36,13 +36,13 @@ export default function HomePage() {
         <section className="hero">
           <div className="wrap">
             <div className="grid">
-              <div>
-                <div className="kicker" style={{marginBottom:'24px'}}>A Legrand-Tech company</div>
-                <h1>We build<br />what&apos;s <span className="accent">next.</span></h1>
-                <p className="sub">We build technology products, we work on the systems businesses already run, and we train the engineers and consultants who deliver both. Three practices, one company.</p>
+                            <div>
+                <div className="kicker" style={{marginBottom:'24px', color:'var(--color-accent)'}}>Ingénierie & Conseil Stratégique</div>
+                <h1 style={{color:'var(--color-text)'}}>Architectes de <br />systèmes <span className="accent" style={{color:'var(--color-text)', fontStyle:'italic', fontWeight:400}}>critiques.</span></h1>
+                <p className="sub" style={{color:'color-mix(in srgb,var(--color-text) 70%,transparent)'}}>Nous concevons des produits technologiques, optimisons les infrastructures existantes et formons les ingénieurs qui délivrent les deux. Trois expertises, une seule exigence de qualité.</p>
                 <div className="cta">
-                  <Link className="btn btn-primary" href="/contact">Discuss a project →</Link>
-                  <Link className="btn btn-secondary" href="/what-we-do">Explore what we do</Link>
+                  <Link className="btn btn-primary" href="/contact" style={{background:'var(--color-text)', color:'var(--color-bg)', borderRadius:0}}>Parler à un expert +'</Link>
+                  <Link className="btn btn-secondary" href="/what-we-do" style={{border:'1px solid var(--color-divider)', color:'var(--color-text)', borderRadius:0}}>Explorer nos solutions</Link>
                 </div>
               </div>
               <aside className="hero-side">
@@ -77,12 +77,12 @@ export default function HomePage() {
       {/* ========= WHAT WE DO ========= */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker">01 · What we do</span>
+          <span className="kicker">01 Â· What we do</span>
           <h2>Three practices. One company.</h2>
           <p className="lede">Products keep the engineering current. Consulting keeps that engineering close to the businesses that use it. The Academy makes the team sustainable, and eventually the wider talent market too.</p>
           <div className="pillars">
             <Link className="pillar" href="/products" style={{textDecoration:'none',color:'inherit'}}>
-              <div className="num"><span>01</span><span className="arrow">→</span></div>
+              <div className="num"><span>01</span><span className="arrow">â†’</span></div>
               <h3>We build <span className="accent">technology.</span></h3>
               <p className="desc">Products and platforms that Luxia-IT designs, builds, and runs alongside the client teams who use them every day.</p>
               <ul>
@@ -91,10 +91,10 @@ export default function HomePage() {
                 <li>SaaS &amp; internal tools</li>
                 <li>Automation &amp; AI</li>
               </ul>
-              <span className="link">Explore our solutions →</span>
+              <span className="link">Explore our solutions â†’</span>
             </Link>
             <Link className="pillar" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div className="num"><span>02</span><span className="arrow">→</span></div>
+              <div className="num"><span>02</span><span className="arrow">â†’</span></div>
               <h3>We solve <span className="accent">complex problems.</span></h3>
               <p className="desc">Senior engineers and architects working inside the client team. The deliverables are running systems, not slide decks.</p>
               <ul>
@@ -103,10 +103,10 @@ export default function HomePage() {
                 <li>DevSecOps &amp; delivery</li>
                 <li>Data &amp; AI</li>
               </ul>
-              <span className="link">Explore our capabilities →</span>
+              <span className="link">Explore our capabilities â†’</span>
             </Link>
             <Link className="pillar" href="/academy" style={{textDecoration:'none',color:'inherit'}}>
-              <div className="num"><span>03</span><span className="arrow">→</span></div>
+              <div className="num"><span>03</span><span className="arrow">â†’</span></div>
               <h3>We build <span className="accent">talent.</span></h3>
               <p className="desc">Cohorts are run by the engineers who ship for our clients. The programs mirror how the practice actually works.</p>
               <ul>
@@ -115,7 +115,7 @@ export default function HomePage() {
                 <li>DevSecOps</li>
                 <li>Data &amp; AI</li>
               </ul>
-              <span className="link">Explore the Academy →</span>
+              <span className="link">Explore the Academy â†’</span>
             </Link>
           </div>
 
@@ -173,12 +173,12 @@ export default function HomePage() {
       {/* ========= FEATURED WORK ========= */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker">02 · Selected work</span>
+          <span className="kicker">02 Â· Selected work</span>
           <h2>How we tell a case study.</h2>
           <p className="lede">Case studies are published once the client has reviewed the story and any figures we quote. The slots below show the format. Real work replaces them as clients agree to publish.</p>
           <div className="work-grid">
             <article className="case big">
-              <div className="placeholder-ribbon">Format · awaiting first story</div>
+              <div className="placeholder-ribbon">Format Â· awaiting first story</div>
               <div>
                 <div className="tags"><span className="tag">Cloud</span><span className="tag">Zero Trust</span><span className="tag">Financial Services</span></div>
                 <h4>The challenge, approach, and outcome format.</h4>
@@ -213,41 +213,41 @@ export default function HomePage() {
       {/* ========= TECHNOLOGIES ========= */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker">03 · Technologies</span>
+          <span className="kicker">03 Â· Technologies</span>
           <h2>Where our engineering lives.</h2>
           <p className="lede">Seven domains, each with its own architects, engineers, and delivery lead. No specialty on this page is a solo pursuit.</p>
           <div className="tech-matrix">
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">01 · Cloud</div><h5>Azure, architecture, migration.</h5><div className="stack">Landing zones · IaC · FinOps</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">01 Â· Cloud</div><h5>Azure, architecture, migration.</h5><div className="stack">Landing zones Â· IaC Â· FinOps</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">02 · Cybersecurity</div><h5>Zero Trust, identity, resilience.</h5><div className="stack">Entra ID · SIEM · IR</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">02 Â· Cybersecurity</div><h5>Zero Trust, identity, resilience.</h5><div className="stack">Entra ID Â· SIEM Â· IR</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">03 · DevSecOps</div><h5>Secure delivery, end to end.</h5><div className="stack">CI/CD · Policy-as-code · SBOM</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">03 Â· DevSecOps</div><h5>Secure delivery, end to end.</h5><div className="stack">CI/CD Â· Policy-as-code Â· SBOM</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">04 · Software Engineering</div><h5>Products, platforms, integrations.</h5><div className="stack">React · .NET · Node · Go</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">04 Â· Software Engineering</div><h5>Products, platforms, integrations.</h5><div className="stack">React Â· .NET Â· Node Â· Go</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">05 · Data &amp; AI</div><h5>Platforms, intelligence, governance.</h5><div className="stack">Fabric · Databricks · LLM</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">05 Â· Data &amp; AI</div><h5>Platforms, intelligence, governance.</h5><div className="stack">Fabric Â· Databricks Â· LLM</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">06 · Automation</div><h5>Business processes, at engineer scale.</h5><div className="stack">Power Platform · APIs · Bots</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">06 Â· Automation</div><h5>Business processes, at engineer scale.</h5><div className="stack">Power Platform Â· APIs Â· Bots</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit'}}>
-              <div><div className="cat">07 · Infrastructure</div><h5>Hybrid, resilient, observable.</h5><div className="stack">Networking · Observability · SRE</div></div>
-              <div className="arrow">→</div>
+              <div><div className="cat">07 Â· Infrastructure</div><h5>Hybrid, resilient, observable.</h5><div className="stack">Networking Â· Observability Â· SRE</div></div>
+              <div className="arrow">â†’</div>
             </Link>
             <Link className="tech-cell" href="/consulting" style={{textDecoration:'none',color:'inherit',background:'color-mix(in srgb,var(--color-accent-900) 40%,var(--color-bg))'}}>
-              <div><div className="cat" style={{color:'var(--color-accent)'}}>See all →</div><h5 style={{color:'var(--color-accent)'}}>Explore our capabilities.</h5><div className="stack">One page, seven practices</div></div>
-              <div className="arrow" style={{opacity:0}}>→</div>
+              <div><div className="cat" style={{color:'var(--color-accent)'}}>See all â†’</div><h5 style={{color:'var(--color-accent)'}}>Explore our capabilities.</h5><div className="stack">One page, seven practices</div></div>
+              <div className="arrow" style={{opacity:0}}>â†’</div>
             </Link>
           </div>
         </div>
@@ -258,7 +258,7 @@ export default function HomePage() {
       {/* ========= INSIGHTS ========= */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker">04 · Insights</span>
+          <span className="kicker">04 Â· Insights</span>
           <h2>How we think about the work.</h2>
           <p className="lede">Short pieces written by the engineers, architects, and consultants working on the problems the rest of this site describes.</p>
           <div className="insights">
@@ -289,16 +289,16 @@ export default function HomePage() {
         <div className="wrap">
           <div className="academy">
             <div className="body">
-              <span className="kicker">05 · Luxia Academy</span>
+              <span className="kicker">05 Â· Luxia Academy</span>
               <h2>The talent behind the technology.</h2>
               <p className="lede">Programs in cybersecurity, cloud, DevSecOps, and data. Every program is designed and taught by the engineers who deliver client work.</p>
-              <Link className="btn btn-primary" href="/academy">Explore the Academy →</Link>
+              <Link className="btn btn-primary" href="/academy">Explore the Academy â†’</Link>
             </div>
             <div className="prog" role="list">
-              <Link className="p" href="/academy"><span className="k">01</span><span>Cybersecurity fundamentals &amp; SOC path</span><span className="m">12 weeks · placeholder</span></Link>
-              <Link className="p" href="/academy"><span className="k">02</span><span>Azure AZ-104 and cloud architecture</span><span className="m">10 weeks · placeholder</span></Link>
-              <Link className="p" href="/academy"><span className="k">03</span><span>DevSecOps on Azure</span><span className="m">5 to 6 months · premium</span></Link>
-              <Link className="p" href="/academy"><span className="k">04</span><span>Data platforms &amp; AI in production</span><span className="m">14 weeks · placeholder</span></Link>
+              <Link className="p" href="/academy"><span className="k">01</span><span>Cybersecurity fundamentals &amp; SOC path</span><span className="m">12 weeks Â· placeholder</span></Link>
+              <Link className="p" href="/academy"><span className="k">02</span><span>Azure AZ-104 and cloud architecture</span><span className="m">10 weeks Â· placeholder</span></Link>
+              <Link className="p" href="/academy"><span className="k">03</span><span>DevSecOps on Azure</span><span className="m">5 to 6 months Â· premium</span></Link>
+              <Link className="p" href="/academy"><span className="k">04</span><span>Data platforms &amp; AI in production</span><span className="m">14 weeks Â· placeholder</span></Link>
             </div>
           </div>
         </div>
@@ -309,26 +309,26 @@ export default function HomePage() {
       {/* ========= AUDIENCES ========= */}
       <section className="section">
         <div className="wrap">
-          <span className="kicker">06 · Find your path</span>
+          <span className="kicker">06 Â· Find your path</span>
           <h2>Three ways to enter the conversation.</h2>
           <div className="audiences" style={{marginTop:'calc(1.5*var(--leading))'}}>
             <div className="aud">
-              <div className="role">CEO · Founder</div>
+              <div className="role">CEO Â· Founder</div>
               <h5>What can Luxia-IT transform in the next 12 months?</h5>
               <p>Business outcomes, credible timelines, and senior engineers on the ground rather than a rotating cast.</p>
-              <Link className="go" href="/contact">Talk to an expert →</Link>
+              <Link className="go" href="/contact">Talk to an expert â†’</Link>
             </div>
             <div className="aud">
-              <div className="role">CTO · CIO · CISO</div>
+              <div className="role">CTO Â· CIO Â· CISO</div>
               <h5>Depth on architecture, security, and execution.</h5>
               <p>How we build, how we secure, and how we deliver. Down to the pipelines, the policies, and the people involved.</p>
-              <Link className="go" href="/consulting">Explore capabilities →</Link>
+              <Link className="go" href="/consulting">Explore capabilities â†’</Link>
             </div>
             <div className="aud">
-              <div className="role">Talent · Student</div>
+              <div className="role">Talent Â· Student</div>
               <h5>Build the skills, then the career.</h5>
               <p>Academy paths, engineering roles, and consulting tracks. Together they form a career, not a single course.</p>
-              <Link className="go" href="/careers">Join Luxia →</Link>
+              <Link className="go" href="/careers">Join Luxia â†’</Link>
             </div>
           </div>
         </div>
@@ -341,7 +341,7 @@ export default function HomePage() {
           <h2>Let&apos;s build <em>what&apos;s next</em>.</h2>
           <p className="lede" style={{maxWidth:'56ch'}}>A short note is enough. Describe the problem, the technology in play, or the team you are building. A senior engineer reads every message.</p>
           <div className="row">
-            <Link className="btn btn-primary" href="/contact">Discuss a project →</Link>
+            <Link className="btn btn-primary" href="/contact">Discuss a project â†’</Link>
             <Link className="btn btn-secondary" href="/careers">Join Luxia</Link>
             <Link className="btn btn-ghost" href="/insights">Read our insights</Link>
           </div>
@@ -353,3 +353,5 @@ export default function HomePage() {
     </>
   );
 }
+
+
