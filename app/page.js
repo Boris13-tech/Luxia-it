@@ -65,7 +65,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="row">
             <div className="lbl">Heritage</div>
-            <div className="marks" style={{fontSize:'14px',color:'color-mix(in srgb,var(--color-text) 72%,transparent)',fontFamily:'inherit',lineHeight:'1.55',maxWidth:'66ch'}}>
+            <div className="marks" style={{fontSize:'14px',color:'color-mix(in srgb,var(--color-bg) 85%,transparent)',fontFamily:'inherit',lineHeight:'1.55',maxWidth:'66ch'}}>
               Luxia-IT continues the technology work of Legrand-Tech, a practice with several years of Azure, cloud security, and DevSecOps engineering behind it. Partner statuses and public credentials are added to this page as they are formalised.
             </div>
           </div>
@@ -353,5 +353,6 @@ export default function HomePage() {
     </>
   );
 }
+
 
 
