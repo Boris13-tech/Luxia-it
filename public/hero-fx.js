@@ -9,25 +9,28 @@ import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 // CONFIGURATION DE LA SCÈNE (À AJUSTER LORS DE L'INTÉGRATION DU GLB)
 // =========================================================================
 const CONFIG = {
-    MODEL_PATH: '/models/infrastructure-component.glb', // A charger ultérieurement
-    MODEL_SCALE: 1.0,
-    MODEL_POSITION: { x: 1.8, y: -1.2, z: 0 },
-    MODEL_ROTATION: { x: 0, y: -Math.PI / 6, z: 0 },
+    MODEL_PATH: '/models/infrastructure-component.glb', // Prototype PCB (31 MB)
     
-    CAMERA_FOV: 35, // Focal longue pour effet macro/studio
-    CAMERA_POSITION: { x: 0, y: 0.5, z: 8 },
+    // Auto-normalization target
+    TARGET_SIZE: 12.0, // Taille normalisée de l'objet dans la scène
+    MODEL_SCALE: 1.0, 
+    MODEL_POSITION: { x: 4.5, y: -1.0, z: -2.0 },
+    MODEL_ROTATION: { x: Math.PI / 16, y: -Math.PI / 7, z: 0 },
+    
+    CAMERA_FOV: 30, // Focal longue pour effet macro/studio
+    CAMERA_POSITION: { x: 0, y: 1.5, z: 12 },
     
     // Profondeur de champ (Depth of Field)
-    DOF_FOCUS_DISTANCE: 7.5, // Distance de mise au point (sur l'arête de l'objet)
-    DOF_APERTURE: 0.0001,    // Ouverture (plus petit = plus de profondeur)
-    DOF_MAXBLUR: 0.015,      // Flou maximum
+    DOF_FOCUS_DISTANCE: 11.0, // Focus sur l'avant du PCB
+    DOF_APERTURE: 0.00008,    
+    DOF_MAXBLUR: 0.015,      
     
     // Éclairage & Environnement
-    LIGHT_ENV_INTENSITY: 1.2,
-    LIGHT_KEY_INTENSITY: 3.5,
-    LIGHT_FILL_INTENSITY: 0.5,
-    LIGHT_RIM_COBALT_INTENSITY: 8.0, // #0047FF (très ciblé sur les bords)
-    SHADOW_OPACITY: 0.4
+    LIGHT_ENV_INTENSITY: 0.8,
+    LIGHT_KEY_INTENSITY: 4.5,
+    LIGHT_FILL_INTENSITY: 1.2,
+    LIGHT_RIM_COBALT_INTENSITY: 12.0, 
+    SHADOW_OPACITY: 0.6
 };
 // =========================================================================
 
@@ -144,13 +147,32 @@ function loadProductionModel() {
         CONFIG.MODEL_PATH,
         (gltf) => {
             const model = gltf.scene;
-            model.scale.setScalar(CONFIG.MODEL_SCALE);
+            
+            // Auto-normalisation
+            const box = new THREE.Box3().setFromObject(model);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const targetScale = (CONFIG.TARGET_SIZE || 10) / maxDim;
+            model.scale.setScalar(targetScale * CONFIG.MODEL_SCALE);
+            
+            const scaledBox = new THREE.Box3().setFromObject(model);
+            const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+            
+            // Centrage absolu avec Y posé sur 0
+            model.position.x -= scaledCenter.x;
+            model.position.y -= scaledBox.min.y;
+            model.position.z -= scaledCenter.z;
             
             // Enable physical shadows on all loaded meshes
             model.traverse((node) => {
                 if (node.isMesh) {
                     node.castShadow = true;
                     node.receiveShadow = true;
+                    if (node.material) {
+                        node.material.roughness = 0.7; 
+                        node.material.metalness = 0.3;
+                        node.material.needsUpdate = true;
+                    }
                 }
             });
             modelGroup.add(model);
@@ -158,7 +180,6 @@ function loadProductionModel() {
         undefined,
         (error) => {
             console.log("En attente de l'asset 3D de production (infrastructure-component.glb). L'architecture de rendu est prête.");
-            // No placeholder primitives are created here. The scene remains empty until the GLB is provided.
         }
     );
 }
@@ -212,10 +233,12 @@ function onWindowResize() {
     // Responsive framing
     if (width <= 960) {
         modelGroup.position.x = 0;
-        modelGroup.position.y = -0.5;
+        modelGroup.position.y = CONFIG.MODEL_POSITION.y - 2.0;
+        modelGroup.scale.setScalar(0.7);
     } else {
         modelGroup.position.x = CONFIG.MODEL_POSITION.x;
         modelGroup.position.y = CONFIG.MODEL_POSITION.y;
+        modelGroup.scale.setScalar(1.0);
     }
 }
 
