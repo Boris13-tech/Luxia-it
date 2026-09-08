@@ -1,45 +1,48 @@
 'use client';
+import {useI18n} from '@/components/i18n-provider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+export default function Framework() {
+const {t:tr} = useI18n();
 const steps = [
   [
     'DISCOVER',
-    'Comprendre avant de concevoir.',
-    'Nous clarifions vos objectifs, vos processus et vos contraintes. Un diagnostic partagé distingue les vrais besoins des effets de mode.',
-    'Livrable : diagnostic et feuille de route priorisée.',
+    tr('m309'),
+    tr('m310'),
+    tr('m311'),
   ],
   [
     'DESIGN',
-    'Donner une architecture à l’ambition.',
-    'Nous définissons les flux de données, les choix techniques et les responsabilités. Les exigences de sécurité font partie de la conception.',
-    'Livrable : architecture cible et critères de réussite.',
+    tr('m312'),
+    tr('m313'),
+    tr('m314'),
   ],
   [
     'BUILD',
-    'Rendre la stratégie opérationnelle.',
-    'Un premier périmètre utile est développé et testé avec vos équipes. Les intégrations et la documentation sont traitées ensemble.',
-    'Livrable : solution testée et documentation technique.',
+    tr('m315'),
+    tr('m316'),
+    tr('m317'),
   ],
   [
     'SECURE',
-    'Vérifier ce qui mérite votre confiance.',
-    'Les accès, les configurations et les scénarios de risque sont examinés. Les écarts sont corrigés avant l’ouverture du service.',
-    'Livrable : revue de sécurité et plan de remédiation.',
+    tr('m318'),
+    tr('m319'),
+    tr('m320'),
   ],
   [
     'EVOLVE',
-    'Faire progresser le système.',
-    'L’usage réel guide les améliorations. Nous suivons la qualité de service, les coûts et les besoins qui émergent après le déploiement.',
-    'Livrable : plan d’amélioration continue.',
+    tr('m321'),
+    tr('m322'),
+    tr('m323'),
   ],
 ];
-export default function Framework() {
+
   return (
     <Tabs defaultValue="DISCOVER" className="framework">
       <TabsList className="framework-tabs" variant="line">
         {steps.map(([name], i) => (
           <TabsTrigger value={name} key={name}>
             <span>0{i + 1}</span>
-            {name}
+            {tr(({DISCOVER:"discover",DESIGN:"design",BUILD:"build",SECURE:"secure",EVOLVE:"evolve"} as const)[name as "DISCOVER"])}
           </TabsTrigger>
         ))}
       </TabsList>

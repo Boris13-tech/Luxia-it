@@ -1,356 +1,362 @@
+import {translator, type Locale} from './i18n';
 export const site = {
   name: 'Luxia-IT',
   origin: 'https://luxia-it.legrandborisohandjae.chatgpt.site',
-  email: 'Contact@legrand-tech.com',
+  email: 'Contact@Luxia-it.com',
   phone: '+40 766 438 679',
   whatsapp: 'https://wa.me/40766438679',
   founder: 'Boris Legrand Ohandja',
   locale: 'fr',
-  locales: ['fr'] as const,
+  locales: ['fr', 'en', 'zh'] as const,
 };
-export const services = [
+export function getContent(locale: Locale='fr') {
+const tr=translator(locale);
+const services = [
   {
     slug: 'artificial-intelligence',
     pillar: 'INTELLIGENCE',
-    title: 'Intelligence artificielle',
-    headline: 'L’intelligence devient opérationnelle.',
+    title: tr('m324'),
+    headline: tr('m366'),
     intro:
-      'Transformer vos connaissances et vos processus en capacités utiles. Nous concevons une IA intégrée à votre activité, avec des limites explicites et une supervision adaptée.',
+      tr('m367'),
     outcome:
-      'Rendre l’information accessible et aider vos équipes à se concentrer sur les décisions qui comptent.',
+      tr('m368'),
     capabilities: [
       [
-        'Agents IA & copilotes',
-        'Des assistants spécialisés, intégrés aux tâches et outils des équipes. Leur périmètre d’action et leurs règles d’escalade sont définis avant le déploiement.',
+        tr('m274'),
+        tr('m369'),
       ],
       [
-        'Assistants de connaissance',
-        'Une recherche dans vos sources autorisées, des réponses traçables et une gestion des droits alignée sur vos documents.',
+        tr('m275'),
+        tr('m370'),
       ],
       [
-        'Intelligence documentaire',
-        'Extraction, classement et préparation de données documentaires, avec une revue humaine lorsque la fiabilité attendue l’exige.',
+        tr('m276'),
+        tr('m371'),
       ],
       [
-        'Évaluation & sécurité de l’IA',
-        'Scénarios de test, critères de qualité et gestion des risques pour suivre la pertinence des réponses et les usages réels.',
+        tr('m372'),
+        tr('m373'),
       ],
     ],
     deliverables: [
-      'Cadrage des cas d’usage et des données',
-      'Architecture de la solution et des accès',
-      'Prototype évalué sur un périmètre convenu',
-      'Documentation et plan de mise en service',
+      tr('m374'),
+      tr('m375'),
+      tr('m376'),
+      tr('m377'),
     ],
     questions: [
       [
-        'Par quoi commencer ?',
-        'Par une tâche fréquente, un corpus accessible et un résultat que vos équipes peuvent évaluer. Un périmètre précis rend les décisions plus utiles qu’une expérimentation ouverte.',
+        tr('m378'),
+        tr('m379'),
       ],
       [
-        'Un agent peut-il agir seul ?',
-        'Le niveau d’autonomie dépend du contexte. Les opérations sensibles doivent conserver des validations et une traçabilité adaptées.',
+        tr('m380'),
+        tr('m381'),
       ],
     ],
   },
   {
     slug: 'cybersecurity',
     pillar: 'TRUST',
-    title: 'Cybersécurité',
-    headline: 'La confiance se conçoit.',
+    title: tr('m325'),
+    headline: tr('m382'),
     intro:
-      'Protéger les identités, les environnements cloud et les données par une architecture cohérente. La sécurité accompagne les usages, les décisions et le cycle de vie des systèmes.',
+      tr('m383'),
     outcome:
-      'Mieux comprendre votre exposition et donner une priorité claire aux mesures de protection.',
+      tr('m384'),
     capabilities: [
       [
-        'Identité & accès',
-        'Organisation des identités, des rôles et des accès privilégiés. Les autorisations suivent le besoin métier et le cycle de vie des utilisateurs.',
+        tr('m281'),
+        tr('m385'),
       ],
       [
-        'Architecture Zero Trust',
-        'Des contrôles adaptés aux identités, aux appareils et aux ressources. La confiance se vérifie au fil des accès.',
+        tr('m282'),
+        tr('m386'),
       ],
       [
-        'Cloud & Microsoft Security',
-        'Revue de configurations, politiques de protection et intégration des capacités de sécurité de l’écosystème Microsoft selon votre environnement.',
+        tr('m387'),
+        tr('m388'),
       ],
       [
-        'Évaluations & gouvernance',
-        'Analyse de l’existant, hiérarchisation des écarts et préparation des preuves nécessaires à vos démarches de conformité.',
+        tr('m389'),
+        tr('m390'),
       ],
     ],
     deliverables: [
-      'Évaluation de l’exposition et des pratiques',
-      'Architecture et matrice de responsabilités',
-      'Plan de remédiation priorisé',
-      'Revue des contrôles et documentation',
+      tr('m391'),
+      tr('m392'),
+      tr('m393'),
+      tr('m394'),
     ],
     questions: [
       [
-        'Proposez-vous une certification de conformité ?',
-        'Une préparation et une revue technique peuvent soutenir votre démarche. Elles ne constituent ni une certification ni une garantie juridique de conformité.',
+        tr('m395'),
+        tr('m396'),
       ],
       [
-        'Faut-il tout remplacer ?',
-        'L’analyse de l’existant permet de distinguer les configurations à corriger, les capacités à renforcer et les changements structurels nécessaires.',
+        tr('m397'),
+        tr('m398'),
       ],
     ],
   },
   {
     slug: 'cloud',
     pillar: 'SCALE',
-    title: 'Cloud & infrastructure',
-    headline: 'Conçu pour aujourd’hui. Prêt à évoluer.',
+    title: tr('m017'),
+    headline: tr('m399'),
     intro:
-      'Construire une infrastructure adaptée à vos usages. De la migration à l’exploitation, nous relions architecture, résilience, sécurité et maîtrise des coûts.',
+      tr('m400'),
     outcome:
-      'Disposer d’un socle documenté, observable et dimensionné pour les besoins de votre organisation.',
+      tr('m401'),
     capabilities: [
       [
-        'Architecture Microsoft Azure',
-        'Conception des environnements, réseaux, identités et règles de gouvernance selon les contraintes de vos applications.',
+        tr('m402'),
+        tr('m403'),
       ],
       [
-        'Migration & modernisation',
-        'Inventaire des dépendances, stratégie de transition et validation progressive des applications et des données.',
+        tr('m287'),
+        tr('m404'),
       ],
       [
-        'Résilience & sauvegarde',
-        'Définition des objectifs de reprise, des mécanismes de sauvegarde et des scénarios de restauration à tester.',
+        tr('m288'),
+        tr('m405'),
       ],
       [
-        'Observabilité & optimisation',
-        'Suivi des services, compréhension des coûts et ajustement des ressources à partir de l’usage réel.',
+        tr('m289'),
+        tr('m406'),
       ],
     ],
     deliverables: [
-      'Architecture cible et inventaire des dépendances',
-      'Plan de migration et de retour arrière',
-      'Configuration du socle et supervision',
-      'Documentation d’exploitation et de reprise',
+      tr('m407'),
+      tr('m408'),
+      tr('m409'),
+      tr('m410'),
     ],
     questions: [
       [
-        'Azure est-il obligatoire ?',
-        'Azure est un axe d’expertise. Les choix d’architecture sont cadrés à partir des contraintes de votre environnement et de vos objectifs.',
+        tr('m411'),
+        tr('m412'),
       ],
       [
-        'Comment maîtriser les coûts ?',
-        'En définissant des responsabilités, des budgets et des mécanismes de suivi dès la conception, puis en revoyant les usages après le déploiement.',
+        tr('m413'),
+        tr('m414'),
       ],
     ],
   },
   {
     slug: 'automation',
     pillar: 'INTELLIGENCE',
-    title: 'Automatisation',
-    headline: 'Moins de friction. Plus de continuité.',
+    title: tr('automation'),
+    headline: tr('m415'),
     intro:
-      'Relier vos outils et vos processus pour que l’information circule. Nous automatisons les étapes répétitives sans perdre la visibilité sur les exceptions et les responsabilités.',
+      tr('m416'),
     outcome:
-      'Rendre les processus plus cohérents, plus traçables et plus simples à piloter.',
+      tr('m417'),
     capabilities: [
       [
-        'Cartographie des processus',
-        'Comprendre les entrées, les validations, les outils et les exceptions avant de choisir ce qui doit être automatisé.',
+        tr('m418'),
+        tr('m419'),
       ],
       [
-        'Workflows intelligents',
-        'Orchestration de tâches documentaires, administratives ou opérationnelles avec contrôles et validations humaines.',
+        tr('m420'),
+        tr('m421'),
       ],
       [
-        'Intégrations & API',
-        'Échanges structurés entre systèmes, gestion des erreurs et limites d’accès adaptées aux données concernées.',
+        tr('m422'),
+        tr('m423'),
       ],
       [
-        'Pilotage des opérations',
-        'Journalisation, reprise sur erreur et indicateurs définis avec les équipes responsables du processus.',
+        tr('m424'),
+        tr('m425'),
       ],
     ],
     deliverables: [
-      'Cartographie et priorisation des processus',
-      'Spécifications des flux et intégrations',
-      'Workflows testés et gestion des exceptions',
-      'Documentation et transfert aux équipes',
+      tr('m426'),
+      tr('m427'),
+      tr('m428'),
+      tr('m429'),
     ],
     questions: [
       [
-        'Tous les processus doivent-ils être automatisés ?',
-        'Non. Un processus instable ou mal défini doit souvent être simplifié avant d’être automatisé.',
+        tr('m430'),
+        tr('m431'),
       ],
       [
-        'Que se passe-t-il en cas d’erreur ?',
-        'Chaque flux doit prévoir une détection, une alerte, une reprise et un responsable. Ces règles sont définies pendant la conception.',
+        tr('m432'),
+        tr('m433'),
       ],
     ],
   },
 ];
-export const sectors = [
+const sectors = [
   [
-    'PME & ETI',
-    'Structurer la croissance sans multiplier la complexité.',
-    'Des outils mieux reliés, des connaissances accessibles et des accès organisés.',
-    'Automatisation des opérations · Socle cloud · Protection des identités',
+    tr('m040'),
+    tr('m434'),
+    tr('m435'),
+    tr('m436'),
   ],
   [
-    'Services financiers',
-    'Faire évoluer les usages dans un cadre maîtrisé.',
-    'Des architectures documentées, des accès traçables et des processus où la supervision reste explicite.',
-    'Gouvernance des accès · Sécurité cloud · Intelligence documentaire',
+    tr('m041'),
+    tr('m437'),
+    tr('m438'),
+    tr('m439'),
   ],
   [
-    'Services professionnels',
-    'Donner plus de portée à votre expertise.',
-    'Un accès plus simple aux connaissances internes et une préparation mieux structurée des dossiers.',
-    'Assistants de connaissance · Workflows · Collaboration',
+    tr('m042'),
+    tr('m440'),
+    tr('m441'),
+    tr('m442'),
   ],
   [
-    'Éducation',
-    'Rendre les ressources utiles et accessibles.',
-    'Des environnements numériques organisés autour des utilisateurs, des contenus et de la continuité de service.',
-    'Identités · Recherche documentaire · Infrastructure',
+    tr('m043'),
+    tr('m443'),
+    tr('m444'),
+    tr('m445'),
   ],
   [
-    'Commerce',
-    'Relier les opérations aux attentes des clients.',
-    'Une circulation plus cohérente de l’information entre les équipes, les outils et les demandes de support.',
-    'Automatisation · Support assisté · Intégration',
+    tr('m044'),
+    tr('m446'),
+    tr('m447'),
+    tr('m448'),
   ],
   [
-    'Secteur public',
-    'Moderniser avec méthode et traçabilité.',
-    'Une approche progressive des services numériques, attentive à la gouvernance des données et aux responsabilités.',
-    'Architecture · Gouvernance · Modernisation',
+    tr('m045'),
+    tr('m449'),
+    tr('m450'),
+    tr('m451'),
   ],
   [
-    'Startups',
-    'Construire un socle qui accompagne la trajectoire.',
-    'Des choix techniques explicites, une sécurité intégrée et une infrastructure adaptée au stade du produit.',
-    'Cloud · Architecture produit · IA appliquée',
+    tr('m046'),
+    tr('m452'),
+    tr('m453'),
+    tr('m454'),
   ],
 ];
-export const articles = [
+const articles = [
   {
     slug: 'agents-processus',
     tag: 'INTELLIGENCE',
-    title: 'Agents IA : commencer par le processus, pas par le modèle.',
+    title: tr('m087'),
     intro:
-      'Un agent utile répond à un besoin défini. Le choix du modèle arrive après la compréhension du travail à accomplir.',
+      tr('m455'),
     sections: [
       [
-        'Partir d’une tâche observable',
-        'Identifier les informations d’entrée, le résultat attendu et la personne qui peut juger sa qualité. « Aider une équipe » est une ambition ; « préparer une réponse à partir de documents autorisés » est un périmètre de travail.',
+        tr('m456'),
+        tr('m457'),
       ],
       [
-        'Définir les frontières de l’action',
-        'Distinguer la consultation, la proposition et l’exécution. Ces trois niveaux n’impliquent pas les mêmes accès ni les mêmes conséquences. Les validations humaines doivent correspondre aux enjeux de chaque action.',
+        tr('m458'),
+        tr('m459'),
       ],
       [
-        'Évaluer avant d’étendre',
-        'Constituer des situations représentatives, y compris des cas incomplets ou contradictoires. Examiner la pertinence, la traçabilité et la capacité à reconnaître une limite. Une démonstration convaincante ne remplace pas ce travail.',
+        tr('m460'),
+        tr('m461'),
       ],
       [
-        'Prévoir l’exploitation',
-        'Un agent s’inscrit dans un système vivant. Les documents, les permissions et les processus changent. La responsabilité de suivre ces évolutions doit être attribuée dès le départ.',
+        tr('m462'),
+        tr('m463'),
       ],
     ],
   },
   {
     slug: 'identite-securite',
     tag: 'TRUST',
-    title: 'L’identité, premier périmètre de votre sécurité.',
+    title: tr('m088'),
     intro:
-      'Les applications se distribuent. Les utilisateurs travaillent dans plusieurs environnements. L’identité relie ces accès et devient un point de décision central.',
+      tr('m464'),
     sections: [
       [
-        'Savoir qui accède à quoi',
-        'Un inventaire des comptes ne suffit pas. Il faut comprendre les droits effectifs, les comptes techniques, les accès temporaires et les privilèges conservés au fil des changements de rôle.',
+        tr('m465'),
+        tr('m466'),
       ],
       [
-        'Appliquer le besoin réel',
-        'Des rôles définis par l’activité rendent les autorisations plus lisibles. Les exceptions doivent rester visibles, justifiées et réexaminées.',
+        tr('m467'),
+        tr('m468'),
       ],
       [
-        'Traiter le cycle de vie',
-        'L’arrivée, la mobilité et le départ d’une personne sont des événements de sécurité. Les processus RH et informatiques doivent se rejoindre dans des opérations fiables et attribuées.',
+        tr('m469'),
+        tr('m470'),
       ],
       [
-        'Vérifier dans la durée',
-        'Les revues d’accès et les journaux apportent une vue concrète de l’usage. Leur valeur dépend des personnes responsables de les examiner et de corriger les écarts.',
+        tr('m471'),
+        tr('m472'),
       ],
     ],
   },
   {
     slug: 'cloud-pilotage',
     tag: 'SCALE',
-    title: 'Le cloud se pilote autant qu’il se construit.',
+    title: tr('m089'),
     intro:
-      'Une architecture cloud ne s’arrête pas à sa mise en service. Elle doit rester compréhensible à mesure que les usages et les coûts évoluent.',
+      tr('m473'),
     sections: [
       [
-        'Nommer les responsabilités',
-        'Chaque environnement doit avoir un propriétaire, un usage et un niveau de service attendu. Ces repères simplifient les arbitrages et les décisions de changement.',
+        tr('m474'),
+        tr('m475'),
       ],
       [
-        'Rendre les coûts lisibles',
-        'La répartition des ressources et leur identification facilitent l’analyse. Un budget utile se rattache à un service et à un besoin, pas seulement à un montant global.',
+        tr('m476'),
+        tr('m477'),
       ],
       [
-        'Tester la reprise',
-        'Une sauvegarde et une restauration réussie sont deux choses différentes. Les scénarios de reprise doivent tenir compte des dépendances et être confrontés aux objectifs de service.',
+        tr('m478'),
+        tr('m479'),
       ],
       [
-        'Organiser l’amélioration',
-        'Les métriques ont un intérêt lorsqu’elles déclenchent une décision. Prévoir un rythme de revue aide à ajuster les ressources, documenter les compromis et anticiper les évolutions.',
+        tr('m480'),
+        tr('m481'),
       ],
     ],
   },
 ];
-export const cases = [
+const cases = [
   {
     slug: 'knowledge-assistant',
-    title: 'La connaissance d’entreprise, rendue accessible.',
+    title: tr('m482'),
     tag: 'INTELLIGENCE',
     intro:
-      'Architecture de référence pour un assistant documentaire respectant les permissions des utilisateurs.',
+      tr('m483'),
     challenge:
-      'Les documents d’une organisation sont dispersés. Retrouver une réponse exige de connaître les bonnes sources et leur contexte.',
+      tr('m484'),
     architecture:
-      'Sources autorisées → ingestion et indexation → recherche filtrée par droits → génération avec références → interface utilisateur.',
+      tr('m485'),
     solution:
-      'Le concept relie un corpus délimité à une recherche documentaire contrôlée. Les réponses doivent s’appuyer sur des sources consultables ; l’absence de source doit pouvoir conduire à une réponse d’incertitude.',
+      tr('m486'),
     impact:
-      'Bénéfices envisagés : faciliter la recherche et réduire les interruptions entre équipes. Aucun résultat client ni gain mesuré n’est revendiqué.',
+      tr('m487'),
     criteria: [
-      'Pertinence sur un jeu de questions métier',
-      'Respect des permissions documentaires',
-      'Traçabilité des références',
-      'Traitement des réponses insuffisamment fondées',
+      tr('m488'),
+      tr('m489'),
+      tr('m490'),
+      tr('m491'),
     ],
   },
   {
     slug: 'secure-cloud',
-    title: 'Un socle cloud. La sécurité dès le départ.',
+    title: tr('m492'),
     tag: 'TRUST × SCALE',
     intro:
-      'Architecture de référence Azure associant identités, gouvernance, réseau et observabilité.',
+      tr('m493'),
     challenge:
-      'La multiplication des ressources et des équipes peut rendre les responsabilités et les configurations difficiles à suivre.',
+      tr('m494'),
     architecture:
-      'Identités → politiques et rôles → segmentation des environnements → ressources → journaux et supervision.',
+      tr('m495'),
     solution:
-      'Le concept sépare les environnements, organise les accès et prévoit des règles de configuration. Les sauvegardes, les budgets et les journaux font partie du socle initial.',
+      tr('m496'),
     impact:
-      'Bénéfices envisagés : rendre l’exploitation plus lisible et les écarts plus visibles. Aucune disponibilité, certification ou économie mesurée n’est revendiquée.',
+      tr('m497'),
     criteria: [
-      'Revue des rôles et accès privilégiés',
-      'Vérification des politiques de configuration',
-      'Exercice de restauration',
-      'Lisibilité des coûts par environnement',
+      tr('m498'),
+      tr('m499'),
+      tr('m500'),
+      tr('m501'),
     ],
   },
 ];
+return {services,sectors,articles,cases};
+}
+export const {services,sectors,articles,cases}=getContent();
 export const topRoutes = [
   'expertise',
   'solutions',

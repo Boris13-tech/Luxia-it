@@ -1,49 +1,53 @@
 'use client';
+import {useI18n} from '@/components/i18n-provider';
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/locale-link';
 import Nucleus from './nucleus';
-export const pillars = [
+export default function PillarStory({sharedCore=false}:{sharedCore?:boolean}) {
+const {t:tr} = useI18n();
+const pillars = [
   {
     name: 'INTELLIGENCE',
-    title: 'L’IA au cœur de votre activité.',
-    text: 'Des agents qui assistent vos équipes. Des connaissances accessibles. Des processus qui avancent avec moins de friction.',
+    title: tr('m272'),
+    text: tr('m273'),
     items: [
-      'Agents IA & copilotes',
-      'Assistants de connaissance',
-      'Intelligence documentaire',
-      'Automatisation des processus',
+      tr('m274'),
+      tr('m275'),
+      tr('m276'),
+      tr('m277'),
     ],
     path: 'artificial-intelligence',
-    label: 'Explorer l’intelligence artificielle',
+    label: tr('m278'),
   },
   {
     name: 'TRUST',
-    title: 'La confiance se construit.',
-    text: 'La sécurité fait partie de l’architecture. Nous relions identités, données et gouvernance pour protéger ce qui compte.',
+    title: tr('m279'),
+    text: tr('m280'),
     items: [
-      'Identité & accès',
-      'Architecture Zero Trust',
+      tr('m281'),
+      tr('m282'),
       'Microsoft Security',
-      'Évaluation & gouvernance',
+      tr('m283'),
     ],
     path: 'cybersecurity',
-    label: 'Découvrir notre approche sécurité',
+    label: tr('m284'),
   },
   {
     name: 'SCALE',
-    title: 'Une infrastructure qui voit plus loin.',
-    text: 'Un cloud conçu pour vos usages, vos exigences de résilience et votre trajectoire de croissance. Avec la maîtrise des coûts en ligne de mire.',
+    title: tr('m285'),
+    text: tr('m286'),
     items: [
       'Microsoft Azure',
-      'Migration & modernisation',
-      'Résilience & sauvegarde',
-      'Observabilité & optimisation',
+      tr('m287'),
+      tr('m288'),
+      tr('m289'),
     ],
     path: 'cloud',
-    label: 'Concevoir votre trajectoire cloud',
+    label: tr('m290'),
   },
 ];
-export default function PillarStory() {
+
+  pillars.push({name:'AUTOMATION',title:tr('syncTitle'),text:tr('syncText'),items:[tr('m418'),tr('m420'),tr('m422'),tr('m424')],path:'automation',label:tr('syncLink')});
   const [mode, setMode] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -61,10 +65,10 @@ export default function PillarStory() {
   return (
     <section className="story wrap" ref={ref}>
       <div className="story-visual">
-        <Nucleus mode={mode} />
+        {sharedCore?<div className="story-core-slot" data-core-slot="story"/>:<Nucleus mode={mode}/>}
         <div className="scene-caption">
-          <span>LUXIA CORE / 0{mode + 1}</span>
-          <span>{pillars[mode].name}</span>
+          <span>{tr('m291')}{mode + 1}</span>
+          <span aria-hidden="true">↗</span>
         </div>
       </div>
       <div className="story-chapters">

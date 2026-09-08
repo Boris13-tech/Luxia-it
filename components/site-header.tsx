@@ -1,5 +1,8 @@
 'use client';
-import Link from 'next/link';
+import {useI18n} from '@/components/i18n-provider';
+import Link from '@/components/locale-link';
+import LanguageSelector from './language-selector';
+import {localizedPath} from '@/lib/i18n';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -11,19 +14,21 @@ import {
   SheetDescription,
   SheetClose,
 } from '@/components/ui/sheet';
-export const navigation = [
-  ['Expertises', '/expertise'],
-  ['Solutions', '/solutions'],
+export default function SiteHeader() {
+const {t:tr,locale} = useI18n();
+const navigation = [
+  [tr('m096'), '/expertise'],
+  [tr('m097'), '/solutions'],
   ['Luxia Labs', '/labs'],
   ['Insights', '/insights'],
-  ['Le groupe', '/company'],
+  [tr('m100'), '/company'],
 ];
-export default function SiteHeader() {
+
   const path = usePathname();
   const [open, setOpen] = useState(false);
   return (
     <header className="site-header">
-      <Link href="/" className="wordmark" aria-label="Luxia-IT, accueil">
+      <Link href="/" className="wordmark" aria-label={tr('m264')}>
         <span className="logo-crop">
           <Image
             src="/luxia-logo.jpg"
@@ -35,12 +40,12 @@ export default function SiteHeader() {
         </span>
         LUXIA<span>-IT</span>
       </Link>
-      <nav aria-label="Navigation principale">
+      <nav aria-label={tr('m265')}>
         {navigation.map(([title, url]) => (
           <Link
             key={url}
             href={url}
-            aria-current={path === url ? 'page' : undefined}
+            aria-current={path === localizedPath(locale,url) ? 'page' : undefined}
           >
             {title}
             {url === '/labs' && <i />}
@@ -48,28 +53,25 @@ export default function SiteHeader() {
         ))}
       </nav>
       <div className="header-end">
-        <span className="locale" aria-label="Langue française">
-          FR
-        </span>
+        <LanguageSelector />
         <Link href="/contact" className="button small">
-          Parlons de votre projet <span>↗</span>
+          {tr('m267')}<span>↗</span>
         </Link>
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="menu-toggle" aria-label="Ouvrir le menu">
+          <SheetTrigger id="main-menu-trigger" className="menu-toggle" aria-label={tr('m268')}>
             ☰
           </SheetTrigger>
           <SheetContent className="mobile-menu" showCloseButton={false}>
             <SheetTitle>LUXIA-IT</SheetTitle>
-            <SheetDescription>Intelligence. Trust. Scale.</SheetDescription>
-            <SheetClose className="menu-close" aria-label="Fermer le menu">
-              ×
-            </SheetClose>
-            <nav aria-label="Navigation mobile">
+            <SheetDescription>{tr('m269')}</SheetDescription>
+            <SheetClose className="menu-close" aria-label={tr('m270')}>
+              {tr('m012')}</SheetClose>
+            <nav aria-label={tr('m271')}>
               {[
                 ...navigation,
-                ['Secteurs', '/industries'],
-                ['Projets', '/case-studies'],
-                ['Contact', '/contact'],
+                [tr('m098'), '/industries'],
+                [tr('m099'), '/case-studies'],
+                [tr('m102'), '/contact'],
               ].map(([title, url]) => (
                 <Link key={url} href={url} onClick={() => setOpen(false)}>
                   {title}
@@ -77,7 +79,7 @@ export default function SiteHeader() {
                 </Link>
               ))}
             </nav>
-            <p>AFRIQUE × EUROPE</p>
+            <LanguageSelector onSelect={()=>setOpen(false)}/><p>{tr('m202')}</p>
           </SheetContent>
         </Sheet>
       </div>

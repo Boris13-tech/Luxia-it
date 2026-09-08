@@ -1886,7 +1886,7 @@ img {
   grid-template-columns: 1fr 1fr !important;
   gap: 12px !important;
 }
-.category-options label {
+.category-options .category-choice {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1895,11 +1895,11 @@ img {
   font-size: 14px;
   cursor: pointer;
 }
-.category-options label:has([data-checked]) {
+.category-options .category-choice:has([data-checked]) {
   border-color: #4f8bdf;
   background: #142b494d;
 }
-.category-options label > b {
+.category-options .category-choice > b {
   margin-left: auto;
   color: #668cbf;
   font-weight: 400;
@@ -2255,13 +2255,13 @@ img {
   .stepper span {
     font-size: 10px;
   }
-  .category-options label {
+  .category-options .category-choice {
     padding: 15px 10px;
     font-size: 12px;
     gap: 8px;
     min-height: 64px;
   }
-  .category-options label > b {
+  .category-options .category-choice > b {
     display: none;
   }
   .form-grid {
@@ -2307,3 +2307,38 @@ img {
   color: #99c4ff;
   margin-top: 18px;
 }
+
+/* The Core is one persistent canvas, travelling between editorial windows. */
+.core-journey{position:fixed;z-index:4;pointer-events:none;transition:opacity .45s;isolation:isolate;overflow:hidden;}
+.core-journey .nucleus{height:100%;min-height:0;pointer-events:auto;background:radial-gradient(ellipse at center,#14375d35,transparent 68%);}
+.core-journey canvas{touch-action:pan-y;}
+.story-core-slot{height:620px;width:100%;}
+.agent-core-slot{height:360px;width:100%;}
+.labs-core-slot{height:270px;width:100%;}
+.labs-page-core{position:absolute;inset:0 0 auto auto;width:48%;height:480px;pointer-events:none;opacity:.8;}
+.labs-feature{position:relative;}
+.labs-feature>h2,.labs-feature>p,.alma-description{position:relative;z-index:1;}
+.alma{position:relative;}
+.alma .micro,.alma strong,.alma>span{position:relative;z-index:5;}
+.hero-content h1{animation:core-headline 1.2s .6s both;}
+@keyframes core-headline{from{opacity:.18;transform:translateY(12px)}to{opacity:1;transform:none}}
+.site-header .language-selector,.mobile-menu .language-selector{display:flex;gap:10px;align-items:center;white-space:nowrap;}
+.language-selector a{font-size:13px!important;line-height:1.5;letter-spacing:.025em;color:#8494aa;padding:7px 2px;}
+.language-selector a[aria-current=page]{color:#f2f7ff;border-bottom:1px solid #67acff;}
+.site-header{z-index:50;}
+.header-end{gap:18px;}
+.footer-email{display:inline-block;padding:18px 0;color:#9fbde0;font-size:16px;}
+.contact-address{overflow-wrap:anywhere;}
+html[lang=zh-CN] body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',var(--font-geist-sans),sans-serif;}
+html[lang=zh-CN] h1,html[lang=zh-CN] h2,html[lang=zh-CN] h3{letter-spacing:-.025em;line-height:1.28;word-break:normal;text-wrap:balance;}
+html[lang=zh-CN] .hero h1{line-height:1.13;letter-spacing:-.035em;font-weight:500;}
+html[lang=zh-CN] p{line-height:1.9;}
+html[lang=zh-CN] .eyebrow,html[lang=zh-CN] .micro{letter-spacing:.09em;}
+html[lang=zh-CN] .hero-description{max-width:400px;}
+html[lang=en] .hero h1{font-size:clamp(62px,6.9vw,112px);}
+@media(max-width:1100px){.header-end>.button{display:none!important}.site-header>.header-end>.language-selector{display:flex}.story-core-slot{height:540px;}}
+@media(max-width:768px){.story-core-slot{height:360px;}.labs-page-core{width:100%;opacity:.22}.language-selector{gap:12px}.site-header .language-selector a{font-size:12px!important}.mobile-menu .language-selector{margin-top:20px;flex-direction:row}.mobile-menu .language-selector a{font-size:18px!important}.labs-core-slot{height:220px;}}
+@media(max-width:600px){.story-visual{top:64px;}.story-core-slot{height:245px}.agent-core-slot{height:240px}.header-end{gap:14px}.story-chapter{scroll-margin-top:330px}.hero-content h1{font-size:64px}html[lang=en] .hero h1{font-size:58px}html[lang=zh-CN] .hero h1{font-size:64px}.hero-description{font-size:16px}.hero-content .actions{pointer-events:auto}.hero-art{left:0;right:0}.labs-core-slot{height:190px}.language-selector a{min-height:36px}.scene-caption{font-size:12px}.story-chapter ul{font-size:14px;}.core-journey{z-index:4;}}
+@media(prefers-reduced-motion:reduce){.hero-content h1{animation:none}.core-journey{transition:none}}
+@media(max-width:600px){.story-visual{width:calc(100% + 40px);align-self:stretch;}.story-core-slot{width:100%;}}
+.category-choice>label{flex:1;cursor:pointer;font-size:14px;}

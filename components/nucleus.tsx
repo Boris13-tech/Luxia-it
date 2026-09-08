@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import {useI18n} from './i18n-provider';
 import {
   Component,
   lazy,
@@ -34,10 +35,15 @@ class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
 export default function Nucleus({
   mode = 0,
   className = '',
+  active = true,
+  persistent = false,
 }: {
   mode?: number;
   className?: string;
+  active?: boolean;
+  persistent?: boolean;
 }) {
+  const {t}=useI18n();
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -67,12 +73,12 @@ export default function Nucleus({
     <figure
       ref={ref}
       className={'nucleus ' + className}
-      aria-label="Structure Luxia : trois formes ascendantes au cœur d’un réseau intelligent"
+      aria-label={t('coreLabel')}
     >
       <Boundary>
-        {visible ? (
+        {visible || persistent ? (
           <Suspense fallback={<Fallback />}>
-            <Scene mode={mode} reduced={reduced} />
+            <Scene mode={mode} reduced={reduced} active={active && (visible || persistent)} />
           </Suspense>
         ) : (
           <Fallback />

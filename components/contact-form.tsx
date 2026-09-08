@@ -1,6 +1,7 @@
 'use client';
+import {useI18n} from '@/components/i18n-provider';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/components/locale-link';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -11,22 +12,24 @@ import {
 } from '@/components/ui/select';
 import { site } from '@/lib/content';
 import { useContactTools } from './contact-tools';
+export default function ContactForm() {
+const {t:tr} = useI18n();
 const categories = [
-  'Intelligence artificielle',
-  'Cybersécurité',
-  'Cloud',
-  'Automatisation',
-  'Partenariat',
-  'Autre',
+  tr('m324'),
+  tr('m325'),
+  tr('cloud'),
+  tr('automation'),
+  tr('m326'),
+  tr('m327'),
 ];
 const sizes = [
-  '1–10 personnes',
-  '11–50 personnes',
-  '51–250 personnes',
-  '251–1 000 personnes',
-  'Plus de 1 000 personnes',
+  tr('size1'),
+  tr('size2'),
+  tr('size3'),
+  tr('size4'),
+  tr('m328'),
 ];
-export default function ContactForm() {
+
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(categories[0]);
   const [size, setSize] = useState(sizes[0]);
@@ -38,7 +41,9 @@ export default function ContactForm() {
     message: '',
   });
   const [feedback, setFeedback] = useState('');
+  const messageField = useRef<HTMLTextAreaElement>(null);
   const stage = useCallback((category: string, message: string) => {
+    messageField.current?.setCustomValidity('');
     setCategory(category);
     setData((d) => ({ ...d, message }));
     setStep(1);
@@ -53,13 +58,14 @@ export default function ContactForm() {
     }
     heading.current?.focus();
   }, [step]);
-  const body = `Bonjour Luxia-IT,\n\nProjet : ${category}\nNom : ${data.name}\nEntreprise : ${data.company}\nEmail : ${data.email}\nPays : ${data.country}\nEffectif : ${size}\n\n${data.message}\n\nCordialement,\n${data.name}`;
+  const body = `${tr('greeting')}\n\n${tr('projectLabel')}: ${category}\n${tr('nameLabel')}: ${data.name}\n${tr('m342')}: ${data.company}\n${tr('emailLabel')}: ${data.email}\n${tr('m344')}: ${data.country}\n${tr('sizeLabel')}: ${size}\n\n${data.message}\n\n${tr('regards')}\n${data.name}`;
+  const validate = (e: React.SyntheticEvent<HTMLInputElement|HTMLTextAreaElement>) => { const el=e.currentTarget; el.setCustomValidity(''); if(el.validity.valueMissing)el.setCustomValidity(tr('required')); else if(el.validity.typeMismatch)el.setCustomValidity(tr('invalidEmail')); else if(el.id==='message' && el.value.trim().length<20)el.setCustomValidity(tr('messageShort')); };
   const update = (key: keyof typeof data, value: string) =>
     setData((d) => ({ ...d, [key]: value }));
   return (
     <div className="contact-flow">
-      <div className="stepper" aria-label={'Étape ' + step + ' sur 3'}>
-        {['Votre projet', 'Votre organisation', 'Votre message'].map((t, i) => (
+      <div className="stepper" aria-label={tr('m329') + ' ' + step + ' ' + tr('stepOf')}>
+        {[tr('m330'), tr('m331'), tr('m332')].map((t, i) => (
           <span key={t} aria-current={step === i + 1 ? 'step' : undefined}>
             <b>0{i + 1}</b>
             {t}
@@ -68,10 +74,10 @@ export default function ContactForm() {
       </div>
       <h2 ref={heading} tabIndex={-1}>
         {step === 1
-          ? 'Quel sujet vous amène ?'
+          ? tr('m333')
           : step === 2
-            ? 'Faisons connaissance.'
-            : 'Votre message est prêt.'}
+            ? tr('m334')
+            : tr('m335')}
       </h2>
       {step === 1 ? (
         <form
@@ -83,35 +89,37 @@ export default function ContactForm() {
           <RadioGroup
             value={category}
             onValueChange={(v) => setCategory(String(v))}
-            aria-label="Catégorie du projet"
+            aria-label={tr('m336')}
             className="category-options"
           >
             {categories.map((c, i) => (
-              <label key={c}>
-                <RadioGroupItem value={c} id={'category-' + i} aria-label={c} />
-                <span>{c}</span>
-                <b>↗</b>
-              </label>
+              <div key={c} className="category-choice">
+                <RadioGroupItem value={c} id={'category-' + i} aria-labelledby={'category-label-' + i} />
+                <label id={'category-label-' + i} htmlFor={'category-' + i}>{c}</label>
+                <b aria-hidden="true">↗</b>
+              </div>
             ))}
           </RadioGroup>
           <label className="field-label" htmlFor="message">
-            Parlez-nous de votre projet <span>*</span>
+            {tr('m337')}<span>*</span>
           </label>
           <textarea
+            ref={messageField}
+            onInvalid={validate}
+            onInput={validate}
             id="message"
             required
             minLength={20}
             maxLength={3000}
             value={data.message}
             onChange={(e) => update('message', e.target.value)}
-            placeholder="Vos objectifs, votre contexte et les difficultés à résoudre…"
+            placeholder={tr('m338')}
             rows={5}
           />
           <small>
-            20 caractères minimum. Ne communiquez pas de données sensibles.
-          </small>
+            {tr('m339')}</small>
           <button className="button primary" type="submit">
-            Continuer <span>→</span>
+            {tr('m340')}<span>→</span>
           </button>
         </form>
       ) : step === 2 ? (
@@ -123,16 +131,18 @@ export default function ContactForm() {
         >
           <div className="form-grid">
             {[
-              ['name', 'Nom complet', 'name'],
-              ['company', 'Entreprise', 'organization'],
-              ['email', 'Email professionnel', 'email'],
-              ['country', 'Pays', 'country-name'],
+              ['name', tr('m341'), 'name'],
+              ['company', tr('m342'), 'organization'],
+              ['email', tr('m343'), 'email'],
+              ['country', tr('m344'), 'country-name'],
             ].map(([key, title, autocomplete]) => (
               <div key={key}>
                 <label className="field-label" htmlFor={key}>
                   {title} <span>*</span>
                 </label>
                 <input
+                  onInvalid={validate}
+                  onInput={validate}
                   id={key}
                   type={key === 'email' ? 'email' : 'text'}
                   required
@@ -151,8 +161,7 @@ export default function ContactForm() {
                 id="size-label"
                 htmlFor="company-size"
               >
-                Taille de l’entreprise
-              </label>
+                {tr('m345')}</label>
               <Select
                 value={size}
                 onValueChange={(v) => setSize(String(v))}
@@ -176,24 +185,21 @@ export default function ContactForm() {
             </div>
           </div>
           <p className="privacy-note">
-            Ces informations servent uniquement à préparer votre message. Elles
-            ne sont pas enregistrées par ce formulaire.{' '}
-            <Link href="/privacy">Confidentialité ↗</Link>
+            {tr('m346')}{' '}
+            <Link href="/privacy">{tr('m347')}</Link>
           </p>
           <div className="actions">
             <button type="button" className="button" onClick={() => setStep(1)}>
-              ← Retour
-            </button>
+              {tr('m348')}</button>
             <button className="button primary" type="submit">
-              Préparer le message <span>→</span>
+              {tr('m349')}<span>→</span>
             </button>
           </div>
         </form>
       ) : (
         <div className="contact-review">
           <p>
-            Vérifiez votre demande, puis ouvrez votre messagerie pour l’envoyer
-            à <a href={'mailto:' + site.email}>{site.email}</a>.
+            {tr('m350')}<a href={'mailto:' + site.email}>{site.email}</a>.
           </p>
           <pre>{body}</pre>
           <div className="actions">
@@ -203,12 +209,12 @@ export default function ContactForm() {
                 'mailto:' +
                 site.email +
                 '?subject=' +
-                encodeURIComponent('Projet Luxia-IT — ' + category) +
+                encodeURIComponent(tr('m351') + ' ' + category) +
                 '&body=' +
                 encodeURIComponent(body)
               }
             >
-              Ouvrir ma messagerie <span>↗</span>
+              {tr('m352')}<span>↗</span>
             </a>
             <button
               className="button"
@@ -216,26 +222,22 @@ export default function ContactForm() {
                 try {
                   await navigator.clipboard.writeText(body);
                   setFeedback(
-                    'Message copié. Vous pouvez le coller dans votre messagerie.',
+                    tr('m353'),
                   );
                 } catch {
                   setFeedback(
-                    'Copie indisponible. Sélectionnez le texte ci-dessus pour le copier.',
+                    tr('m354'),
                   );
                 }
               }}
             >
-              Copier le message
-            </button>
+              {tr('m355')}</button>
           </div>
           <p className="privacy-note">
-            Aucun message n’a été envoyé automatiquement. Vous confirmez l’envoi
-            dans votre application de messagerie.
-          </p>
+            {tr('m356')}</p>
           <output aria-live="polite">{feedback}</output>
           <button className="text-link" onClick={() => setStep(2)}>
-            ← Modifier mes informations
-          </button>
+            {tr('m357')}</button>
         </div>
       )}
     </div>

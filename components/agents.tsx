@@ -1,40 +1,43 @@
 'use client';
+import {useI18n} from '@/components/i18n-provider';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Nucleus from './nucleus';
+export default function Agents({sharedCore=false}:{sharedCore?:boolean}) {
+const {t:tr} = useI18n();
 const agents = [
   [
     'Knowledge',
-    'La connaissance, enfin accessible.',
-    'Un assistant qui explore un corpus autorisé et propose des réponses sourcées. Les accès restent alignés sur les droits de chaque utilisateur.',
-    'QUESTION → SOURCES → RÉPONSE',
+    tr('m292'),
+    tr('m293'),
+    tr('m294'),
   ],
   [
     'Operations',
-    'Moins de tâches répétées.',
-    'Un agent qui prépare et orchestre des étapes de travail définies. Les actions sensibles passent par une validation humaine.',
-    'ÉVÉNEMENT → VALIDATION → ACTION',
+    tr('m295'),
+    tr('m296'),
+    tr('m297'),
   ],
   [
     'Support',
-    'Une réponse mieux préparée.',
-    'Un assistant qui classe une demande, retrouve les informations utiles et prépare une réponse pour votre équipe support.',
-    'DEMANDE → CONTEXTE → PROPOSITION',
+    tr('m298'),
+    tr('m299'),
+    tr('m300'),
   ],
   [
     'Sales',
-    'Le contexte avant la conversation.',
-    'Un agent qui synthétise les informations commerciales autorisées pour préparer les échanges et faciliter le suivi.',
-    'CONTEXTE → SYNTHÈSE → SUIVI',
+    tr('m301'),
+    tr('m302'),
+    tr('m303'),
   ],
   [
     'Security',
-    'Le signal au milieu du bruit.',
-    'Un assistant qui aide à contextualiser une alerte et à préparer son examen. Les décisions de sécurité restent supervisées.',
-    'ALERTE → ANALYSE → REVUE',
+    tr('m304'),
+    tr('m305'),
+    tr('m306'),
   ],
 ];
-export default function Agents() {
+
   const [active, setActive] = useState('Knowledge');
   return (
     <Tabs
@@ -45,7 +48,7 @@ export default function Agents() {
       <TabsList variant="line" className="agent-tabs">
         {agents.map(([n]) => (
           <TabsTrigger value={n} key={n}>
-            {n}
+            {tr(({Knowledge:"knowledge",Operations:"operations",Support:"support",Sales:"sales",Security:"security"} as const)[n as "Knowledge"])}
             <span>↗</span>
           </TabsTrigger>
         ))}
@@ -53,17 +56,15 @@ export default function Agents() {
       {agents.map(([n, t, d, f]) => (
         <TabsContent key={n} value={n} className="agent-panel">
           <div className="agent-visual">
-            <Nucleus mode={3} />
+            {sharedCore?<div className="agent-core-slot" data-core-slot="3"/>:<Nucleus mode={3}/>}
           </div>
           <div>
-            <p className="eyebrow">{n.toUpperCase()} AGENT / CONCEPT</p>
+            <p className="eyebrow">{tr(({Knowledge:"knowledge",Operations:"operations",Support:"support",Sales:"sales",Security:"security"} as const)[n as "Knowledge"])} {tr('m307')}</p>
             <h3>{t}</h3>
             <p>{d}</p>
             <div className="flow-label">{f}</div>
             <p className="fine-print">
-              Scénario exploratoire. Disponibilité et périmètre à définir selon
-              votre projet.
-            </p>
+              {tr('m308')}</p>
           </div>
         </TabsContent>
       ))}

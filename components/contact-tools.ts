@@ -1,4 +1,5 @@
 'use client';
+import {useI18n} from '@/components/i18n-provider';
 import { useEffect } from 'react';
 import { flushSync } from 'react-dom';
 type Registry = {
@@ -17,27 +18,28 @@ type Registry = {
 export function useContactTools(
   stage: (category: string, message: string) => void,
 ) {
+  const {t:tr} = useI18n();
   useEffect(() => {
     const registry = (document as Document & { modelContext?: Registry })
       .modelContext;
     if (!registry?.registerTool) return;
     const lifecycle = new AbortController();
     const choices = [
-      'Intelligence artificielle',
-      'Cybersécurité',
-      'Cloud',
-      'Automatisation',
-      'Partenariat',
-      'Autre',
+      tr('m324'),
+      tr('m325'),
+      tr('cloud'),
+      tr('automation'),
+      tr('m326'),
+      tr('m327'),
     ];
     try {
       Promise.resolve(
         registry.registerTool(
           {
             name: 'stage_luxia_project',
-            title: 'Préparer un projet Luxia-IT',
+            title: tr('m358'),
             description:
-              'Renseigne la catégorie et le contexte dans le formulaire visible. Aucun message envoyé ; les coordonnées et la confirmation restent à compléter.',
+              tr('m359'),
             inputSchema: {
               type: 'object',
               properties: {
@@ -62,7 +64,7 @@ export function useContactTools(
                 x.message.trim().length < 20 ||
                 x.message.length > 3000
               )
-                throw new Error('Catégorie ou contexte invalide.');
+                throw new Error(tr('m360'));
               flushSync(() => stage(x.category as string, x.message as string));
               return { status: 'staged', step: 1, sent: false };
             },
@@ -72,5 +74,5 @@ export function useContactTools(
       ).catch(() => {});
     } catch {}
     return () => lifecycle.abort();
-  }, [stage]);
+  }, [stage,tr]);
 }

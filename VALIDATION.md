@@ -1,5 +1,22 @@
 # Validation — Luxia-IT
 
+## Multilingual LUXIA CORE update — 8 September 2026
+
+- 63 localized content URLs pass HTTP checks (21 pages × FR, EN, zh-CN), each with one H1, the expected HTML language, canonical, four language alternates and the official email. The navigation language selector preserves the page on every route. Root/legacy redirects and locale-specific 404 responses pass.
+- All message keys exist in all three dictionaries. Customer-facing TS/TSX contains no residual French copy or Legrand-Tech email. The email is defined once in `site.email` and reused by contact, careers, footer, legal pages, form drafts and Organization data.
+- English and Chinese home compositions inspected on desktop; Chinese home and email review inspected at 390px. French home/sticky Core inspected on mobile. Document-width checks pass at 375, 390, 430, 1024, 1440 and 1920px; the English contact tablet check passes at 768px.
+- Mobile Chinese menu opens, exposes all three languages, navigates to Contact and closes. Switching English → Chinese on home and English → French on Contact preserves the page and updates the interface. Direct localized loads also return the correct server-rendered language.
+- All three contact flows reach review and produce a correctly encoded mailto draft to Contact@Luxia-it.com. English and Chinese bodies are localized. No email or WhatsApp message was sent.
+- Empty-field validation appears in the page language. Regression verified: after a required-field error, a WebMCP-staged valid message clears stale custom validity and progresses to step 2. Localized tool categories match the visible form. Radio accessible names were corrected to remove repeated labels; Cloud selection verified.
+- Home has one mounted canvas across hero, sticky expertise chapters, automation, agents and Labs. A mobile slot-width issue was corrected, and canvas/slot widths were verified equal. Resize and tab changes update its placement. The organism contains no text labels, globe, brain, cloud icon or external shield.
+- Sites build, native Next.js/Vercel build and authored-source lint pass. The retained starter PostCSS default-export warning is non-blocking. Dependencies were not changed by this update.
+
+Performance safeguards: instanced computational nodes/surfaces/gates, reused typed GPU buffers, lazy 3D chunk, no postprocessing render passes, capped DPR, paused offscreen/hidden rendering and reduced-motion still state. Three.js's upstream Clock deprecation warning remains in development. A transient development hydration-ID warning was addressed with a stable menu trigger ID. No Lighthouse score or real-device performance measurement is claimed. OS reduced-motion switching is not exposed by the browser tooling; that path was reviewed in source.
+
+Legal identity/registration details still need the company's input. Contact delivery remains an explicit email-application handoff. The site's public audience was authorized by the owner and is preserved.
+
+## Initial release checks (historical)
+
 ## Completed functional and visual checks
 
 - 21 content pages return HTTP 200, each with one H1, title, description and canonical URL. Internal content links resolve to implemented routes.
