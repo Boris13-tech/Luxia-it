@@ -45,3 +45,15 @@ Both the Sites-compatible build and the native Next.js/Vercel build passed durin
 Before public release, the company must supply the legal entity, registered address, registration/tax details and final privacy information. The current contact mechanism prepares an email rather than providing server-side email delivery. French content is published; reviewed English content remains a future extension.
 
 Final dependency audit after the security updates: npm reports 0 vulnerabilities across 617 packages. The scaffold dependencies were updated to compatible patched releases without force or legacy peer dependency overrides.
+
+## Architectural direction — 9 September 2026
+
+The same site now uses a continuous, fixed 3D stage across the home narrative. Its beveled, folded L lamellae derive from the supplied identity. A timed verification cycle retracts local gates before packets descend, activates computation decks and illuminates authorized output. Close views for intelligence and trust transition to wider infrastructure views; Labs and the international section reuse the same geometry.
+
+The four expertise chapters use asymmetric placement, oversized background typography and native expandable capability lists. The engineering ecosystem and six-step conceptual case explorer are translated in French, English and Chinese. No partner status, client result or available ALMA capability is invented.
+
+Performance design: seven instanced draw groups; 17 lamellae / 51 packets on desktop, 9 / 27 on mobile; capped DPR (1.5 desktop, 1 mobile), reduced further after sustained slow frames. No GLB, HDR download, video, audio or postprocessing pipeline. The reflection environment is generated once and disposed on unmount. The scene is lazy-loaded, pauses in inactive sections and hidden documents, and renders on demand for reduced motion. Typography and content remain server-rendered. No Lighthouse, field LCP, CLS or INP score is claimed; real device/field measurements remain necessary before asserting a performance rating.
+
+Visual review at 1440×900 and 390×844: hero, close architecture, capability disclosure and Chinese concept explorer inspected. Initial overly regular silhouette, opaque glass, mobile horizontal overflow and an SSR/client generated-ID mismatch were corrected. Scene-only and logo-hidden development reviews confirmed a consistent folded-corner silhouette without reliance on the wordmark; this is an internal creative judgment, not an external award rating.
+
+Review perspectives: brand (logo-derived geometry), direction (dark material and selective light), interaction (causally ordered gates/packets), engineering (instancing and disposal), accessibility (native buttons/details, live panel, reduced motion), business (explicit conceptual status, accessible expert contact). The multilingual HTTP audit found no failures across 63 routes, canonical/hreflang, language switching and official contact address.

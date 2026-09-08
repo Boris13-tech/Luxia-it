@@ -1,3 +1,4 @@
+import CaseArchitecture from './case-architecture';
 import {notFound} from 'next/navigation';
 import Link from '@/components/locale-link';
 import {getContent, allRoutes, site} from '@/lib/content';
@@ -261,6 +262,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
           <p className="content-notice">
             {tr('m124')}</p>
         </PageHero>
+        <div className="wrap"><CaseArchitecture variant={project.slug==='secure-cloud'?'cloud':'knowledge'}/></div>
         <section className="case-body wrap">
           {[
             [tr('case1'), project.challenge],

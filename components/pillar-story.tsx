@@ -63,7 +63,7 @@ const pillars = [
     return () => o.disconnect();
   }, []);
   return (
-    <section className="story wrap" ref={ref}>
+    <section className={"story wrap"+(sharedCore?" cinematic-story":"")} ref={ref}>
       <div className="story-visual">
         {sharedCore?<div className="story-core-slot" data-core-slot="story"/>:<Nucleus mode={mode}/>}
         <div className="scene-caption">
@@ -73,20 +73,20 @@ const pillars = [
       </div>
       <div className="story-chapters">
         {pillars.map((p, i) => (
-          <article className="story-chapter" key={p.name} data-mode={i}>
+          <article className="story-chapter" key={p.name} data-mode={i} data-scene={i}>
             <p className="eyebrow">
               0{i + 1} / {p.name}
             </p>
-            <h2>{p.title}</h2>
+            <span className="chapter-word" aria-hidden="true">{p.name}</span><div className="chapter-editorial"><h2>{p.title}</h2>
             <p>{p.text}</p>
-            <ul>
+            <details><summary>{tr("exploreCapabilities")}</summary><ul>
               {p.items.map((x) => (
                 <li key={x}>{x}</li>
               ))}
-            </ul>
+            </ul></details>
             <Link className="text-link" href={'/expertise/' + p.path}>
               {p.label} ↗
-            </Link>
+            </Link></div>
           </article>
         ))}
       </div>

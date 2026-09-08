@@ -1,90 +1,86 @@
-/* oxlint-disable react/react-compiler -- Three.js owns mutable GPU buffers updated in useFrame. */
+/* oxlint-disable react/react-compiler -- The render loop owns mutable GPU objects. */
 'use client';
-import {Canvas,useFrame} from '@react-three/fiber';
-import {useMemo,useRef} from 'react';
+import {Canvas,useFrame,useThree} from '@react-three/fiber';
+import {useEffect,useMemo,useRef} from 'react';
 import * as THREE from 'three';
-
-// One topology drives compute, workload routing and local verification gates.
-// Deterministic coordinates keep the organism continuous across editorial states.
-const ZONES=7, PER_ZONE=12, NODE_COUNT=ZONES*PER_ZONE;
-const EDGE_COUNT=NODE_COUNT+ZONES*5;
-const PACKETS=EDGE_COUNT*2;
-const vertexShader=`attribute float intensity; varying float vIntensity;
-void main(){vIntensity=intensity;vec4 p=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*p;gl_PointSize=clamp((4.+intensity*11.)*6./-p.z,2.,22.);}`;
-const fragmentShader=`varying float vIntensity;void main(){float r=length(gl_PointCoord-.5)*2.;float a=pow(max(0.,1.-r),2.5);vec3 c=mix(vec3(.12,.39,.85),vec3(.7,.92,1.),vIntensity);gl_FragColor=vec4(c,a*.85);}`;
-function Organism({mode,reduced}:{mode:number;reduced:boolean}){
- const group=useRef<THREE.Group>(null), nodes=useRef<THREE.InstancedMesh>(null),gates=useRef<THREE.InstancedMesh>(null),surfaces=useRef<THREE.InstancedMesh>(null);
- const elapsed=useRef(0),state=useRef(mode),dummy=useMemo(()=>new THREE.Object3D(),[]);
+import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+function Environment(){
+ const {gl,scene}=useThree();
+ useEffect(()=>{const room=new RoomEnvironment();const pmrem=new THREE.PMREMGenerator(gl);const target=pmrem.fromScene(room,.04);scene.environment=target.texture;return()=>{scene.environment=null;target.dispose();pmrem.dispose();room.dispose();};},[gl,scene]);
+ return null;
+}
+const cameras=[new THREE.Vector3(7,4,10),new THREE.Vector3(-2,1.2,5.4),new THREE.Vector3(1.5,.3,3.7),new THREE.Vector3(10,8,15),new THREE.Vector3(5,7,10),new THREE.Vector3(-7,3,11),new THREE.Vector3(0,10,17)];
+function Architecture({mode,reduced,mobile,journey}:{mode:number;reduced:boolean;mobile:boolean;journey:boolean}){
+ const chassis=useRef<THREE.InstancedMesh>(null),rims=useRef<THREE.InstancedMesh>(null),gates=useRef<THREE.InstancedMesh>(null),packets=useRef<THREE.InstancedMesh>(null),glass=useRef<THREE.InstancedMesh>(null);
+ const decks=useRef<THREE.InstancedMesh>(null),decisions=useRef<THREE.InstancedMesh>(null);
+ const group=useRef<THREE.Group>(null),clock=useRef(0),slow=useRef(0),quality=useRef(false);
+ const {setDpr}=useThree();const count=mobile?9:17;
  const data=useMemo(()=>{
-  const base=Array.from({length:NODE_COUNT},(_,i)=>{const z=Math.floor(i/PER_ZONE),j=i%PER_ZONE;const a=z*2.39996;const r=.65+z*.34;return new THREE.Vector3(Math.cos(a)*r+(j%3-1)*.3, (z-3)*.42+(Math.floor(j/3)-1.5)*.22,Math.sin(a)*r*.7+(j%2)*.24);});
-  return {base,positions:base.map(p=>p.clone()),lines:new Float32Array(EDGE_COUNT*6),lineColors:new Float32Array(EDGE_COUNT*6),packets:new Float32Array(PACKETS*3),intensity:new Float32Array(PACKETS),edges:Array.from({length:EDGE_COUNT},()=>[0,0]),energy:new Float32Array(NODE_COUNT),a:new THREE.Vector3(),b:new THREE.Vector3(),color:new THREE.Color()};
+  // The logo's rising corner becomes a folded architectural lamella.
+  const shape=new THREE.Shape();shape.moveTo(-1.6,2.5);shape.lineTo(-1.2,2.5);shape.lineTo(-1.2,-1.35);shape.lineTo(1.7,-1.35);shape.lineTo(1.7,-1.75);shape.lineTo(-1.6,-1.75);shape.closePath();
+  const body=new THREE.ExtrudeGeometry(shape,{depth:.115,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.035,bevelThickness:.025,curveSegments:1});
+  return {body,dummy:new THREE.Object3D(),color:new THREE.Color(),target:new THREE.Vector3(),look:new THREE.Vector3()};
  },[]);
- const lineGeometry=useMemo(()=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(data.lines,3).setUsage(THREE.DynamicDrawUsage));g.setAttribute('color',new THREE.BufferAttribute(data.lineColors,3).setUsage(THREE.DynamicDrawUsage));return g;},[data]);
- const packetGeometry=useMemo(()=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(data.packets,3).setUsage(THREE.DynamicDrawUsage));g.setAttribute('intensity',new THREE.BufferAttribute(data.intensity,1).setUsage(THREE.DynamicDrawUsage));return g;},[data]);
- useFrame(({pointer,camera},delta)=>{
-  if(!group.current||!nodes.current||!gates.current||!surfaces.current)return;
-  elapsed.current+=Math.min(delta,.05);const time=reduced?8:elapsed.current;
-  state.current=reduced?mode:THREE.MathUtils.damp(state.current,mode,2,delta);
-  const m=state.current,cloud=Math.exp(-Math.pow(m-2,2)*3),security=Math.exp(-Math.pow(m-1,2)*3),sync=Math.exp(-Math.pow(m-3,2)*3),labs=Math.max(0,m-3);
-  const reveal=reduced?1:THREE.MathUtils.smoothstep(time,.2,3.8);
-  const cycle=time%14,verify=Math.exp(-Math.pow(cycle-2,2)*1.1),compute=Math.exp(-Math.pow(cycle-7,2)*.4);
-  const scale=.22+reveal*(.78+cloud*.18+compute*.055);
-  group.current.scale.setScalar(scale);
-  group.current.rotation.set(.16+(reduced?0:pointer.y*.035),-.25+Math.sin(time*.065)*.18+(reduced?0:pointer.x*.08),-.12);
-  // Camera shifts are restrained: topology remains recognisably the same system.
-  camera.position.z=THREE.MathUtils.damp(camera.position.z,mode===2?9.5:8.8,2,delta);
-  data.energy.fill(.05);
-  for(let i=0;i<NODE_COUNT;i++){
-   const z=Math.floor(i/PER_ZONE),j=i%PER_ZONE,p=data.positions[i],b=data.base[i];
-   const expansion=1+cloud*.21+labs*Math.sin(time*.3+z)*.14;
-   const proximity=reduced?0:Math.max(0,1-Math.hypot(b.x-pointer.x*3,b.y-pointer.y*2)/1.5);
-   p.set(b.x*expansion+Math.sin(time*.25+z*1.8+j*.7)*.065+pointer.x*proximity*.1,b.y+Math.cos(time*.32+z+j*.8)*.055,b.z*expansion+Math.sin(time*.22+i*.4)*(.05+labs*.09));
-  }
-  for(let e=0;e<EDGE_COUNT;e++){
-   let a,b;
-   if(e<NODE_COUNT){a=e;const z=Math.floor(e/PER_ZONE),j=e%PER_ZONE;b=z*PER_ZONE+(j+1+(j%3===0?2:0))%PER_ZONE;}
-   else{const k=e-NODE_COUNT,z=k%ZONES;a=z*PER_ZONE+(Math.floor(k/ZONES)*3)%PER_ZONE;const target=(z+1+Math.floor(k/ZONES)%2)%ZONES;b=target*PER_ZONE+(Math.floor(time/8)+k*3)%PER_ZONE;}
-   data.edges[e][0]=a;data.edges[e][1]=b;
-   const suspicious=e===NODE_COUNT+3 && cycle>9 && cycle<12;
-   // Local quarantine reroutes a workload; the rest of the network keeps running.
-   if(suspicious){b=(b+4)%NODE_COUNT;data.edges[e][1]=b;}
-   const pa=data.positions[a],pb=data.positions[b];pa.toArray(data.lines,e*6);pb.toArray(data.lines,e*6+3);
-   const glow=.10+(e>=NODE_COUNT?.14:0)+verify*.12+compute*.12;
-   data.color.set(suspicious?'#77573d':e%7===0?'#76cde0':'#2263aa').multiplyScalar(glow*2.2);
-   data.color.toArray(data.lineColors,e*6);data.color.toArray(data.lineColors,e*6+3);
-   for(let k=0;k<2;k++){
-    const idx=e*2+k;let phase=(time*(.13+sync*.065)+e*.173+k*.5)%1;
-    // Packets slow at the authentication gate, then enter compute clusters.
-    const gate=.33; if(phase>.25&&phase<.45)phase=gate+(phase-.33)*.35;
-    const intensity=(.2+Math.sin(phase*Math.PI)*.8)*reveal;
-    data.a.lerpVectors(pa,pb,phase);data.a.toArray(data.packets,idx*3);data.intensity[idx]=intensity;
-    if(phase>.82)data.energy[b]+=intensity*.45;
+ useEffect(()=>()=>data.body.dispose(),[data]);
+ useFrame(({camera,pointer},dt)=>{
+  if(!chassis.current||!rims.current||!gates.current||!packets.current||!glass.current||!group.current||!decks.current||!decisions.current)return;
+  const delta=Math.min(dt,.05);clock.current+=delta;const t=reduced?5:clock.current;
+  // One cycle drives verification, gate opening, resource routing and authorized exit.
+  const cycle=t%12,open=reduced?1:THREE.MathUtils.smoothstep(cycle,1.4,2.2)*(1-THREE.MathUtils.smoothstep(cycle,9.8,10.5));
+  const compute=THREE.MathUtils.smoothstep(cycle,4.8,5.5)*(1-THREE.MathUtils.smoothstep(cycle,7.2,8));
+  const action=THREE.MathUtils.smoothstep(cycle,7.5,8)*(1-THREE.MathUtils.smoothstep(cycle,9.6,10));
+  const reveal=reduced?1:THREE.MathUtils.smoothstep(t,0,2.2);
+  const m=THREE.MathUtils.clamp(mode+1,0,6),a=Math.floor(m),b=Math.min(6,a+1);
+  data.target.lerpVectors(cameras[a],cameras[b],m-a);if(mobile)data.target.multiplyScalar(1.2);
+  if(!reduced){data.target.x+=pointer.x*.25;data.target.y+=pointer.y*.15;}
+  if(reduced)camera.position.copy(data.target);else camera.position.lerp(data.target,1-Math.exp(-delta*2));
+  data.look.set(journey&&mode<0?(mobile?-.15:-2.9)*(1-Math.max(0,mode+1)):0,mobile&&mode<0?-1.7:0,0);camera.lookAt(data.look);
+  group.current.rotation.set(.05,-.22,0);group.current.scale.setScalar(.96+reveal*.04);
+  const expansion=Math.exp(-Math.pow(mode-2,2)*3),lab=Math.exp(-Math.pow(mode-4,2)*4),international=Math.exp(-Math.pow(mode-5,2)*4);
+  for(let i=0;i<count;i++){
+   const x=Math.floor(i/3)*.14+international*(i<count/2?-1:1)*1.8;
+   const y=(i%3)*.24+Math.floor(i/3)*.07+lab*Math.sin(t*.25+i*.5)*.22;
+   const z=(i-(count-1)/2)*.27*(1+expansion*.7)+international*(i%3)*.25;
+   data.dummy.position.set(x,y,z);data.dummy.rotation.set(0,0,lab*(i%2?.035:-.035));data.dummy.scale.setScalar(1);data.dummy.updateMatrix();chassis.current.setMatrixAt(i,data.dummy.matrix);
+   data.color.set(i%4===0?'#376a80':'#172c3a').multiplyScalar(.015+reveal*1.2+compute*(i%3===0?.4:.04));chassis.current.setColorAt(i,data.color);
+   data.dummy.position.set(-1.18+x,.54+y,z+.06);data.dummy.rotation.set(0,0,0);data.dummy.scale.set(.018,3.76,.019);data.dummy.updateMatrix();rims.current.setMatrixAt(i*2,data.dummy.matrix);
+   data.dummy.position.set(.24+x,-1.33+y,z+.06);data.dummy.scale.set(2.84,.018,.019);data.dummy.updateMatrix();rims.current.setMatrixAt(i*2+1,data.dummy.matrix);
+   const lit=(i%4===0?.46:.065)+compute*.22+action*.16;data.color.set('#69d6ee').multiplyScalar(lit*reveal);rims.current.setColorAt(i*2,data.color);rims.current.setColorAt(i*2+1,data.color);
+   for(let side=0;side<2;side++){
+    data.dummy.position.set(-1.17+x+(side?1:-1)*(.11+open*.19),-.55+y,z+.12);data.dummy.scale.set(.19,.07,.24);data.dummy.updateMatrix();gates.current.setMatrixAt(i*2+side,data.dummy.matrix);
+    data.color.set(open>.8?'#9eeaff':'#315d6f').multiplyScalar(reveal);gates.current.setColorAt(i*2+side,data.color);
+   }
+   data.dummy.position.set(-.66+x,-.08+y,z);data.dummy.scale.set(.43,.85+(i%3)*.18,.018);data.dummy.updateMatrix();glass.current.setMatrixAt(i,data.dummy.matrix);
+   for(let k=0;k<3;k++){
+    const travel=reduced?.7:THREE.MathUtils.clamp((cycle-2.2-k*.36-i*.035)/6.5,0,1),distance=travel*6.6;
+    const px=distance<3.8?-1.12:-1.12+(distance-3.8),py=distance<3.8?2.45-distance:-1.35;
+    data.dummy.position.set(px+x,py+y,z+.1);data.dummy.scale.setScalar((cycle>10?0:.036)*reveal);data.dummy.updateMatrix();packets.current.setMatrixAt(i*3+k,data.dummy.matrix);
    }
   }
-  for(let i=0;i<NODE_COUNT;i++){
-   const energy=Math.min(1,data.energy[i]+compute*.5),z=Math.floor(i/PER_ZONE);
-   dummy.position.copy(data.positions[i]);dummy.rotation.set(0,z*.25,Math.PI/4);dummy.scale.setScalar((i%4===0?.058:.032)*(1+energy*.6));dummy.updateMatrix();nodes.current.setMatrixAt(i,dummy.matrix);
-   data.color.set(i%4===0?'#a7dce8':'#2474ce').multiplyScalar(.6+energy*.9);nodes.current.setColorAt(i,data.color);
+  for(let j=0;j<6;j++){
+   const tier=j%3,cluster=j<3?-1:1;
+   data.dummy.position.set(.1+tier*.62+international*cluster*1.5,-1.1+tier*.13,cluster*(.7+expansion*1.8));
+   data.dummy.rotation.set(0,0,0);data.dummy.scale.set(.48,.09,1.7);data.dummy.updateMatrix();decks.current.setMatrixAt(j,data.dummy.matrix);
+   data.color.set('#244351').multiplyScalar(.04+reveal*(.8+compute*.4));decks.current.setColorAt(j,data.color);
+   data.dummy.position.y+=.051;data.dummy.scale.set(.35,.006,action>.2?1.5:.35+compute);data.dummy.updateMatrix();decisions.current.setMatrixAt(j,data.dummy.matrix);
+   data.color.set('#a4e6ec').multiplyScalar((.04+compute*.45+action*.8)*reveal);decisions.current.setColorAt(j,data.color);
   }
-  for(let z=0;z<ZONES;z++){
-   const edge=NODE_COUNT+z;const [a,b]=data.edges[edge];const p=data.a.lerpVectors(data.positions[a],data.positions[b],.33);
-   dummy.position.copy(p);dummy.lookAt(data.positions[b]);const pulse=.82+verify*.5+security*.25;dummy.scale.set(.19*pulse,.19*pulse,1);dummy.updateMatrix();gates.current.setMatrixAt(z,dummy.matrix);
-   data.color.set(z===3&&cycle>9&&cycle<12?'#bc835b':'#79c9d9').multiplyScalar(.3+verify*.7+security*.25);gates.current.setColorAt(z,data.color);
-   const anchor=data.positions[z*PER_ZONE+4];dummy.position.copy(anchor);dummy.rotation.set(.3+z*.12,.5+z*.3,-.15);dummy.scale.set(.32+compute*.15,.42+cloud*.12,.035);dummy.updateMatrix();surfaces.current.setMatrixAt(z,dummy.matrix);
-  }
-  nodes.current.instanceMatrix.needsUpdate=true;if(nodes.current.instanceColor)nodes.current.instanceColor.needsUpdate=true;
-  gates.current.instanceMatrix.needsUpdate=true;if(gates.current.instanceColor)gates.current.instanceColor.needsUpdate=true;surfaces.current.instanceMatrix.needsUpdate=true;
-  lineGeometry.attributes.position.needsUpdate=true;lineGeometry.attributes.color.needsUpdate=true;packetGeometry.attributes.position.needsUpdate=true;packetGeometry.attributes.intensity.needsUpdate=true;
+  for(const mesh of [chassis.current,rims.current,gates.current,packets.current,glass.current,decks.current,decisions.current]){mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;}
+  if(!reduced&&!quality.current&&clock.current>4){slow.current=dt>.028?slow.current+1:Math.max(0,slow.current-1);if(slow.current>75){quality.current=true;setDpr(mobile?.8:1);}}
  });
  return <group ref={group}>
-  <lineSegments geometry={lineGeometry} frustumCulled={false}><lineBasicMaterial vertexColors transparent opacity={.7} depthWrite={false}/></lineSegments>
-  <instancedMesh ref={nodes} args={[undefined,undefined,NODE_COUNT]} frustumCulled={false}><boxGeometry args={[1,1,1]}/><meshBasicMaterial toneMapped={false}/></instancedMesh>
-  <instancedMesh ref={surfaces} args={[undefined,undefined,ZONES]} frustumCulled={false}><boxGeometry args={[1,1,1]}/><meshPhysicalMaterial color="#439bd6" metalness={.55} roughness={.25} transparent opacity={.18} depthWrite={false} side={THREE.DoubleSide}/></instancedMesh>
-  <instancedMesh ref={gates} args={[undefined,undefined,ZONES]} frustumCulled={false}><ringGeometry args={[.8,1,4]}/><meshBasicMaterial side={THREE.DoubleSide} transparent opacity={.8} depthWrite={false}/></instancedMesh>
-  <points geometry={packetGeometry} frustumCulled={false}><shaderMaterial vertexShader={vertexShader} fragmentShader={fragmentShader} transparent depthWrite={false} blending={THREE.AdditiveBlending}/></points>
+  <instancedMesh ref={decks} args={[undefined,undefined,6]} frustumCulled={false}><boxGeometry/><meshStandardMaterial metalness={.9} roughness={.2}/></instancedMesh>
+  <instancedMesh ref={decisions} args={[undefined,undefined,6]} frustumCulled={false}><boxGeometry/><meshBasicMaterial toneMapped={false}/></instancedMesh>
+  <instancedMesh ref={chassis} args={[data.body,undefined,count]} frustumCulled={false}><meshStandardMaterial metalness={.88} roughness={.26} envMapIntensity={1.9}/></instancedMesh>
+  <instancedMesh ref={rims} args={[undefined,undefined,count*2]} frustumCulled={false}><boxGeometry/><meshBasicMaterial toneMapped={false}/></instancedMesh>
+  <instancedMesh ref={gates} args={[undefined,undefined,count*2]} frustumCulled={false}><boxGeometry/><meshStandardMaterial metalness={.5} roughness={.18}/></instancedMesh>
+  <instancedMesh ref={glass} args={[undefined,undefined,count]} frustumCulled={false}><boxGeometry/><meshPhysicalMaterial color="#86c7dc" metalness={.2} roughness={.08} transparent opacity={.085} depthWrite={false} envMapIntensity={2}/></instancedMesh>
+  <instancedMesh ref={packets} args={[undefined,undefined,count*3]} frustumCulled={false}><boxGeometry/><meshBasicMaterial color="#b9f5ff" toneMapped={false}/></instancedMesh>
  </group>;
 }
-export default function NucleusScene({mode=0,reduced=false,active=true}:{mode?:number;reduced?:boolean;active?:boolean}){
- const mobile=typeof window!=='undefined'&&window.matchMedia('(max-width: 600px)').matches;
- return <Canvas dpr={[1,mobile?1:1.5]} camera={{position:[0,0,8.8],fov:42}} gl={{alpha:true,antialias:!mobile,powerPreference:'low-power'}} frameloop={!active||reduced?'demand':'always'}><fog attach="fog" args={['#080d14',8,17]}/><ambientLight intensity={.7}/><pointLight position={[0,2,3]} intensity={12} color="#91d8f5"/><Organism mode={mode} reduced={reduced}/></Canvas>;
+export default function NucleusScene({mode=0,reduced=false,active=true,journey=false}:{mode?:number;reduced?:boolean;active?:boolean;journey?:boolean}){
+ const mobile=typeof window!=='undefined'&&window.matchMedia('(max-width: 700px)').matches;
+ return <Canvas dpr={[.8,mobile?1:1.5]} camera={{position:[7,4,10],fov:40,near:.1,far:80}} gl={{alpha:true,antialias:!mobile,powerPreference:'low-power'}} frameloop={!active||reduced?'demand':'always'}>
+  <Environment/><ambientLight intensity={.35}/><directionalLight position={[2,6,4]} intensity={3} color="#c0e8ff"/><pointLight position={[-4,-2,3]} intensity={24} color="#087bef"/><Architecture mode={mode} reduced={reduced} mobile={mobile} journey={journey}/>
+ </Canvas>;
 }

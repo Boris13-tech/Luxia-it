@@ -78,7 +78,7 @@ export default function Nucleus({
       <Boundary>
         {visible || persistent ? (
           <Suspense fallback={<Fallback />}>
-            <Scene mode={mode} reduced={reduced} active={active && (visible || persistent)} />
+            <Scene mode={mode} reduced={reduced} active={active && visible} journey={persistent} />
           </Suspense>
         ) : (
           <Fallback />
@@ -87,3 +87,4 @@ export default function Nucleus({
     </figure>
   );
 }
+

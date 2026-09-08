@@ -37,3 +37,6 @@ Tokens and responsive rules live in `app/globals.css`. `components/nucleus-scene
 ## Verification
 
 See `VALIDATION.md` for completed checks and limitations. Contact-tool support is feature-detected; unsupported browsers simply retain the normal form.
+
+### Architectural visual system
+The third visual direction replaces the earlier point network with folded L infrastructure, a persistent narrative camera, local verification gates and activated compute decks. It adds a translated engineering ecosystem and interactive six-step conceptual cases. Development-only `?core-review=scene` and `?core-review=identity` views support visual reviews; these have no production behavior. See VALIDATION.md for reviewed views and performance limits.

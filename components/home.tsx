@@ -4,12 +4,14 @@ import CoreJourney from '@/components/core-journey';
 import PillarStory from '@/components/pillar-story';
 import Framework from '@/components/framework';
 import Agents from '@/components/agents';
+import Engineering from '@/components/engineering';
+import CaseArchitecture from '@/components/case-architecture';
 
 export default function Home({locale}:{locale:Locale}) {
 const tr=translator(locale);
   return (
     <main id="main" className="home-page"><CoreJourney/>
-      <section className="hero">
+      <section className="hero" data-scene="-1">
         <div className="hero-art" data-core-slot="0">
           <span className="art-coordinate">{tr('m001')}</span>
         </div>
@@ -75,7 +77,7 @@ const tr=translator(locale);
         </div>
       </section>
       <PillarStory sharedCore />
-      <section className="section wrap">
+      <section className="section wrap agent-chapter" data-scene="3">
         <div className="section-heading">
           <div>
             <p className="eyebrow">{tr('m024')}</p>
@@ -91,7 +93,7 @@ const tr=translator(locale);
         <Link href="/solutions" className="text-link section-link">
           {tr('m028')}</Link>
       </section>
-      <section className="labs-teaser">
+      <section className="labs-teaser" data-scene="4">
         <div className="wrap labs-layout">
           <div>
             <p className="eyebrow">
@@ -116,6 +118,7 @@ const tr=translator(locale);
           </Link>
         </div>
       </section>
+      <Engineering />
       <section className="section wrap industries-home">
         <p className="eyebrow">{tr('m036')}</p>
         <div className="section-heading">
@@ -144,7 +147,7 @@ const tr=translator(locale);
           ))}
         </div>
       </section>
-      <section className="continents section">
+      <section className="continents section" data-scene="5">
         <div className="wrap">
           <p className="eyebrow">{tr('m047')}</p>
           <h2>
@@ -204,6 +207,7 @@ const tr=translator(locale);
           <Link href="/case-studies" className="text-link">
             {tr('m068')}</Link>
         </div>
+        <CaseArchitecture variant="knowledge" compact/>
         <div className="project-grid">
           <Link href="/case-studies/knowledge-assistant" className="project">
             <div
