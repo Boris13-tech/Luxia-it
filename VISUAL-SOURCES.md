@@ -11,3 +11,9 @@ Images use CSS color grading and framing. Scrolling changes exposure and a small
 
 - world.webp: NASA — Earth composite, Africa and Europe framing. https://unsplash.com/photos/the-continents-and-oceans-with-clouds-gyp1xkjZNg8
 
+
+## Cyber and intercontinental revision
+- cyber.webp: Jefferson Santos, software workstation. Used as a cybersecurity editorial context, not a claim that the subject works for Luxia-IT. https://unsplash.com/photos/9SoCnyQmkzI
+- connectivity.webp: Compare Fibre, optical-fibre detail. Used to express digital collaboration, not an owned cable or direct Cameroon–Romania link. https://unsplash.com/photos/INNsF0Zz_kQ
+- The opening architecture photograph is retained for the homepage only. Trust now uses the cyber photograph; the international chapter uses connectivity rather than an Earth landscape.
+- Security editorial scope follows identity, network segmentation and monitoring principles: https://learn.microsoft.com/en-us/security/zero-trust/deploy/overview

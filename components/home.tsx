@@ -173,6 +173,7 @@ const tr=translator(locale);
                 {tr('m057')}</small>
             </div>
           </div>
+          <div className="international-disciplines"><span>CLOUD</span><span>IDENTITY</span><span>DATA</span><span>COLLABORATION</span></div>
           <div className="continent-copy">
             <p>
               {tr('m058')}</p>
