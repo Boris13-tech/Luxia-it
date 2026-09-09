@@ -1,7 +1,7 @@
 import {translator, type Locale} from './i18n';
 export const site = {
   name: 'Luxia-IT',
-  origin: 'https://luxia-it.legrandborisohandjae.chatgpt.site',
+  origin: 'https://luxia-it.com',
   email: 'Contact@Luxia-it.com',
   phone: '+40 766 438 679',
   whatsapp: 'https://wa.me/40766438679',
@@ -376,3 +376,4 @@ export const allRoutes = [
   ...articles.map((a) => 'insights/' + a.slug),
   ...cases.map((c) => 'case-studies/' + c.slug),
 ];
+

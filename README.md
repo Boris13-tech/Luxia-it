@@ -1,42 +1,51 @@
 # Luxia-IT
 
-Luxia-IT corporate site with 21 content pages in French, English and Simplified Chinese (63 localized routes), the procedural LUXIA CORE experience, and an accessible contact message preparation flow.
+Official multilingual website for Luxia-IT: intelligent enterprise architecture, artificial intelligence, cybersecurity, cloud and automation.
+
+**Production:** https://luxia-it.com  
+**Source of truth:** https://github.com/Boris13-tech/Luxia-it  
+**Languages:** FR / EN / 中文
+
+## Stack
+
+Next.js 16 / React 19, TypeScript, Three.js and React Three Fiber, Tailwind CSS and accessible Base UI components. The editable application includes all 63 localized routes, the Luxia Core renderer, fonts, public assets and translation resources. Sites uses the Vinext/Cloudflare Workers build of the same source.
 
 ## Development
 
-`npm install` then `npm run dev`. `npm run build` produces the Sites-compatible Worker and browser assets. The supplied Sites scaffold uses Vinext, the Vite-based Next.js App Router implementation. React, TypeScript, Tailwind and React Three Fiber are used throughout.
+Use Node.js 24 and npm.
 
-## Vercel compatibility
+```sh
+npm ci
+npm run dev
+```
 
-The project also includes Next.js 16.3.4 and a Vercel configuration. `npm run build:vercel` uses native Next.js with the same application source. Sites continues to use its original Vinext build. Before changing the public domain, update canonical metadata and the sitemap origin.
+Open the local URL printed by the server. No API keys or application secrets are required for the current website. Contact prepares an email draft addressed to `Contact@Luxia-it.com`; it does not send through a backend.
 
-## Content and localization
+## Validation and builds
 
-Company contact data and the shared expertise, sector, article and concept structures live in `lib/content.ts`. All customer copy is centralized in `lib/messages/fr.json`, `en.json` and `zh.json`. Stable message keys connect the same components and data structures to each language. `lib/i18n.ts` owns locale validation, URL prefixes and language alternates.
+```sh
+npm run lint
+npm run build
+npm run build:vercel
+```
 
-URLs use `/fr`, `/en` and `/zh` with identical page slugs. The root and legacy unprefixed content URLs redirect to French. The dynamic root layout renders the correct HTML language on direct visits. Navigation preserves language, while the global language selector preserves the page. Titles, descriptions, OpenGraph, canonicals, hreflang, structured data and sitemap entries are localized. Chinese uses a system CJK font stack with adjusted spacing and line heights.
+`build` creates the Sites Worker bundle in `dist/`. `build:vercel` creates the native Next.js build. Run these sequentially because their generated Next.js type files share the workspace. Build output and credentials are ignored by Git.
 
-## Contact
+## Deployment
 
-The form validates the project and organization in the selected language, shows a complete review, and creates an encoded `mailto:` link using the official email centralized in `site.email`: Contact@Luxia-it.com. It does not claim to send or store a lead. Users explicitly send from their email application. A copy option is available if no mail application is configured. WhatsApp links to +40 766 438 679. The WebMCP tool uses the same localized categories and visible form state.
+Production remains on the existing Sites project identified in `.openai/hosting.json`. Cloudflare DNS connects `luxia-it.com` and `www.luxia-it.com` to that deployment. The apex domain is canonical; `www` permanently redirects while preserving the route and query string. `/` keeps the French default, with `/fr`, `/en` and `/zh` language prefixes.
 
-For direct server delivery, connect a transactional email provider, keep credentials server-side, and add rate limiting, anti-abuse controls and server validation before replacing the current explicit email handoff.
+GitHub `main` contains the complete approved source. CI validates the application on pushes and pull requests. The current Sites integration does not expose a GitHub-triggered deployment connection: production promotion remains an explicit approved step through Sites, using the exact GitHub source commit, its Worker build and the existing project. Never deploy a different checkout or replace this project with a second site.
 
-## Publication checklist
+The original legacy GitHub history is retained as a merge parent; the current tree is the approved production application. Keep secrets only in hosting/account secret stores, never in commits, remote URLs or documentation.
 
-Confirm legal entity, registered address, registration and tax numbers, publication director, final hosting details, and privacy terms before public publication. These fields are identified as pending on the legal pages. No clients, certifications, commercial partnerships, offices or measurable project outcomes have been invented.
+## Structure
 
-The owner explicitly made the Sites deployment public. All absolute metadata and sitemap URLs derive from `site.origin`; change that value when the final domain is selected.
+- `app/`: localized routes, metadata, sitemap and robots.
+- `components/`: interface, contact flow and shared 3D system.
+- `lib/messages/`: French, English and Chinese copy.
+- `public/`: production assets.
+- `next.config.ts`, `vite.config.ts`, `vercel.json`: deployment configuration.
+- `VALIDATION.md`: engineering checks and limitations.
 
-## Visual system
-
-Tokens and responsive rules live in `app/globals.css`. `components/nucleus-scene.tsx` renders one coupled network: seven computational zones, instanced nodes, local verification gates, adaptive routes, transparent compute surfaces and shader-based packet trails. The same topology drives authentication, computation, expansion and workload distribution. A restrained quarantine event reroutes one flow while the rest of the network continues.
-
-`components/core-journey.tsx` keeps one mounted canvas across the home hero, sticky expertise chapters, automation, agents and Labs. It follows editorial windows without resetting simulation time. Cursor proximity influences nearby nodes. There are no domain labels or literal brain/cloud/shield forms in the scene. Reduced motion uses a composed still state. Rendering pauses outside visible windows and when hidden, with DPR capped at 1 on mobile and 1.5 on desktop. The original supplied logo remains the fallback if WebGL is unavailable.
-
-## Verification
-
-See `VALIDATION.md` for completed checks and limitations. Contact-tool support is feature-detected; unsupported browsers simply retain the normal form.
-
-### Architectural visual system
-The third visual direction replaces the earlier point network with folded L infrastructure, a persistent narrative camera, local verification gates and activated compute decks. It adds a translated engineering ecosystem and interactive six-step conceptual cases. Development-only `?core-review=scene` and `?core-review=identity` views support visual reviews; these have no production behavior. See VALIDATION.md for reviewed views and performance limits.
+Business/legal details still awaiting confirmation remain explicitly marked on the site. No client outcomes or partner certifications are invented.
