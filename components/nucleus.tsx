@@ -34,11 +34,17 @@ class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 export default function Nucleus({
   mode = 0,
+  experience = false,
+  method = -1,
+  policy = 'allow',
   className = '',
   active = true,
   persistent = false,
 }: {
   mode?: number;
+  experience?: boolean;
+  method?: number;
+  policy?: "allow"|"deny"|"privilege";
   className?: string;
   active?: boolean;
   persistent?: boolean;
@@ -78,7 +84,7 @@ export default function Nucleus({
       <Boundary>
         {visible || persistent ? (
           <Suspense fallback={<Fallback />}>
-            <Scene mode={mode} reduced={reduced} active={active && visible} journey={persistent} />
+            <Scene experience={experience} method={method} policy={policy} mode={mode} reduced={reduced} active={active && visible} journey={persistent} />
           </Suspense>
         ) : (
           <Fallback />

@@ -1,10 +1,11 @@
+import ExpertiseExperience from './expertise-experience';
 import CaseArchitecture from './case-architecture';
 import {notFound} from 'next/navigation';
 import Link from '@/components/locale-link';
 import {getContent, allRoutes, site} from '@/lib/content';
 import {translator, type Locale, localizedPath} from '@/lib/i18n';
 import Nucleus from '@/components/nucleus';
-import Framework from '@/components/framework';
+
 import Agents from '@/components/agents';
 import ContactForm from '@/components/contact-form';
 function getTitle(path: string,locale:Locale) {
@@ -290,36 +291,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
   } else
     switch (path) {
       case 'expertise':
-        content = (
-          <>
-            <PageHero
-              kicker={tr('m127')}
-              title={tr('m128')}
-              intro={tr('m129')}
-            />
-            <section className="wrap expertise-index">
-              {services.map((s, i) => (
-                <Link key={s.slug} href={'/expertise/' + s.slug}>
-                  <span className="micro">
-                    0{i + 1} / {s.pillar}
-                  </span>
-                  <h2>{s.title}</h2>
-                  <p>{s.outcome}</p>
-                  <span className="arrow">↗</span>
-                </Link>
-              ))}
-            </section>
-            <section className="section wrap">
-              <p className="eyebrow">{tr('m130')}</p>
-              <h2>
-                {tr('m131')}<br />
-                <span>{tr('m132')}</span>
-              </h2>
-              <Framework />
-            </section>
-            <CTA locale={locale} />
-          </>
-        );
+        content = <><ExpertiseExperience/><CTA locale={locale}/></>;
         break;
       case 'solutions':
         content = (
@@ -767,3 +739,4 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
     </main>
   );
 }
+
