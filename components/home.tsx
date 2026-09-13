@@ -64,9 +64,14 @@ const copy = {
 
 export default function Home({locale}:{locale:Locale}) {
   const c=copy[locale];
+  const x={
+    fr:{reference:'TECHNOLOGIES DE RÉFÉRENCE',impact:'Une vision unifiée',delivery:'Des solutions concrètes',measure:'Des critères mesurables',reach:'Une ambition internationale',campus:'La technologie au service des organisations.',futureEye:'NOTRE ENGAGEMENT',futureTitle:'Un avenir numérique plus inclusif.',futureCopy:'Nous croyons à une technologie qui renforce les compétences, réduit les fractures et ouvre de nouvelles opportunités.',futureTag:'Des talents d’Afrique. Un impact global.',futureCta:'Découvrir notre impact',footer:'UN MONDE PLUS HUMAIN. PLUS CONNECTÉ.'},
+    en:{reference:'REFERENCE TECHNOLOGIES',impact:'One unified vision',delivery:'Concrete solutions',measure:'Measurable criteria',reach:'International ambition',campus:'Technology serving organisations.',futureEye:'OUR COMMITMENT',futureTitle:'A more inclusive digital future.',futureCopy:'We believe in technology that strengthens skills, closes gaps and opens new opportunities.',futureTag:'Talent from Africa. Global impact.',futureCta:'Discover our impact',footer:'A MORE HUMAN. CONNECTED WORLD.'},
+    zh:{reference:'参考技术',impact:'统一愿景',delivery:'具体方案',measure:'可衡量标准',reach:'国际化雄心',campus:'让技术服务于组织。',futureEye:'我们的承诺',futureTitle:'建设更包容的数字未来。',futureCopy:'我们相信技术能够增强能力、缩小差距并创造新的机会。',futureTag:'非洲人才，全球影响。',futureCta:'了解我们的影响',footer:'更人性，更互联的世界。'}
+  }[locale];
   return <main id="main" className="home-page home-vision-v2">
     <section className="v2-hero">
-      <Image className="v2-hero-image" src="/visuals/luxia-global-v2.png" alt="" fill priority sizes="100vw" />
+      <Image className="v2-hero-image" src="/visuals/luxia-hero-v3.png" alt="" fill priority sizes="100vw" />
       <div className="v2-hero-shade" />
       <div className="wrap v2-hero-grid">
         <div className="v2-hero-copy">
@@ -77,36 +82,38 @@ export default function Home({locale}:{locale:Locale}) {
         </div>
         <aside className="v2-manifesto" aria-label={c.secondary}>{c.promises.map((item,i)=><div key={item}><span>0{i+1}</span><strong>{item}</strong></div>)}</aside>
       </div>
-      <div className="wrap v2-technology-line" aria-label="Technologies de référence"><span>MICROSOFT AZURE</span><span>MICROSOFT 365</span><span>GITHUB</span><span>INFRASTRUCTURE AS CODE</span></div>
+      <div className="wrap v2-technology-line" aria-label={x.reference}><b>{x.reference}</b><span>MICROSOFT</span><span>AZURE</span><span>MICROSOFT 365</span><span>GITHUB</span><span>VERCEL</span></div>
+      <div className="v3-slider"><span>01</span><i/><span>04</span><b>↓</b></div>
     </section>
 
-    <section className="v2-platform wrap">
+    <section className="v2-platform v3-platform wrap">
       <div className="v2-section-copy"><p className="eyebrow">{c.ecosystem}</p><h2>{c.platformTitle[0]}<br/><span>{c.platformTitle[1]}</span></h2><p>{c.platformCopy}</p><Link href="/solutions" className="button v2-light-button">{c.platformCta}<span>→</span></Link></div>
-      <div className="v2-system" aria-label={c.platformTitle.join(' ')}>
+      <div className="v2-system v3-system" aria-label={c.platformTitle.join(' ')}>
         <div className="v2-core"><span>LUXIA-IT</span><strong>{c.core}</strong><small>INTELLIGENCE · TRUST · SCALE</small></div>
-        <div className="v2-node-grid">{c.nodes.map(([title,desc],i)=><Link key={title} href={i===0?'/expertise/artificial-intelligence':i===1||i===2?'/expertise/cybersecurity':i===3?'/expertise/cloud':'/expertise/automation'}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small></Link>)}</div>
+        <div className="v3-orbit" aria-hidden="true"/>
+        <div className="v2-node-grid v3-node-grid">{c.nodes.map(([title,desc],i)=><Link key={title} href={i===0?'/expertise/artificial-intelligence':i===1||i===2?'/expertise/cybersecurity':i===3?'/expertise/cloud':'/expertise/automation'}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small></Link>)}</div>
       </div>
-      <div className="v2-stages">{c.stages.map(([n,title,desc])=><article key={n}><span>{n}</span><strong>{title}</strong><p>{desc}</p></article>)}</div>
+      <aside className="v2-stages v3-stages"><p className="eyebrow">DU CONCEPT<br/>À L’IMPACT</p>{[[x.impact,c.stages[0][2]],[x.delivery,c.stages[2][2]],[x.measure,c.stages[3][2]],[x.reach,c.globalCopy]].map(([title,desc],i)=><article key={title}><span>0{i+1}</span><strong>{title}</strong><p>{desc}</p></article>)}</aside>
     </section>
 
     <section className="v2-impact">
       <div className="wrap v2-impact-grid">
-        <div className="v2-section-copy"><p className="eyebrow">{c.impactEyebrow}</p><h2>{c.impactTitle[0]}<br/><span>{c.impactTitle[1]}</span></h2><p>{c.impactCopy}</p><div className="v2-principles">{c.principles.map(([title,desc])=><div key={title}><strong>{title}</strong><span>{desc}</span></div>)}</div></div>
-        <div className="v2-impact-image"><Image src="/visuals/cyber.webp" alt="" fill sizes="(max-width: 800px) 100vw, 54vw"/><div><span>ZERO TRUST</span><strong>IDENTITY · ACCESS · DATA</strong></div></div>
+        <div className="v2-section-copy"><p className="eyebrow">{c.impactEyebrow}</p><h2>{c.impactTitle[0]}<br/><span>{c.impactTitle[1]}</span></h2><p>{c.impactCopy}</p><div className="v2-principles v3-outcomes">{[[c.stages[0][0],c.stages[0][1]],[c.stages[1][0],c.stages[1][1]],[c.stages[2][0],c.stages[2][1]],['04',c.stages[3][1]]].map(([value,label])=><div key={value+label}><strong>{value}</strong><span>{label}</span></div>)}</div></div>
+        <Link href="/company" className="v2-impact-image"><Image src="/visuals/luxia-campus-v3.png" alt="" fill sizes="(max-width: 800px) 100vw, 54vw"/><div><span>▶ &nbsp; LUXIA-IT</span><strong>{x.campus}</strong></div></Link>
       </div>
     </section>
 
     <section className="v2-industries wrap">
       <div className="v2-section-copy"><p className="eyebrow">{c.industriesEyebrow}</p><h2>{c.industriesTitle[0]}<br/><span>{c.industriesTitle[1]}</span></h2><Link href="/industries" className="button v2-light-button">{c.industriesCta}<span>→</span></Link></div>
-      <div className="v2-industry-grid">{c.industries.map(([title,desc],i)=><Link key={title} href={'/industries#sector-'+i}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small><b>↗</b></Link>)}</div>
+      <div className="v2-industry-grid v3-industry-grid">{c.industries.map(([title,desc],i)=><Link key={title} href={'/industries#sector-'+i}><Image src="/visuals/luxia-industries-v3.png" alt="" fill sizes="(max-width:700px) 50vw, 18vw" style={{objectPosition:`${i*33.333}% center`}}/><i/><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small><b>↗</b></Link>)}</div>
     </section>
 
-    <section className="v2-global">
-      <Image src="/visuals/connectivity.webp" alt="" fill sizes="100vw"/>
+    <section className="v2-global v3-future">
+      <Image src="/visuals/luxia-future-v3.png" alt="" fill sizes="100vw"/>
       <div className="v2-global-shade" />
-      <div className="wrap v2-global-content"><p className="eyebrow">{c.globalEyebrow}</p><h2>{c.globalTitle[0]}<br/><span>{c.globalTitle[1]}</span></h2><p>{c.globalCopy}</p><Link href="/company#international" className="button v2-light-button">{c.globalCta}<span>→</span></Link></div>
+      <div className="wrap v2-global-content"><p className="eyebrow">{x.futureEye}</p><h2>{x.futureTitle}</h2><p>{x.futureCopy}</p><Link href="/company#international" className="button v2-light-button">{x.futureCta}<span>→</span></Link><aside>{x.futureTag}</aside></div>
     </section>
 
-    <section className="v2-closing wrap"><p className="eyebrow">LUXIA-IT</p><h2>{c.closing[0]}<br/><span>{c.closing[1]}</span></h2><Link href="/contact" className="button primary">{c.contact}<span>↗</span></Link></section>
+    <section className="v3-planet-footer"><Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="100vw"/><div className="v3-planet-shade"/><div className="wrap"><strong>LUXIA-IT</strong><span>INTELLIGENCE. TRUST. SCALE.</span><p>{x.footer}</p></div></section>
   </main>;
 }

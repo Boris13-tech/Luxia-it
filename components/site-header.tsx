@@ -16,12 +16,18 @@ import {
 } from '@/components/ui/sheet';
 export default function SiteHeader() {
 const {t:tr,locale} = useI18n();
+const labels = locale==='fr'
+  ? ['Produits','Solutions','Industries','Développeurs','Ressources','À propos']
+  : locale==='en'
+    ? ['Products','Solutions','Industries','Developers','Resources','About']
+    : ['产品','解决方案','行业','开发者','资源','关于'];
 const navigation = [
-  [tr('m096'), '/expertise'],
-  [tr('m097'), '/solutions'],
-  ['Luxia Labs', '/labs'],
-  ['Insights', '/insights'],
-  [tr('m100'), '/company'],
+  [labels[0], '/solutions'],
+  [labels[1], '/expertise'],
+  [labels[2], '/industries'],
+  [labels[3], '/labs'],
+  [labels[4], '/insights'],
+  [labels[5], '/company'],
 ];
 
   const path = usePathname();
@@ -55,7 +61,7 @@ const navigation = [
       <div className="header-end">
         <LanguageSelector />
         <Link href="/contact" className="button small">
-          {tr('m267')}<span>↗</span>
+          {locale==='fr'?'Nous contacter':locale==='en'?'Contact us':'联系我们'}<span>↗</span>
         </Link>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger id="main-menu-trigger" className="menu-toggle" aria-label={tr('m268')}>

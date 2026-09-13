@@ -24,3 +24,11 @@ Images use CSS color grading and framing. Scrolling changes exposure and a small
 - Original image generated for Luxia-IT with the built-in OpenAI image generation tool.
 - The user-supplied homepage mockup was used only as a reference for composition and atmosphere.
 - The image contains no third-party logo, text, person, office, or client claim.
+
+## Full visual direction — vision v3
+
+- `public/visuals/luxia-hero-v3.png`: original night-city, human figure and Africa–Europe globe hero.
+- `public/visuals/luxia-campus-v3.png`: original architectural campus image for the impact section.
+- `public/visuals/luxia-industries-v3.png`: original four-panel editorial image for Finance, Education, Professional Services and Public Sector cards.
+- `public/visuals/luxia-future-v3.png`: original panoramic human-impact landscape.
+- All four images were generated for Luxia-IT with the built-in OpenAI image generation tool. The user-supplied homepage mockup guided composition and atmosphere only. No depicted person, building, city, equipment or result is presented as a Luxia-IT employee, office, client asset or completed project.
