@@ -3101,6 +3101,9 @@ html[data-core-review=identity] .site-header a:first-child,html[data-core-review
   display: grid;
   place-items: center;
   perspective: 1200px;
+  transform: translate3d(0,calc(var(--camera-pulse,0) * -16px),0) scale(calc(1 + var(--camera-pulse,0) * .075));
+  transform-origin: 58% 50%;
+  transition: transform .08s linear;
 }
 .luxia-artifact {
   --artifact-scale: 1;

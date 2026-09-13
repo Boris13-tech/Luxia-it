@@ -36,27 +36,54 @@ export default function ExpertiseExperience() {
   const {t, locale} = useI18n();
   const {services} = getContent(locale);
   const sequence = useRef<HTMLDivElement>(null);
+  const targetProgress = useRef(0);
+  const renderedProgress = useRef(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    let frame = 0;
-    const update = () => {
-      frame = 0;
+    let scrollFrame = 0;
+    let motionFrame = 0;
+    let initialized = false;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const readScroll = () => {
+      scrollFrame = 0;
       if (!sequence.current) return;
       const rect = sequence.current.getBoundingClientRect();
       const distance = Math.max(1, sequence.current.offsetHeight - window.innerHeight);
-      setProgress(Math.min(1, Math.max(0, -rect.top / distance)));
+      targetProgress.current = Math.min(1, Math.max(0, -rect.top / distance));
+      if (!initialized || reducedMotion) {
+        initialized = true;
+        renderedProgress.current = targetProgress.current;
+        setProgress(targetProgress.current);
+        return;
+      }
+      if (!motionFrame) motionFrame = requestAnimationFrame(animate);
+    };
+    const animate = () => {
+      const gap = targetProgress.current - renderedProgress.current;
+      if (Math.abs(gap) < .0002) {
+        renderedProgress.current = targetProgress.current;
+        setProgress(targetProgress.current);
+        motionFrame = 0;
+        return;
+      }
+      // A firm response to a strong gesture, followed by a slower product-film settle.
+      const cadence = Math.min(.22, .065 + Math.abs(gap) * .72);
+      renderedProgress.current += gap * cadence;
+      setProgress(renderedProgress.current);
+      motionFrame = requestAnimationFrame(animate);
     };
     const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(readScroll);
     };
-    update();
+    readScroll();
     window.addEventListener('scroll', onScroll, {passive: true});
     window.addEventListener('resize', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
-      if (frame) cancelAnimationFrame(frame);
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      if (motionFrame) cancelAnimationFrame(motionFrame);
     };
   }, []);
 
@@ -64,6 +91,7 @@ export default function ExpertiseExperience() {
   const item = services[mode];
   const filmProgress = cinematicTimeline(progress);
   const chapterProgress = Math.min(1, Math.max(0, progress * 4 - mode));
+  const cameraPulse = Math.sin(chapterProgress * Math.PI);
 
   return (
     <div className="expertise-photo-film" ref={sequence}>
@@ -75,7 +103,7 @@ export default function ExpertiseExperience() {
             </div>
           ))}
         </div>
-        <div className="expertise-object-stage" aria-hidden="true"><LuxiaArtifact progress={filmProgress}/></div>
+        <div className="expertise-object-stage" aria-hidden="true" style={{'--camera-pulse': cameraPulse} as CSSProperties}><LuxiaArtifact progress={filmProgress}/></div>
         <div className="expertise-photo-shade" aria-hidden="true"/>
         <div className="expertise-photo-copy" key={mode}>
           <p className="eyebrow">LUXIA CORE</p>
