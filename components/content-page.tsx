@@ -1,13 +1,28 @@
-import ExpertiseExperience from './expertise-experience';
 import CaseArchitecture from './case-architecture';
 import {notFound} from 'next/navigation';
 import Link from '@/components/locale-link';
 import {getContent, allRoutes, site} from '@/lib/content';
 import {translator, type Locale, localizedPath} from '@/lib/i18n';
-import Nucleus from '@/components/nucleus';
+import Image from 'next/image';
 
-import Agents from '@/components/agents';
 import ContactForm from '@/components/contact-form';
+
+const serviceVisuals: Record<string, string> = {
+  'artificial-intelligence': '/visuals/intelligence.webp',
+  cybersecurity: '/visuals/cyber.webp',
+  cloud: '/visuals/cloud.webp',
+  automation: '/visuals/automation.webp',
+};
+
+function EditorialVisual({src, label}: {src: string; label: string}) {
+  return (
+    <div className="editorial-frame">
+      <Image src={src} alt="" fill sizes="(max-width: 700px) 100vw, 50vw" />
+      <i aria-hidden="true" />
+      <span>{label}</span>
+    </div>
+  );
+}
 function getTitle(path: string,locale:Locale) {
 const tr=translator(locale);const {services,articles,cases}=getContent(locale);
 const labels: Record<string, string> = {
@@ -44,10 +59,17 @@ function PageHero({
 }) {
   return (
     <section className="page-hero wrap">
-      <p className="eyebrow">{kicker}</p>
-      <h1>{title}</h1>
-      {intro && <p className="page-intro">{intro}</p>}
-      {children}
+      <div className="page-hero-copy">
+        <p className="eyebrow">{kicker}</p>
+        <h1>{title}</h1>
+        {intro && <p className="page-intro">{intro}</p>}
+        {children}
+      </div>
+      <div className="page-hero-index" aria-hidden="true">
+        <span>01</span><i />
+        <span>02</span><i />
+        <span>03</span>
+      </div>
     </section>
   );
 }
@@ -119,11 +141,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
             <Link className="text-link" href="/contact">
               {tr('m111')}</Link>
           </div>
-          <Nucleus
-            mode={
-              services.indexOf(service) === 3 ? 3 : services.indexOf(service)
-            }
-          />
+          <EditorialVisual src={serviceVisuals[service.slug]} label={service.title} />
         </section>
         <section className="section wrap">
           <p className="eyebrow">{tr('m112')}</p>
@@ -291,7 +309,20 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
   } else
     switch (path) {
       case 'expertise':
-        content = <><ExpertiseExperience/><CTA locale={locale}/></>;
+        content = <>
+          <PageHero kicker={tr('m096')} title={tr('m134')} intro={tr('m135')} />
+          <section className="section wrap editorial-service-grid">
+            {services.map((item, i) => (
+              <Link href={'/expertise/' + item.slug} key={item.slug} className="editorial-service-card">
+                <Image src={serviceVisuals[item.slug]} alt="" fill sizes="(max-width: 700px) 100vw, 50vw" />
+                <i aria-hidden="true" />
+                <span className="micro">0{i + 1}</span>
+                <div><h2>{item.title}</h2><p>{item.intro}</p><b>↗</b></div>
+              </Link>
+            ))}
+          </section>
+          <CTA locale={locale}/>
+        </>;
         break;
       case 'solutions':
         content = (
@@ -343,7 +374,15 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
                 {tr('m146')}<br />
                 <span>{tr('m147')}</span>
               </h2>
-              <Agents />
+              <div className="platform-story-panel">
+                <Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="100vw" />
+                <i aria-hidden="true" />
+                <div>
+                  <span className="micro">LUXIA CORE</span>
+                  <strong>{tr('m146')}</strong>
+                  <small>{tr('m147')}</small>
+                </div>
+              </div>
             </section>
             <CTA locale={locale} title={tr('m148')} />
           </>
@@ -412,7 +451,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
             <section className="labs-feature wrap" id="alma">
               <p className="eyebrow">
                 <span className="status-dot" /> {tr('m034')}</p>
-              <div className="labs-page-core"><Nucleus mode={4}/></div><h2>ALMA</h2>
+              <div className="labs-page-core"><Image src="/visuals/intelligence.webp" alt="" fill sizes="50vw" /></div><h2>ALMA</h2>
               <p>{tr('m035')}</p>
               <div className="alma-description">
                 <p>
@@ -504,6 +543,11 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
                 <p>
                   {tr('m186')}</p>
               </div>
+            </section>
+            <section className="wrap company-visual-story">
+              <Image src="/visuals/luxia-future-v3.png" alt="" fill sizes="100vw" />
+              <i aria-hidden="true" />
+              <p>{tr('m049')}<br/><span>{tr('m203')}</span></p>
             </section>
             <section className="section wrap">
               <p className="eyebrow">{tr('m187')}</p>
@@ -713,7 +757,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
         break;
     }
   return (
-    <main id="main" className="inner-page">
+    <main id="main" className="inner-page" data-page={path} data-family={path.split('/')[0]}>
       <Breadcrumbs locale={locale} path={path} />
       {content}
       <JsonLd

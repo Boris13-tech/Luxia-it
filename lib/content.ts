@@ -2,7 +2,7 @@ import {translator, type Locale} from './i18n';
 export const site = {
   name: 'Luxia-IT',
   origin: 'https://luxia-it.com',
-  email: 'Contact@Luxia-it.com',
+  email: 'Contact@legrand-tech.com',
   phone: '+40 766 438 679',
   whatsapp: 'https://wa.me/40766438679',
   founder: 'Boris Legrand Ohandja',
