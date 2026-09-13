@@ -23,9 +23,10 @@ export default function LuxiaArtifact({progress}: {progress: number}) {
   const trust=smooth(stage,.58,1)*(1-smooth(stage,1.42,1.86));
   const scale=smooth(stage,1.52,2.18);
   const automation=smooth(stage,2.34,3);
+  const active=Math.min(3,Math.floor(progress*4));
   const rootStyle={
     '--artifact-scale': 1+trust*.09-scale*.12+automation*.08,
-    '--shell-gap': `${44-trust*34+scale*62-automation*24}px`,
+    '--shell-gap': `${120-trust*110+scale*70-automation*50}px`,
     '--artifact-turn': `${-7+progress*6}deg`,
     '--core-light': .4+(1-Math.min(1,stage))*1.05+automation*.4,
   } as CSSProperties;
@@ -38,11 +39,10 @@ export default function LuxiaArtifact({progress}: {progress: number}) {
       const x=mix(mix(start[0],spread[0],scale),end[0],automation);
       const y=mix(mix(start[1],spread[1],scale),end[1],automation);
       const sequence=smooth(automation,index*.13,Math.min(1,index*.13+.38));
-      return <div className="artifact-module" key={src} style={{transform:`translate3d(${x}px,${y}px,${18+sequence*20}px) rotateY(${(index-1.5)*(1-automation)*2}deg)`,opacity:.7+sequence*.3}}>
+      return <div className="artifact-module" key={src} style={{transform:`translate3d(${x}px,${y}px,${18+sequence*20}px) rotateY(${(index-1.5)*(1-automation)*2}deg)`,opacity:index===active?.92:.16+sequence*.3}}>
         <Image src={src} alt="" fill sizes="180px" unoptimized/>
       </div>;
     })}
-    <div className="artifact-shell shell-top"/><div className="artifact-shell shell-bottom"/>
     <div className="artifact-shell shell-left"/><div className="artifact-shell shell-right"/>
   </div>;
 }
