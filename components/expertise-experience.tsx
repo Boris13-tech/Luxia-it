@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, type CSSProperties} from 'react';
 import Link from './locale-link';
 import {useI18n} from './i18n-provider';
 import {getContent} from '@/lib/content';
@@ -15,6 +15,22 @@ const filmScenes = [
   {src: '/visuals/luxia-global-v2.png', position: '54% 50%'},
   {src: '/visuals/luxia-campus-v3.png', position: '58% 50%'},
 ];
+
+const smootherStep = (value: number) => {
+  const x = Math.min(1, Math.max(0, value));
+  return x * x * x * (x * (x * 6 - 15) + 10);
+};
+
+// Each chapter rests on its key frame, moves with intent, then resolves before
+// the next title enters. The scroll remains native while the film changes pace.
+const cinematicTimeline = (value: number) => {
+  if (value >= 1) return 1;
+  const scaled = Math.max(0, value) * 4;
+  const chapter = Math.floor(scaled);
+  const local = scaled - chapter;
+  const movement = smootherStep((local - .18) / .62);
+  return (chapter + movement) / 4;
+};
 
 export default function ExpertiseExperience() {
   const {t, locale} = useI18n();
@@ -46,20 +62,22 @@ export default function ExpertiseExperience() {
 
   const mode = Math.min(3, Math.floor(progress * 4));
   const item = services[mode];
+  const filmProgress = cinematicTimeline(progress);
+  const chapterProgress = Math.min(1, Math.max(0, progress * 4 - mode));
 
   return (
     <div className="expertise-photo-film" ref={sequence}>
       <section className="expertise-photo-frame">
-        <div className="expertise-photo-stage" aria-hidden="true">
+        <div className="expertise-photo-stage" aria-hidden="true" style={{'--scene-progress': chapterProgress} as CSSProperties}>
           {filmScenes.map((scene, index) => (
             <div className={index === mode ? 'is-current' : ''} key={scene.src}>
               <Image src={scene.src} alt="" fill sizes="100vw" style={{objectPosition: scene.position}} unoptimized priority={index === 0}/>
             </div>
           ))}
         </div>
-        <div className="expertise-object-stage" aria-hidden="true"><LuxiaArtifact progress={progress}/></div>
+        <div className="expertise-object-stage" aria-hidden="true"><LuxiaArtifact progress={filmProgress}/></div>
         <div className="expertise-photo-shade" aria-hidden="true"/>
-        <div className="expertise-photo-copy">
+        <div className="expertise-photo-copy" key={mode}>
           <p className="eyebrow">LUXIA CORE</p>
           <p className="photo-count">0{mode + 1}<span>/04</span></p>
           <h1>{names[mode]}</h1>
