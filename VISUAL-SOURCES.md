@@ -17,3 +17,10 @@ Images use CSS color grading and framing. Scrolling changes exposure and a small
 - connectivity.webp: Compare Fibre, optical-fibre detail. Used to express digital collaboration, not an owned cable or direct Cameroon–Romania link. https://unsplash.com/photos/INNsF0Zz_kQ
 - The opening architecture photograph is retained for the homepage only. Trust now uses the cyber photograph; the international chapter uses connectivity rather than an Earth landscape.
 - Security editorial scope follows identity, network segmentation and monitoring principles: https://learn.microsoft.com/en-us/security/zero-trust/deploy/overview
+
+## Global hero — vision v2
+
+- `public/visuals/luxia-global-v2.png`
+- Original image generated for Luxia-IT with the built-in OpenAI image generation tool.
+- The user-supplied homepage mockup was used only as a reference for composition and atmosphere.
+- The image contains no third-party logo, text, person, office, or client claim.

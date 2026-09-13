@@ -1,308 +1,112 @@
-import {translator, type Locale} from '@/lib/i18n';
+import Image from 'next/image';
 import Link from '@/components/locale-link';
-import CoreJourney from '@/components/core-journey';
-import PillarStory from '@/components/pillar-story';
-import Framework from '@/components/framework';
-import Agents from '@/components/agents';
-import Engineering from '@/components/engineering';
-import CaseArchitecture from '@/components/case-architecture';
+import type {Locale} from '@/lib/i18n';
+
+const copy = {
+  fr: {
+    title: ['Un avenir plus sûr,', 'plus intelligent,', 'plus humain.'],
+    intro: 'Luxia-IT conçoit des architectures cloud, cybersécurité et IA qui relient la stratégie, les équipes et l’exécution.',
+    primary: 'Découvrir nos expertises', secondary: 'Notre vision',
+    promises: ['Connecter les talents.', 'Sécuriser les idées.', 'Bâtir des systèmes durables.'],
+    ecosystem: 'NOTRE ÉCOSYSTÈME', platformTitle: ['Une architecture.', 'Des capacités qui travaillent ensemble.'],
+    platformCopy: 'Identité, sécurité, cloud, données et automatisation sont conçus comme un même système, avec des responsabilités et des accès explicites.',
+    platformCta: 'Explorer les solutions', core: 'SOCLE LUXIA',
+    nodes: [['IA & AUTOMATISATION','Interpréter et orchestrer'],['IDENTITÉ','Contrôler les accès'],['CYBERSÉCURITÉ','Détecter et protéger'],['CLOUD','Distribuer et faire évoluer'],['DEVSECOPS','Construire avec contrôle']],
+    stages: [['01','Comprendre','Objectifs, processus et contraintes.'],['02','Concevoir','Architecture, données et responsabilités.'],['03','Construire','Mise en œuvre progressive et vérifiable.'],['04','Faire évoluer','Mesure, sécurité et amélioration continue.']],
+    impactEyebrow: 'DU CONCEPT À L’IMPACT', impactTitle: ['Des résultats', 'qui comptent.'],
+    impactCopy: 'Chaque projet commence par un besoin mesurable et se termine par un système que les équipes peuvent comprendre, utiliser et faire évoluer.',
+    principles: [['CLARTÉ','Un périmètre et des décisions explicites.'],['CONFIANCE','La sécurité intégrée à l’architecture.'],['CONTINUITÉ','Une trajectoire adaptée à votre organisation.']],
+    industriesEyebrow: 'DES SOLUTIONS POUR CHAQUE CONTEXTE', industriesTitle: ['Des organisations plus fortes.', 'Des services plus résilients.'], industriesCta: 'Voir tous les secteurs',
+    industries: [['Finance','Identité et conformité'],['Éducation','Accès et connaissance'],['Services professionnels','Automatisation maîtrisée'],['Secteur public','Sécurité et continuité']],
+    globalEyebrow: 'AFRIQUE × EUROPE', globalTitle: ['Deux continents.', 'Une même exigence d’ingénierie.'],
+    globalCopy: 'Relier les usages, les compétences et les infrastructures par des systèmes compatibles : cloud, identité, données et collaboration.', globalCta: 'Découvrir notre vision internationale',
+    closing: ['Votre ambition mérite', 'une architecture.'], contact: 'Parler à un expert'
+  },
+  en: {
+    title: ['Build a safer,', 'smarter and more', 'human future.'],
+    intro: 'Luxia-IT designs cloud, cybersecurity and AI architectures that connect strategy, teams and execution.',
+    primary: 'Explore our expertise', secondary: 'Our vision',
+    promises: ['Connect talent.', 'Secure ideas.', 'Build lasting systems.'],
+    ecosystem: 'OUR ECOSYSTEM', platformTitle: ['One architecture.', 'Capabilities working together.'],
+    platformCopy: 'Identity, security, cloud, data and automation are designed as one system, with explicit responsibilities and access.',
+    platformCta: 'Explore solutions', core: 'LUXIA FOUNDATION',
+    nodes: [['AI & AUTOMATION','Interpret and orchestrate'],['IDENTITY','Control access'],['CYBERSECURITY','Detect and protect'],['CLOUD','Distribute and scale'],['DEVSECOPS','Build with control']],
+    stages: [['01','Understand','Goals, processes and constraints.'],['02','Design','Architecture, data and ownership.'],['03','Build','Progressive, verifiable delivery.'],['04','Evolve','Measurement, security and improvement.']],
+    impactEyebrow: 'FROM CONCEPT TO IMPACT', impactTitle: ['Outcomes', 'that matter.'],
+    impactCopy: 'Every project starts with a measurable need and ends with a system teams can understand, use and evolve.',
+    principles: [['CLARITY','An explicit scope and clear decisions.'],['TRUST','Security built into the architecture.'],['CONTINUITY','A path shaped around your organisation.']],
+    industriesEyebrow: 'SOLUTIONS FOR EVERY CONTEXT', industriesTitle: ['Stronger organisations.', 'More resilient services.'], industriesCta: 'View all industries',
+    industries: [['Finance','Identity and compliance'],['Education','Access and knowledge'],['Professional services','Controlled automation'],['Public sector','Security and continuity']],
+    globalEyebrow: 'AFRICA × EUROPE', globalTitle: ['Two continents.', 'One engineering standard.'],
+    globalCopy: 'Connecting uses, expertise and infrastructure through compatible systems: cloud, identity, data and collaboration.', globalCta: 'Discover our international vision',
+    closing: ['Your ambition deserves', 'an architecture.'], contact: 'Talk to an expert'
+  },
+  zh: {
+    title: ['建设更安全、', '更智能、', '更人性的未来。'],
+    intro: 'Luxia-IT 设计云、网络安全与人工智能架构，将战略、团队与执行连接起来。',
+    primary: '探索我们的专长', secondary: '我们的愿景',
+    promises: ['连接人才。', '保护创意。', '构建可持续系统。'],
+    ecosystem: '我们的生态系统', platformTitle: ['一套架构。', '多种能力协同运作。'],
+    platformCopy: '身份、安全、云、数据与自动化被设计为一个整体，并明确责任与访问权限。',
+    platformCta: '探索解决方案', core: 'LUXIA 技术底座',
+    nodes: [['人工智能与自动化','理解与编排'],['身份','控制访问'],['网络安全','检测与保护'],['云','分布与扩展'],['DEVSECOPS','在控制中构建']],
+    stages: [['01','理解','目标、流程与约束。'],['02','设计','架构、数据与责任。'],['03','构建','渐进且可验证的交付。'],['04','演进','度量、安全与持续改进。']],
+    impactEyebrow: '从概念到影响', impactTitle: ['真正重要的', '业务成果。'],
+    impactCopy: '每个项目从可衡量的需求开始，最终形成团队能够理解、使用并持续演进的系统。',
+    principles: [['清晰','明确范围与决策。'],['信任','将安全融入架构。'],['连续','适合组织发展的路径。']],
+    industriesEyebrow: '适用于不同场景的解决方案', industriesTitle: ['更强大的组织。', '更有韧性的服务。'], industriesCta: '查看所有行业',
+    industries: [['金融','身份与合规'],['教育','访问与知识'],['专业服务','可控自动化'],['公共部门','安全与连续性']],
+    globalEyebrow: '非洲 × 欧洲', globalTitle: ['两个大陆。', '同一工程标准。'],
+    globalCopy: '通过兼容的云、身份、数据和协作系统，连接业务场景、专业能力与基础设施。', globalCta: '了解我们的国际愿景',
+    closing: ['您的雄心值得', '一套清晰架构。'], contact: '与专家交流'
+  }
+} as const;
 
 export default function Home({locale}:{locale:Locale}) {
-const tr=translator(locale);
-  return (
-    <main id="main" className="home-page"><CoreJourney/>
-      <section className="hero" data-scene="-1">
-        <div className="hero-art" data-core-slot="0">
-          <span className="art-coordinate">{tr('m001')}</span>
+  const c=copy[locale];
+  return <main id="main" className="home-page home-vision-v2">
+    <section className="v2-hero">
+      <Image className="v2-hero-image" src="/visuals/luxia-global-v2.png" alt="" fill priority sizes="100vw" />
+      <div className="v2-hero-shade" />
+      <div className="wrap v2-hero-grid">
+        <div className="v2-hero-copy">
+          <p className="eyebrow">INTELLIGENCE. TRUST. SCALE.</p>
+          <h1>{c.title[0]}<br/>{c.title[1]}<br/><em>{c.title[2]}</em></h1>
+          <p>{c.intro}</p>
+          <div className="actions"><Link href="/expertise" className="button v2-light-button">{c.primary}<span>→</span></Link><Link href="/company" className="v2-video-link"><i>▶</i>{c.secondary}</Link></div>
         </div>
-        <div className="hero-content wrap">
-          <p className="eyebrow">
-            <span className="status-dot" /> {tr('m002')}</p>
-          <h1>
-            {tr('m003')}<br />
-            {tr('m004')}<br />
-            <em>{tr('m005')}</em>
-          </h1>
-          <p className="hero-description">
-            {tr('m006')}<br />
-            {tr('m007')}</p>
-          <div className="actions">
-            <Link href="/contact" className="button primary">
-              {tr('m008')}<span>↗</span>
-            </Link>
-            <Link href="/company" className="text-link">
-              {tr('m009')}<span>↗</span>
-            </Link>
-          </div>
-        </div>
-        <div className="hero-bottom wrap">
-          <span>{tr('m010')}</span>
-          <span>
-            {tr('m011')}<b>{tr('m012')}</b> {tr('m013')}</span>
-          <a href="#vision">
-            {tr('m014')}<span>↓</span>
-          </a>
-        </div>
-      </section>
-      <section className="pillar-strip wrap">
-        {[
-          [
-            '01',
-            'INTELLIGENCE',
-            tr('m015'),
-            'artificial-intelligence',
-          ],
-          ['02', 'TRUST', tr('m016'), 'cybersecurity'],
-          ['03', 'SCALE', tr('m017'), 'cloud'],
-        ].map(([n, t, s, p]) => (
-          <Link key={n} data-core-hover={Number(n)-1} href={'/expertise/' + p}>
-            <span>{n}</span>
-            {t}
-            <small>{s}</small>
-            <b>↗</b>
-          </Link>
-        ))}
-      </section>
-      <section className="section wrap vision" id="vision">
-        <p className="eyebrow">{tr('m018')}</p>
-        <h2>
-          {tr('m019')}<br />
-          {tr('m020')}<br />
-          <span>{tr('m021')}</span>
-        </h2>
-        <div className="vision-bottom">
-          <span className="micro">{tr('m022')}</span>
-          <p>
-            {tr('m023')}</p>
-        </div>
-      </section>
-      <PillarStory sharedCore />
-      <section className="section wrap agent-chapter" data-scene="3">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">{tr('m024')}</p>
-            <h2>
-              {tr('m025')}<br />
-              <span>{tr('m026')}</span>
-            </h2>
-          </div>
-          <p>
-            {tr('m027')}</p>
-        </div>
-        <Agents sharedCore />
-        <Link href="/solutions" className="text-link section-link">
-          {tr('m028')}</Link>
-      </section>
-      <section className="labs-teaser" data-scene="4">
-        <div className="wrap labs-layout">
-          <div>
-            <p className="eyebrow">
-              <span className="status-dot" /> LUXIA LABS
-            </p>
-            <h2>
-              {tr('m029')}<br />
-              {tr('m030')}<br />
-              <span>{tr('m031')}</span>
-            </h2>
-            <p>
-              {tr('m032')}</p>
-            <Link href="/labs" className="text-link">
-              {tr('m033')}</Link>
-          </div>
-          <Link href="/labs#alma" className="alma"><div className="labs-core-slot" data-core-slot="4"/>
-            <span className="micro">{tr('m034')}</span>
-            <strong>ALMA</strong>
-            <span>
-              {tr('m035')}<b>↗</b>
-            </span>
-          </Link>
-        </div>
-      </section>
-      <Engineering />
-      <section className="section wrap industries-home">
-        <p className="eyebrow">{tr('m036')}</p>
-        <div className="section-heading">
-          <h2>
-            {tr('m037')}<br />
-            <span>{tr('m038')}</span>
-          </h2>
-          <Link href="/industries" className="text-link">
-            {tr('m039')}</Link>
-        </div>
-        <div className="industry-list">
-          {[
-            tr('m040'),
-            tr('m041'),
-            tr('m042'),
-            tr('m043'),
-            tr('m044'),
-            tr('m045'),
-            tr('m046'),
-          ].map((s, i) => (
-            <Link key={s} href={'/industries#sector-' + i}>
-              <span>0{i + 1}</span>
-              {s}
-              <b>↗</b>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className="continents section" data-scene="5">
-        <div className="wrap">
-          <p className="eyebrow">{tr('m047')}</p>
-          <h2>
-            {tr('m048')}<br />
-            <span>{tr('m049')}</span>
-          </h2>
-          <div className="continent-line">
-            <div>
-              <span>{tr('m050')}</span>
-              <strong>{tr('m051')}</strong>
-              <small>
-                {tr('m052')}<br />
-                {tr('m053')}</small>
-            </div>
-            <div className="bridge" aria-hidden="true">
-              <span>{tr('m012')}</span>
-            </div>
-            <div>
-              <span>{tr('m054')}</span>
-              <strong>{tr('m055')}</strong>
-              <small>
-                {tr('m056')}<br />
-                {tr('m057')}</small>
-            </div>
-          </div>
-          <div className="international-disciplines"><span>CLOUD</span><span>IDENTITY</span><span>DATA</span><span>COLLABORATION</span></div>
-          <div className="continent-copy">
-            <p>
-              {tr('m058')}</p>
-            <Link href="/company#international" className="text-link">
-              {tr('m059')}</Link>
-          </div>
-        </div>
-      </section>
-      <section className="section wrap">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">{tr('m060')}</p>
-            <h2>
-              {tr('m061')}<br />
-              {tr('m062')}<br />
-              <span>{tr('m063')}</span>
-            </h2>
-          </div>
-          <p>
-            {tr('m064')}</p>
-        </div>
-        <p className="eyebrow framework-label">
-          {tr('m065')}</p>
-        <Framework />
-      </section>
-      <section className="section wrap">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">{tr('m066')}</p>
-            <h2>{tr('m067')}</h2>
-          </div>
-          <Link href="/case-studies" className="text-link">
-            {tr('m068')}</Link>
-        </div>
-        <CaseArchitecture variant="knowledge" compact/>
-        <div className="project-grid">
-          <Link href="/case-studies/knowledge-assistant" className="project">
-            <div
-              className="project-graphic knowledge-diagram"
-              aria-hidden="true"
-            >
-              <span>{tr('m069')}</span>
-              <i>→</i>
-              <b>
-                {tr('m070')}<br />
-                {tr('m071')}</b>
-              <i>→</i>
-              <span>{tr('m072')}</span>
-            </div>
-            <p className="eyebrow">{tr('m073')}</p>
-            <h3>
-              {tr('m074')}<br />
-              {tr('m075')}<span>↗</span>
-            </h3>
-            <p>
-              {tr('m076')}</p>
-          </Link>
-          <Link href="/case-studies/secure-cloud" className="project">
-            <div
-              className="project-graphic security-diagram"
-              aria-hidden="true"
-            >
-              <span>{tr('m077')}</span>
-              <span>{tr('m078')}</span>
-              <span>{tr('m079')}</span>
-            </div>
-            <p className="eyebrow">{tr('m080')}</p>
-            <h3>
-              {tr('m081')}<br />
-              {tr('m082')}<span>↗</span>
-            </h3>
-            <p>
-              {tr('m083')}</p>
-          </Link>
-        </div>
-      </section>
-      <section className="section wrap">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">LUXIA INSIGHTS</p>
-            <h2>
-              {tr('m084')}<br />
-              <span>{tr('m085')}</span>
-            </h2>
-          </div>
-          <Link href="/insights" className="text-link">
-            {tr('m086')}</Link>
-        </div>
-        <div className="insight-rows">
-          {[
-            [
-              'INTELLIGENCE',
-              tr('m087'),
-              'agents-processus',
-            ],
-            [
-              'TRUST',
-              tr('m088'),
-              'identite-securite',
-            ],
-            [
-              'SCALE',
-              tr('m089'),
-              'cloud-pilotage',
-            ],
-          ].map(([tag, title, slug], i) => (
-            <Link key={slug} href={'/insights/' + slug}>
-              <span className="micro">
-                0{i + 1} / {tag}
-              </span>
-              <h3>{title}</h3>
-              <span>↗</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className="closing wrap">
-        <p className="eyebrow">{tr('m090')}</p>
-        <h2>
-          {tr('m091')}<br />
-          <em>{tr('m092')}</em>
-        </h2>
-        <Link href="/contact" className="button primary">
-          {tr('m093')}<span>↗</span>
-        </Link>
-        <span className="closing-note">
-          {tr('m094')}<br />
-          {tr('m095')}</span>
-      </section>
-    </main>
-  );
+        <aside className="v2-manifesto" aria-label={c.secondary}>{c.promises.map((item,i)=><div key={item}><span>0{i+1}</span><strong>{item}</strong></div>)}</aside>
+      </div>
+      <div className="wrap v2-technology-line" aria-label="Technologies de référence"><span>MICROSOFT AZURE</span><span>MICROSOFT 365</span><span>GITHUB</span><span>INFRASTRUCTURE AS CODE</span></div>
+    </section>
+
+    <section className="v2-platform wrap">
+      <div className="v2-section-copy"><p className="eyebrow">{c.ecosystem}</p><h2>{c.platformTitle[0]}<br/><span>{c.platformTitle[1]}</span></h2><p>{c.platformCopy}</p><Link href="/solutions" className="button v2-light-button">{c.platformCta}<span>→</span></Link></div>
+      <div className="v2-system" aria-label={c.platformTitle.join(' ')}>
+        <div className="v2-core"><span>LUXIA-IT</span><strong>{c.core}</strong><small>INTELLIGENCE · TRUST · SCALE</small></div>
+        <div className="v2-node-grid">{c.nodes.map(([title,desc],i)=><Link key={title} href={i===0?'/expertise/artificial-intelligence':i===1||i===2?'/expertise/cybersecurity':i===3?'/expertise/cloud':'/expertise/automation'}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small></Link>)}</div>
+      </div>
+      <div className="v2-stages">{c.stages.map(([n,title,desc])=><article key={n}><span>{n}</span><strong>{title}</strong><p>{desc}</p></article>)}</div>
+    </section>
+
+    <section className="v2-impact">
+      <div className="wrap v2-impact-grid">
+        <div className="v2-section-copy"><p className="eyebrow">{c.impactEyebrow}</p><h2>{c.impactTitle[0]}<br/><span>{c.impactTitle[1]}</span></h2><p>{c.impactCopy}</p><div className="v2-principles">{c.principles.map(([title,desc])=><div key={title}><strong>{title}</strong><span>{desc}</span></div>)}</div></div>
+        <div className="v2-impact-image"><Image src="/visuals/cyber.webp" alt="" fill sizes="(max-width: 800px) 100vw, 54vw"/><div><span>ZERO TRUST</span><strong>IDENTITY · ACCESS · DATA</strong></div></div>
+      </div>
+    </section>
+
+    <section className="v2-industries wrap">
+      <div className="v2-section-copy"><p className="eyebrow">{c.industriesEyebrow}</p><h2>{c.industriesTitle[0]}<br/><span>{c.industriesTitle[1]}</span></h2><Link href="/industries" className="button v2-light-button">{c.industriesCta}<span>→</span></Link></div>
+      <div className="v2-industry-grid">{c.industries.map(([title,desc],i)=><Link key={title} href={'/industries#sector-'+i}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small><b>↗</b></Link>)}</div>
+    </section>
+
+    <section className="v2-global">
+      <Image src="/visuals/connectivity.webp" alt="" fill sizes="100vw"/>
+      <div className="v2-global-shade" />
+      <div className="wrap v2-global-content"><p className="eyebrow">{c.globalEyebrow}</p><h2>{c.globalTitle[0]}<br/><span>{c.globalTitle[1]}</span></h2><p>{c.globalCopy}</p><Link href="/company#international" className="button v2-light-button">{c.globalCta}<span>→</span></Link></div>
+    </section>
+
+    <section className="v2-closing wrap"><p className="eyebrow">LUXIA-IT</p><h2>{c.closing[0]}<br/><span>{c.closing[1]}</span></h2><Link href="/contact" className="button primary">{c.contact}<span>↗</span></Link></section>
+  </main>;
 }
