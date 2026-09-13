@@ -1,4 +1,5 @@
 import CaseArchitecture from './case-architecture';
+import ExpertiseExperience from './expertise-experience';
 import {notFound} from 'next/navigation';
 import Link from '@/components/locale-link';
 import {getContent, allRoutes, site} from '@/lib/content';
@@ -309,20 +310,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
   } else
     switch (path) {
       case 'expertise':
-        content = <>
-          <PageHero kicker={tr('m096')} title={tr('m134')} intro={tr('m135')} />
-          <section className="section wrap editorial-service-grid">
-            {services.map((item, i) => (
-              <Link href={'/expertise/' + item.slug} key={item.slug} className="editorial-service-card">
-                <Image src={serviceVisuals[item.slug]} alt="" fill sizes="(max-width: 700px) 100vw, 50vw" />
-                <i aria-hidden="true" />
-                <span className="micro">0{i + 1}</span>
-                <div><h2>{item.title}</h2><p>{item.intro}</p><b>↗</b></div>
-              </Link>
-            ))}
-          </section>
-          <CTA locale={locale}/>
-        </>;
+        content = <><ExpertiseExperience/><CTA locale={locale}/></>;
         break;
       case 'solutions':
         content = (
@@ -783,4 +771,3 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
     </main>
   );
 }
-

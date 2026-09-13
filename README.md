@@ -19,7 +19,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by the server. No API keys or application secrets are required for the current website. Contact prepares an email draft addressed to `Contact@legrand-tech.com`; it does not send through a backend.
+Open the local URL printed by the server. No API keys or application secrets are required for the current website. Contact prepares an email draft addressed to `Contact@Luxia-it.com`; it does not send through a backend.
 
 ## Validation and builds
 

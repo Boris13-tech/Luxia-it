@@ -1,36 +1,73 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
-import Nucleus from './nucleus';
-import Framework from './framework';
+
+import Image from 'next/image';
+import {useEffect, useRef, useState} from 'react';
 import Link from './locale-link';
 import {useI18n} from './i18n-provider';
 import {getContent} from '@/lib/content';
-const names=['INTELLIGENCE','TRUST','SCALE','AUTOMATION'];
-const descriptions=['exAI','exTrust','exScale','exAuto'] as const;
-export default function ExpertiseExperience(){
- const {t,locale}=useI18n(),{services}=getContent(locale);
- const [mode,setMode]=useState(0),[method,setMethod]=useState(-1),[policy,setPolicy]=useState<'allow'|'deny'|'privilege'>('allow');
- const [awake,setAwake]=useState(true);
- const [visible,setVisible]=useState(true),ref=useRef<HTMLDivElement>(null);
- useEffect(()=>{const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{threshold:0});if(ref.current)observer.observe(ref.current);return()=>observer.disconnect();},[]);
- useEffect(()=>{let timer:ReturnType<typeof setTimeout>;const wake=()=>{setAwake(true);clearTimeout(timer);timer=setTimeout(()=>setAwake(false),45000);};wake();window.addEventListener("pointermove",wake,{passive:true});window.addEventListener("scroll",wake,{passive:true});window.addEventListener("keydown",wake);window.addEventListener("pointerdown",wake,{passive:true});return()=>{clearTimeout(timer);window.removeEventListener("pointermove",wake);window.removeEventListener("scroll",wake);window.removeEventListener("keydown",wake);window.removeEventListener("pointerdown",wake);};},[]);
- const select=(i:number)=>{setMode(i);setMethod(-1);};
- return <div className="expertise-experience" ref={ref}>
- <div className="expertise-universe" aria-hidden="true"><Nucleus mode={mode} method={method} policy={policy} experience active={visible&&awake}/></div>
- <section className="expertise-command wrap">
- <p className="eyebrow">LUXIA CORE / {t('exExplore')}</p><h1>{t('exTitle')}</h1>
- <div className="core-selector" aria-label={t('exExplore')}>{names.map((name,i)=><button type="button" key={name} aria-pressed={mode===i&&method<0} onPointerEnter={e=>{if(e.pointerType==='mouse')select(i)}} onFocus={()=>select(i)} onClick={()=>select(i)}><span>0{i+1}</span>{name}<b>↗</b></button>)}</div>
- <p className="core-instruction">{t('exControl')}</p><div className="core-mode-copy" aria-live="polite"><p>{t(descriptions[mode])}</p></div>
- </section>
- <section className="expertise-inspect wrap">
- <div className="expertise-capability"><p className="eyebrow">{names[mode]}</p><h2>{services[mode].title}</h2><p>{services[mode].outcome}</p><Link className="text-link" href={'/expertise/'+services[mode].slug}>{services[mode].title} ↗</Link></div>
- <div className="core-security-controls"><button className="text-link security-mode-trigger" type="button" onClick={()=>select(1)}>ZERO TRUST <span>↗</span></button>
- <details className="technical-reveal" onToggle={e=>{if(e.currentTarget.open)select(1)}}><summary>{t('exDiagram')}<span>+</span></summary><div className="trust-architecture">
- {(['Identity','Pim','Workload','Vault','Telemetry'] as const).map((part,i)=><article key={part} className={'trust-'+part.toLowerCase()}><span className="micro">0{i+1}</span><h3>{t(`ex${part}`)}</h3><p>{t(`ex${part}Text`)}</p></article>)}
- <p className="trust-references">{t('exSources')}: <a href="https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview">Conditional Access ↗</a> · <a href="https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure">PIM ↗</a> · <a href="https://learn.microsoft.com/en-us/azure/key-vault/general/authentication">Key Vault ↗</a></p>
- </div></details></div></section>
- <section className="expertise-method wrap"><p className="eyebrow">LUXIA TRANSFORMATION FRAMEWORK</p><h2>{t('exMethod')}</h2><Framework onStageChange={stage=>{setMethod(stage);setPolicy("allow");setMode([0,0,3,1,2][stage]);}}/></section>
- </div>;
+import LuxiaArtifact from './luxia-artifact';
+
+const names = ['INTELLIGENCE', 'TRUST', 'SCALE', 'AUTOMATION'];
+const descriptions = ['exAI', 'exTrust', 'exScale', 'exAuto'] as const;
+const filmScenes = [
+  {src: '/visuals/luxia-hero-v3.png', position: '62% 44%'},
+  {src: '/visuals/trust.webp', position: '55% 48%'},
+  {src: '/visuals/luxia-global-v2.png', position: '54% 50%'},
+  {src: '/visuals/luxia-campus-v3.png', position: '58% 50%'},
+];
+
+export default function ExpertiseExperience() {
+  const {t, locale} = useI18n();
+  const {services} = getContent(locale);
+  const sequence = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (!sequence.current) return;
+      const rect = sequence.current.getBoundingClientRect();
+      const distance = Math.max(1, sequence.current.offsetHeight - window.innerHeight);
+      setProgress(Math.min(1, Math.max(0, -rect.top / distance)));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const mode = Math.min(3, Math.floor(progress * 4));
+  const item = services[mode];
+
+  return (
+    <div className="expertise-photo-film" ref={sequence}>
+      <section className="expertise-photo-frame">
+        <div className="expertise-photo-stage" aria-hidden="true">
+          {filmScenes.map((scene, index) => (
+            <div className={index === mode ? 'is-current' : ''} key={scene.src}>
+              <Image src={scene.src} alt="" fill sizes="100vw" style={{objectPosition: scene.position}} unoptimized priority={index === 0}/>
+            </div>
+          ))}
+        </div>
+        <div className="expertise-object-stage" aria-hidden="true"><LuxiaArtifact progress={progress}/></div>
+        <div className="expertise-photo-shade" aria-hidden="true"/>
+        <div className="expertise-photo-copy">
+          <p className="eyebrow">LUXIA CORE</p>
+          <p className="photo-count">0{mode + 1}<span>/04</span></p>
+          <h1>{names[mode]}</h1>
+          <p className="photo-description" aria-live="polite">{t(descriptions[mode])}</p>
+          <Link className="photo-link" href={'/expertise/' + item.slug}>{item.title}<span>↗</span></Link>
+        </div>
+        <div className="photo-progress" aria-hidden="true"><i style={{transform: `scaleX(${Math.max(.025, progress)})`}}/></div>
+      </section>
+    </div>
+  );
 }
-
-
