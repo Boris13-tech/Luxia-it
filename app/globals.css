@@ -3311,7 +3311,7 @@ html[data-core-review=identity] .site-header a:first-child,html[data-core-review
 .expertise-editorial-card:hover img { opacity:.68; filter:saturate(.58) brightness(.8) contrast(1.06); transform:scale(1.045); }
 .inner-page[data-page="expertise"]>.page-cta { margin-top:0; }
 
-@media(max-width:900px) {
+@media(max-width:1100px) {
   .expertise-editorial-hero { grid-template-columns:1fr; }
   .expertise-editorial-copy { padding:80px 0 55px; }
   .expertise-editorial-image { min-height:480px; }
