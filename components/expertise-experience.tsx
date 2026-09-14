@@ -1,118 +1,57 @@
 'use client';
 
 import Image from 'next/image';
-import {useEffect, useRef, useState, type CSSProperties} from 'react';
 import Link from './locale-link';
 import {useI18n} from './i18n-provider';
 import {getContent} from '@/lib/content';
-import LuxiaArtifact from './luxia-artifact';
 
-const names = ['INTELLIGENCE', 'TRUST', 'SCALE', 'AUTOMATION'];
-const descriptions = ['exAI', 'exTrust', 'exScale', 'exAuto'] as const;
-const filmScenes = [
-  {src: '/visuals/luxia-hero-v3.png', position: '62% 44%'},
-  {src: '/visuals/trust.webp', position: '55% 48%'},
-  {src: '/visuals/luxia-global-v2.png', position: '54% 50%'},
-  {src: '/visuals/luxia-campus-v3.png', position: '58% 50%'},
+const visuals = [
+  '/visuals/intelligence.webp',
+  '/visuals/trust.webp',
+  '/visuals/cloud.webp',
+  '/visuals/automation.webp',
 ];
 
-const smootherStep = (value: number) => {
-  const x = Math.min(1, Math.max(0, value));
-  return x * x * x * (x * (x * 6 - 15) + 10);
-};
-
-// Each chapter rests on its key frame, moves with intent, then resolves before
-// the next title enters. The scroll remains native while the film changes pace.
-const cinematicTimeline = (value: number) => {
-  if (value >= 1) return 1;
-  const scaled = Math.max(0, value) * 4;
-  const chapter = Math.floor(scaled);
-  const local = scaled - chapter;
-  const movement = smootherStep((local - .18) / .62);
-  return (chapter + movement) / 4;
-};
+const descriptions = ['exAI', 'exTrust', 'exScale', 'exAuto'] as const;
 
 export default function ExpertiseExperience() {
   const {t, locale} = useI18n();
   const {services} = getContent(locale);
-  const sequence = useRef<HTMLDivElement>(null);
-  const targetProgress = useRef(0);
-  const renderedProgress = useRef(0);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let scrollFrame = 0;
-    let motionFrame = 0;
-    let initialized = false;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const readScroll = () => {
-      scrollFrame = 0;
-      if (!sequence.current) return;
-      const rect = sequence.current.getBoundingClientRect();
-      const distance = Math.max(1, sequence.current.offsetHeight - window.innerHeight);
-      targetProgress.current = Math.min(1, Math.max(0, -rect.top / distance));
-      if (!initialized || reducedMotion) {
-        initialized = true;
-        renderedProgress.current = targetProgress.current;
-        setProgress(targetProgress.current);
-        return;
-      }
-      if (!motionFrame) motionFrame = requestAnimationFrame(animate);
-    };
-    const animate = () => {
-      const gap = targetProgress.current - renderedProgress.current;
-      if (Math.abs(gap) < .0002) {
-        renderedProgress.current = targetProgress.current;
-        setProgress(targetProgress.current);
-        motionFrame = 0;
-        return;
-      }
-      // A firm response to a strong gesture, followed by a slower product-film settle.
-      const cadence = Math.min(.22, .065 + Math.abs(gap) * .72);
-      renderedProgress.current += gap * cadence;
-      setProgress(renderedProgress.current);
-      motionFrame = requestAnimationFrame(animate);
-    };
-    const onScroll = () => {
-      if (!scrollFrame) scrollFrame = requestAnimationFrame(readScroll);
-    };
-    readScroll();
-    window.addEventListener('scroll', onScroll, {passive: true});
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (scrollFrame) cancelAnimationFrame(scrollFrame);
-      if (motionFrame) cancelAnimationFrame(motionFrame);
-    };
-  }, []);
-
-  const mode = Math.min(3, Math.floor(progress * 4));
-  const item = services[mode];
-  const filmProgress = cinematicTimeline(progress);
-  const chapterProgress = Math.min(1, Math.max(0, progress * 4 - mode));
-  const cameraPulse = Math.sin(chapterProgress * Math.PI);
 
   return (
-    <div className="expertise-photo-film" ref={sequence}>
-      <section className="expertise-photo-frame">
-        <div className="expertise-photo-stage" aria-hidden="true" style={{'--scene-progress': chapterProgress} as CSSProperties}>
-          {filmScenes.map((scene, index) => (
-            <div className={index === mode ? 'is-current' : ''} key={scene.src}>
-              <Image src={scene.src} alt="" fill sizes="100vw" style={{objectPosition: scene.position}} unoptimized priority={index === 0}/>
-            </div>
+    <div className="expertise-editorial">
+      <section className="expertise-editorial-hero wrap">
+        <div className="expertise-editorial-copy">
+          <p className="eyebrow">EXPERTISE / INTELLIGENCE · TRUST · SCALE</p>
+          <h1>{t('m134')}</h1>
+          <p>{t('m183')}</p>
+          <Link href="/contact" className="button primary">{t('m093')}<span>↗</span></Link>
+        </div>
+        <div className="expertise-editorial-image" aria-hidden="true">
+          <Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="(max-width: 760px) 100vw, 56vw" priority unoptimized/>
+          <span>LUXIA-IT / SYSTEMS</span>
+        </div>
+      </section>
+
+      <section className="expertise-editorial-index wrap">
+        <div className="expertise-index-heading">
+          <p className="eyebrow">{t('m096')}</p>
+          <h2>{t('m135')}</h2>
+        </div>
+        <div className="expertise-editorial-grid">
+          {services.map((service, index) => (
+            <Link className="expertise-editorial-card" href={'/expertise/' + service.slug} key={service.slug}>
+              <Image src={visuals[index]} alt="" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized/>
+              <i aria-hidden="true"/>
+              <div>
+                <span className="micro">0{index + 1} / {service.pillar}</span>
+                <h3>{service.title}</h3>
+                <p>{t(descriptions[index])}</p>
+                <strong>↗</strong>
+              </div>
+            </Link>
           ))}
         </div>
-        <div className="expertise-object-stage" aria-hidden="true" style={{'--camera-pulse': cameraPulse} as CSSProperties}><LuxiaArtifact progress={filmProgress}/></div>
-        <div className="expertise-photo-shade" aria-hidden="true"/>
-        <div className="expertise-photo-copy" key={mode}>
-          <p className="eyebrow">LUXIA CORE</p>
-          <p className="photo-count">0{mode + 1}<span>/04</span></p>
-          <h1>{names[mode]}</h1>
-          <p className="photo-description" aria-live="polite">{t(descriptions[mode])}</p>
-          <Link className="photo-link" href={'/expertise/' + item.slug}>{item.title}<span>↗</span></Link>
-        </div>
-        <div className="photo-progress" aria-hidden="true"><i style={{transform: `scaleX(${Math.max(.025, progress)})`}}/></div>
       </section>
     </div>
   );

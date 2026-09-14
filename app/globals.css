@@ -3281,3 +3281,57 @@ html[data-core-review=identity] .site-header a:first-child,html[data-core-review
   .expertise-photo-stage img { transform: none; }
   .expertise-photo-copy { animation: none; }
 }
+
+/* /expertise — systems rigor with clear editorial hierarchy. */
+.inner-page[data-page="expertise"] { background:#05080b; }
+.expertise-editorial { padding-top:18px; }
+.expertise-editorial-hero { min-height:760px; display:grid; grid-template-columns:minmax(0,.84fr) minmax(520px,1.16fr); align-items:stretch; border-top:1px solid #ffffff24; border-bottom:1px solid #ffffff24; }
+.expertise-editorial-copy { position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; padding:90px clamp(34px,5vw,82px) 90px 0; }
+.expertise-editorial-copy .eyebrow { margin-bottom:42px; color:#9fb0bc; }
+.expertise-editorial-copy h1 { max-width:760px; margin:0 0 34px; font-size:clamp(58px,6.6vw,108px); font-weight:430; line-height:.91; letter-spacing:-.067em; }
+.expertise-editorial-copy>p:not(.eyebrow) { max-width:620px; margin:0 0 38px; color:#bac6ce; font-size:18px; line-height:1.62; }
+.expertise-editorial-copy .button { align-self:flex-start; border-radius:0; }
+.expertise-editorial-image { position:relative; min-height:760px; overflow:hidden; }
+.expertise-editorial-image::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,#05080b 0%,transparent 36%),linear-gradient(0deg,#05080bcc,transparent 44%); }
+.expertise-editorial-image img { object-fit:cover; filter:saturate(.52) contrast(1.08) brightness(.72); }
+.expertise-editorial-image span { position:absolute; right:28px; bottom:24px; z-index:2; color:#d8e4eb; font:10px var(--font-geist-mono); letter-spacing:.22em; }
+.expertise-editorial-index { padding-block:130px 110px; }
+.expertise-index-heading { display:grid; grid-template-columns:1fr 2fr; gap:40px; align-items:start; margin-bottom:70px; }
+.expertise-index-heading h2 { max-width:920px; margin:0; color:#e8edf0; font-size:clamp(28px,3.3vw,52px); font-weight:440; line-height:1.08; letter-spacing:-.04em; }
+.expertise-editorial-grid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #ffffff29; }
+.expertise-editorial-card { position:relative; min-height:520px; overflow:hidden; border-bottom:1px solid #ffffff29; color:#fff; }
+.expertise-editorial-card:nth-child(odd) { border-right:1px solid #ffffff29; }
+.expertise-editorial-card img { object-fit:cover; opacity:.42; filter:saturate(.35) brightness(.68) contrast(1.1); transform:scale(1.01); transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .6s ease,filter .6s ease; }
+.expertise-editorial-card>i { position:absolute; inset:0; background:linear-gradient(0deg,#05080bf5 2%,#05080b52 70%,#05080b1c); }
+.expertise-editorial-card>div { position:absolute; inset:auto 0 0; z-index:2; display:grid; grid-template-columns:1fr auto; padding:42px; }
+.expertise-editorial-card .micro { grid-column:1/-1; margin-bottom:24px; color:#aebdc6; }
+.expertise-editorial-card h3 { margin:0 0 17px; font-size:clamp(31px,3vw,52px); font-weight:450; letter-spacing:-.045em; }
+.expertise-editorial-card p { grid-column:1; max-width:490px; margin:0; color:#bec9d0; font-size:15px; line-height:1.55; }
+.expertise-editorial-card strong { grid-column:2; grid-row:2/4; align-self:end; font-size:28px; font-weight:400; }
+.expertise-editorial-card:hover img { opacity:.68; filter:saturate(.58) brightness(.8) contrast(1.06); transform:scale(1.045); }
+.inner-page[data-page="expertise"]>.page-cta { margin-top:0; }
+
+@media(max-width:900px) {
+  .expertise-editorial-hero { grid-template-columns:1fr; }
+  .expertise-editorial-copy { padding:80px 0 55px; }
+  .expertise-editorial-image { min-height:480px; }
+  .expertise-editorial-grid { grid-template-columns:1fr; }
+  .expertise-editorial-card:nth-child(odd) { border-right:0; }
+}
+@media(max-width:600px) {
+  .expertise-editorial { padding-top:8px; }
+  .expertise-editorial-hero { width:calc(100% - 36px); min-height:0; }
+  .expertise-editorial-copy { padding:60px 0 42px; }
+  .expertise-editorial-copy .eyebrow { margin-bottom:28px; }
+  .expertise-editorial-copy h1 { font-size:50px; }
+  .expertise-editorial-copy>p:not(.eyebrow) { font-size:16px; }
+  .expertise-editorial-image { min-height:390px; }
+  .expertise-editorial-image::after { background:linear-gradient(0deg,#05080bd9,transparent 60%); }
+  .expertise-editorial-index { padding-block:80px 70px; }
+  .expertise-index-heading { display:block; margin-bottom:42px; }
+  .expertise-index-heading .eyebrow { margin-bottom:20px; }
+  .expertise-index-heading h2 { font-size:30px; }
+  .expertise-editorial-card { min-height:430px; }
+  .expertise-editorial-card>div { padding:26px 22px; }
+  .expertise-editorial-card h3 { font-size:37px; }
+}
