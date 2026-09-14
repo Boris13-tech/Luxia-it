@@ -7,7 +7,7 @@ import {getContent} from '@/lib/content';
 
 const visuals = [
   '/visuals/intelligence.webp',
-  '/visuals/trust.webp',
+  '/visuals/cyber.webp',
   '/visuals/cloud.webp',
   '/visuals/automation.webp',
 ];
@@ -22,21 +22,20 @@ export default function ExpertiseExperience() {
     <div className="expertise-editorial">
       <section className="expertise-editorial-hero wrap">
         <div className="expertise-editorial-copy">
-          <p className="eyebrow">EXPERTISE / INTELLIGENCE · TRUST · SCALE</p>
+          <p className="eyebrow">LUXIA-IT / {t('m096')}</p>
           <h1>{t('m134')}</h1>
           <p>{t('m183')}</p>
           <Link href="/contact" className="button primary">{t('m093')}<span>↗</span></Link>
         </div>
         <div className="expertise-editorial-image" aria-hidden="true">
-          <Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="(max-width: 760px) 100vw, 56vw" priority unoptimized/>
-          <span>LUXIA-IT / SYSTEMS</span>
+          <Image src="/visuals/cloud.webp" alt="" fill sizes="100vw" priority unoptimized/>
         </div>
       </section>
 
       <section className="expertise-editorial-index wrap">
         <div className="expertise-index-heading">
-          <p className="eyebrow">{t('m096')}</p>
-          <h2>{t('m135')}</h2>
+          <h2>{t('m096')}</h2>
+          <p>{t('m135')}</p>
         </div>
         <div className="expertise-editorial-grid">
           {services.map((service, index) => (
@@ -44,9 +43,10 @@ export default function ExpertiseExperience() {
               <Image src={visuals[index]} alt="" fill sizes="(max-width: 760px) 100vw, 50vw" unoptimized/>
               <i aria-hidden="true"/>
               <div>
-                <span className="micro">0{index + 1} / {service.pillar}</span>
+                <span className="micro">0{index + 1} / {index === 3 ? 'AUTOMATION' : service.pillar}</span>
                 <h3>{service.title}</h3>
                 <p>{t(descriptions[index])}</p>
+                <ul>{service.capabilities.slice(0, 3).map(([title]) => <li key={title}>{title}</li>)}</ul>
                 <strong>↗</strong>
               </div>
             </Link>
