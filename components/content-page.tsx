@@ -339,7 +339,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
                     tr('m143'),
                     'cloud',
                   ],
-                ].map(([t, d, p], i) => (
+                ].map(([t, d, p]) => (
                   <article key={t}>
                     <Image className="solution-photo" src={serviceVisuals[p]} alt="" width={1000} height={560} sizes="(max-width:700px) 100vw, 50vw" />
                     <h3>{t}</h3>
