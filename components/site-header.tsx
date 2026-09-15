@@ -17,10 +17,10 @@ import {
 export default function SiteHeader() {
 const {t:tr,locale} = useI18n();
 const labels = locale==='fr'
-  ? ['Produits','Solutions','Industries','Développeurs','Ressources','À propos']
+  ? ['Solutions','Expertises','Industries','Développeurs','Ressources','À propos']
   : locale==='en'
-    ? ['Products','Solutions','Industries','Developers','Resources','About']
-    : ['产品','解决方案','行业','开发者','资源','关于'];
+    ? ['Solutions','Expertise','Industries','Developers','Resources','About']
+    : ['解决方案','专业能力','行业','开发者','资源','关于'];
 const navigation = [
   [labels[0], '/solutions'],
   [labels[1], '/expertise'],
@@ -75,7 +75,6 @@ const navigation = [
             <nav aria-label={tr('m271')}>
               {[
                 ...navigation,
-                [tr('m098'), '/industries'],
                 [tr('m099'), '/case-studies'],
                 [tr('m102'), '/contact'],
               ].map(([title, url]) => (

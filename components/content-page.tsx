@@ -66,11 +66,7 @@ function PageHero({
         {intro && <p className="page-intro">{intro}</p>}
         {children}
       </div>
-      <div className="page-hero-index" aria-hidden="true">
-        <span>01</span><i />
-        <span>02</span><i />
-        <span>03</span>
-      </div>
+
     </section>
   );
 }
@@ -345,7 +341,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
                   ],
                 ].map(([t, d, p], i) => (
                   <article key={t}>
-                    <span className="micro">0{i + 1}</span>
+                    <Image className="solution-photo" src={serviceVisuals[p]} alt="" width={1000} height={560} sizes="(max-width:700px) 100vw, 50vw" />
                     <h3>{t}</h3>
                     <div>
                       <p>{d}</p>
@@ -363,7 +359,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
                 <span>{tr('m147')}</span>
               </h2>
               <div className="platform-story-panel">
-                <Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="100vw" />
+                <Image src="/visuals/connectivity.webp" alt="" fill sizes="100vw" />
                 <i aria-hidden="true" />
                 <div>
                   <span className="micro">LUXIA CORE</span>
@@ -380,7 +376,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
         content = (
           <>
             <PageHero
-              kicker="SECTEURS"
+              kicker={tr('m098')}
               title={tr('m149')}
               intro={tr('m150')}
             />
@@ -533,7 +529,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
               </div>
             </section>
             <section className="wrap company-visual-story">
-              <Image src="/visuals/luxia-future-v3.png" alt="" fill sizes="100vw" />
+              <Image src="/visuals/world.webp" alt="" fill sizes="100vw" />
               <i aria-hidden="true" />
               <p>{tr('m049')}<br/><span>{tr('m203')}</span></p>
             </section>
@@ -756,7 +752,7 @@ const tr=translator(locale); const {services,sectors,articles,cases}=getContent(
             {
               '@type': 'ListItem',
               position: 1,
-              name: 'Accueil',
+              name: tr('m108'),
               item: site.origin + '/' + locale,
             },
             ...slug.map((_, i) => ({

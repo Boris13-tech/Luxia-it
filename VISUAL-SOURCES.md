@@ -32,3 +32,6 @@ Images use CSS color grading and framing. Scrolling changes exposure and a small
 - `public/visuals/luxia-industries-v3.png`: original four-panel editorial image for Finance, Education, Professional Services and Public Sector cards.
 - `public/visuals/luxia-future-v3.png`: original panoramic human-impact landscape.
 - All four images were generated for Luxia-IT with the built-in OpenAI image generation tool. The user-supplied homepage mockup guided composition and atmosphere only. No depicted person, building, city, equipment or result is presented as a Luxia-IT employee, office, client asset or completed project.
+
+## September 15 — shared editorial direction
+Active homepage imagery now uses the licensed trust, automation and connectivity photographs above. Generated v3 imagery is no longer rendered by the homepage. Shared inner-page openings use subject-specific photographs; legal and contact openings are typographic. Existing asset files remain for source history.

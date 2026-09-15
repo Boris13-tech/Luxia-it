@@ -71,49 +71,44 @@ export default function Home({locale}:{locale:Locale}) {
   }[locale];
   return <main id="main" className="home-page home-vision-v2">
     <section className="v2-hero">
-      <Image className="v2-hero-image" src="/visuals/luxia-hero-v3.png" alt="" fill priority sizes="100vw" />
+      <Image className="v2-hero-image" src="/visuals/trust.webp" alt="" fill priority sizes="100vw" />
       <div className="v2-hero-shade" />
       <div className="wrap v2-hero-grid">
         <div className="v2-hero-copy">
           <p className="eyebrow">INTELLIGENCE. TRUST. SCALE.</p>
           <h1>{c.title[0]}<br/>{c.title[1]}<br/><em>{c.title[2]}</em></h1>
           <p>{c.intro}</p>
-          <div className="actions"><Link href="/expertise" className="button v2-light-button">{c.primary}<span>→</span></Link><Link href="/company" className="v2-video-link"><i>▶</i>{c.secondary}</Link></div>
+          <div className="actions"><Link href="/expertise" className="button v2-light-button">{c.primary}<span>→</span></Link><Link href="/company" className="v2-video-link">{c.secondary}<span>↗</span></Link></div>
         </div>
         <aside className="v2-manifesto" aria-label={c.secondary}>{c.promises.map((item,i)=><div key={item}><span>0{i+1}</span><strong>{item}</strong></div>)}</aside>
       </div>
       <div className="wrap v2-technology-line" aria-label={x.reference}><b>{x.reference}</b><span>MICROSOFT</span><span>AZURE</span><span>MICROSOFT 365</span><span>GITHUB</span><span>VERCEL</span></div>
-      <div className="v3-slider"><span>01</span><i/><span>04</span><b>↓</b></div>
+
     </section>
 
     <section className="v2-platform v3-platform wrap">
       <div className="v2-section-copy"><p className="eyebrow">{c.ecosystem}</p><h2>{c.platformTitle[0]}<br/><span>{c.platformTitle[1]}</span></h2><p>{c.platformCopy}</p><Link href="/solutions" className="button v2-light-button">{c.platformCta}<span>→</span></Link></div>
-      <div className="v2-system v3-system" aria-label={c.platformTitle.join(' ')}>
-        <div className="v2-core"><span>LUXIA-IT</span><strong>{c.core}</strong><small>INTELLIGENCE · TRUST · SCALE</small></div>
-        <div className="v3-orbit" aria-hidden="true"/>
-        <div className="v2-node-grid v3-node-grid">{c.nodes.map(([title,desc],i)=><Link key={title} href={i===0?'/expertise/artificial-intelligence':i===1||i===2?'/expertise/cybersecurity':i===3?'/expertise/cloud':'/expertise/automation'}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small></Link>)}</div>
-      </div>
-      <aside className="v2-stages v3-stages"><p className="eyebrow">DU CONCEPT<br/>À L’IMPACT</p>{[[x.impact,c.stages[0][2]],[x.delivery,c.stages[2][2]],[x.measure,c.stages[3][2]],[x.reach,c.globalCopy]].map(([title,desc],i)=><article key={title}><span>0{i+1}</span><strong>{title}</strong><p>{desc}</p></article>)}</aside>
+      <div className="home-capabilities">{c.nodes.map(([title,desc],i)=><Link key={title} href={i===0?'/expertise/artificial-intelligence':i===1||i===2?'/expertise/cybersecurity':i===3?'/expertise/cloud':'/expertise/automation'}><strong>{title}</strong><span>{desc}</span><b>↗</b></Link>)}</div>
     </section>
 
     <section className="v2-impact">
       <div className="wrap v2-impact-grid">
         <div className="v2-section-copy"><p className="eyebrow">{c.impactEyebrow}</p><h2>{c.impactTitle[0]}<br/><span>{c.impactTitle[1]}</span></h2><p>{c.impactCopy}</p><div className="v2-principles v3-outcomes">{[[c.stages[0][0],c.stages[0][1]],[c.stages[1][0],c.stages[1][1]],[c.stages[2][0],c.stages[2][1]],['04',c.stages[3][1]]].map(([value,label])=><div key={value+label}><strong>{value}</strong><span>{label}</span></div>)}</div></div>
-        <Link href="/company" className="v2-impact-image"><Image src="/visuals/luxia-campus-v3.png" alt="" fill sizes="(max-width: 800px) 100vw, 54vw"/><div><span>▶ &nbsp; LUXIA-IT</span><strong>{x.campus}</strong></div></Link>
+        <Link href="/company" className="v2-impact-image"><Image src="/visuals/automation.webp" alt="" fill sizes="(max-width: 800px) 100vw, 54vw"/><div><span>LUXIA-IT ↗</span><strong>{x.campus}</strong></div></Link>
       </div>
     </section>
 
     <section className="v2-industries wrap">
       <div className="v2-section-copy"><p className="eyebrow">{c.industriesEyebrow}</p><h2>{c.industriesTitle[0]}<br/><span>{c.industriesTitle[1]}</span></h2><Link href="/industries" className="button v2-light-button">{c.industriesCta}<span>→</span></Link></div>
-      <div className="v2-industry-grid v3-industry-grid">{c.industries.map(([title,desc],i)=><Link key={title} href={'/industries#sector-'+i}><Image src="/visuals/luxia-industries-v3.png" alt="" fill sizes="(max-width:700px) 50vw, 18vw" style={{objectPosition:`${i*33.333}% center`}}/><i/><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small><b>↗</b></Link>)}</div>
+      <div className="v2-industry-grid v3-industry-grid">{c.industries.map(([title,desc],i)=><Link key={title} href={'/industries#sector-'+[1,3,2,5][i]}><span>0{i+1}</span><strong>{title}</strong><small>{desc}</small><b>↗</b></Link>)}</div>
     </section>
 
     <section className="v2-global v3-future">
-      <Image src="/visuals/luxia-future-v3.png" alt="" fill sizes="100vw"/>
+      <Image src="/visuals/connectivity.webp" alt="" fill sizes="100vw"/>
       <div className="v2-global-shade" />
       <div className="wrap v2-global-content"><p className="eyebrow">{x.futureEye}</p><h2>{x.futureTitle}</h2><p>{x.futureCopy}</p><Link href="/company#international" className="button v2-light-button">{x.futureCta}<span>→</span></Link><aside>{x.futureTag}</aside></div>
     </section>
 
-    <section className="v3-planet-footer"><Image src="/visuals/luxia-global-v2.png" alt="" fill sizes="100vw"/><div className="v3-planet-shade"/><div className="wrap"><strong>LUXIA-IT</strong><span>INTELLIGENCE. TRUST. SCALE.</span><p>{x.footer}</p></div></section>
+
   </main>;
 }
