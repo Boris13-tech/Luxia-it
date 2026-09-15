@@ -3539,3 +3539,34 @@ html[data-core-review=identity] .site-header a:first-child,html[data-core-review
 .home-vision-v2 .v2-technology-line span { display:inline; }
 .home-vision-v2 .v2-technology-line b { display:block; }
 @media(max-width:700px) { .home-vision-v2 .v2-technology-line b { width:100%; } .home-vision-v2 .v2-technology-line span { font-size:12px; } }
+/* Scroll chapters: native movement, layered openings and uninterrupted reading. */
+.site-header { position:fixed; inset:0 0 auto; background:#050b10ed; backdrop-filter:blur(12px); }
+.home-page>section,.inner-page>section { scroll-margin-top:76px; }
+.next-chapter { background:#dfe5e9; color:#10212d; padding:90px max(28px,calc((100% - 1320px)/2)); }
+.next-chapter>a { display:grid; grid-template-columns:1fr auto; gap:32px; align-items:center; min-height:260px; }
+.next-chapter .eyebrow { grid-column:1/-1; margin:0; color:#435561; }
+.next-chapter strong { font-size:clamp(48px,8vw,120px); font-weight:430; line-height:1; letter-spacing:-.06em; overflow-wrap:anywhere; }
+.chapter-arrow { font-size:clamp(48px,7vw,100px); transition:transform .4s cubic-bezier(.22,1,.36,1); }
+.next-chapter a:hover .chapter-arrow { transform:translate(8px,-8px); }
+@media(min-width:901px) and (prefers-reduced-motion:no-preference) {
+ .home-vision-v2 .v3-platform>.v2-section-copy { position:sticky; top:130px; }
+ .home-vision-v2 .home-capabilities a { min-height:180px; align-content:center; }
+ .home-vision-v2 .v2-industries>.v2-section-copy { margin-bottom:80px; }
+ .home-vision-v2 .v2-impact-grid>.v2-section-copy { position:sticky; top:130px; align-self:start; }
+}
+@supports(animation-timeline:view()) {
+ @media(prefers-reduced-motion:no-preference) {
+  .v2-hero,.page-hero,.expertise-editorial-hero { view-timeline-name:--opening; view-timeline-axis:block; }
+  .v2-hero-image,.page-hero::before,.expertise-editorial-image { animation:opening-depth linear both; animation-timeline:--opening; animation-range:exit 0% exit 100%; }
+  .v2-hero-copy,.page-hero-copy,.expertise-editorial-copy { animation:opening-departure linear both; animation-timeline:--opening; animation-range:exit 0% exit 80%; }
+ }
+}
+@keyframes opening-depth { from { transform:translateY(0) scale(1); } to { transform:translateY(18%) scale(1.05); } }
+@keyframes opening-departure { from { opacity:1; } to { opacity:0; } }
+@media(max-width:700px) {
+ .next-chapter { padding:60px 20px; }
+ .next-chapter>a { min-height:180px; gap:24px; }
+ .next-chapter strong { font-size:48px; }
+ .next-chapter .chapter-arrow { font-size:44px; }
+}
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .chapter-arrow { transition:none; } }
