@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import {Geist,Geist_Mono} from 'next/font/google';
 import '../globals.css';
+import RouteTransition from '@/components/route-transition';
 import PageMotion from '@/components/page-motion';
 import NextChapter from '@/components/next-chapter';
 import SiteHeader from '@/components/site-header';
@@ -13,5 +14,6 @@ const mono=Geist_Mono({variable:'--font-geist-mono',subsets:['latin']});
 export const metadata:Metadata={metadataBase:new URL(site.origin)};
 export default async function RootLayout({children,params}:{children:React.ReactNode;params:Promise<{slug?:string[]}>}){
  const {slug=[]}=await params;const locale=isLocale(slug[0])?slug[0]:'fr';const t=translator(locale);
- return <html lang={locale==='zh'?'zh-CN':locale} className="dark"><body className={`${sans.variable} ${mono.variable}`}><I18nProvider key={locale} locale={locale}><a className="skip" href="#main">{t('m260')}</a><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({'@context':'https://schema.org','@type':'Organization',name:site.name,url:site.origin+'/'+locale,email:site.email,telephone:site.phone,description:t('m258'),founder:{'@type':'Person',name:site.founder}}).replace(/</g,'\\u003c')}}/><SiteHeader/><PageMotion/>{children}<NextChapter/><SiteFooter locale={locale}/></I18nProvider></body></html>;
+ return <html lang={locale==='zh'?'zh-CN':locale} className="dark"><body className={`${sans.variable} ${mono.variable}`}><RouteTransition><I18nProvider key={locale} locale={locale}><a className="skip" href="#main">{t('m260')}</a><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({'@context':'https://schema.org','@type':'Organization',name:site.name,url:site.origin+'/'+locale,email:site.email,telephone:site.phone,description:t('m258'),founder:{'@type':'Person',name:site.founder}}).replace(/</g,'\\u003c')}}/><SiteHeader/><PageMotion/>{children}<NextChapter/><SiteFooter locale={locale}/></I18nProvider></RouteTransition></body></html>;
 }
+

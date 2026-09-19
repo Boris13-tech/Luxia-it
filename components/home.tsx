@@ -1,3 +1,4 @@
+import HeroSlideshow from '@/components/hero-slideshow';
 import Image from 'next/image';
 import Link from '@/components/locale-link';
 import type {Locale} from '@/lib/i18n';
@@ -71,7 +72,7 @@ export default function Home({locale}:{locale:Locale}) {
   }[locale];
   return <main id="main" className="home-page home-vision-v2">
     <section className="v2-hero">
-      <Image className="v2-hero-image" src="/visuals/trust.webp" alt="" fill priority sizes="100vw" />
+      <HeroSlideshow locale={locale} />
       <div className="v2-hero-shade" />
       <div className="wrap v2-hero-grid">
         <div className="v2-hero-copy">
@@ -112,3 +113,4 @@ export default function Home({locale}:{locale:Locale}) {
 
   </main>;
 }
+
