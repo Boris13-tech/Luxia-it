@@ -117,8 +117,15 @@ l'Union européenne, ou une petite fonction serveur exploitée par Luxia-IT.
 
 ## Déploiement
 
-L'URL publique se définit au build : `SITE_URL=https://www.exemple.fr npm run build`
-(utilisée pour les URL canoniques, le sitemap et security.txt).
+L'URL publique sert aux URL canoniques, au sitemap, à robots.txt et à security.txt.
+Par défaut, c'est le domaine de production `https://luxia-it.com`. `SITE_URL` la
+remplace (par exemple pour un site de recette) ; une valeur invalide arrête le
+build plutôt que de publier de fausses URL.
+
+**Anciennes adresses** : les URL du site précédent (`/fr`, `/en`, `/zh`,
+`/company`, `/expertise/…`, `/insights/…`, etc.) sont redirigées de façon
+permanente vers les nouvelles pages, de manière identique dans `vercel.json`,
+`deploy/nginx.conf` et `public/_redirects` (Netlify, Cloudflare Pages).
 
 **Hébergement statique** (Cloudflare Pages, Netlify ou tout CDN) : publier
 `dist/`. Le fichier `_headers` est pris en compte automatiquement.

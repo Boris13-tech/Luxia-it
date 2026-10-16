@@ -2,10 +2,27 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// URL publique du site : à définir au déploiement (SITE_URL=https://www.exemple.fr npm run build).
-// Sur Vercel, à défaut, on utilise l'adresse de production du projet.
-const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-const site = process.env.SITE_URL ?? (vercelUrl ? `https://${vercelUrl}` : 'https://luxia-it.example');
+// Domaine de production historique de Luxia-IT (URL canonique par défaut).
+const PRODUCTION_ORIGIN = 'https://luxia-it.com';
+
+/**
+ * URL publique du site, utilisée pour les liens canoniques, Open Graph, le
+ * sitemap, robots.txt et security.txt. SITE_URL la remplace (ex. recette) ;
+ * vide ou absente, c'est le domaine de production qui s'applique. Une valeur
+ * inutilisable arrête le build plutôt que de publier des URL fausses.
+ */
+function resolveSite() {
+  const raw = (process.env.SITE_URL ?? '').trim();
+  if (raw === '') return PRODUCTION_ORIGIN;
+  const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    return new URL(candidate).origin;
+  } catch {
+    throw new Error(`SITE_URL n'est pas une URL valide : « ${raw} ». Exemple attendu : https://luxia-it.com`);
+  }
+}
+
+const site = resolveSite();
 
 export default defineConfig({
   site,
