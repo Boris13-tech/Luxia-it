@@ -1,0 +1,319 @@
+---
+/**
+ * Schéma d'architecture en HTML/CSS : lisible à toutes les tailles
+ * (horizontal sur grand écran, vertical sur mobile), sans image.
+ */
+interface Group {
+  label: string;
+  items: readonly string[];
+}
+
+interface Props {
+  title: string;
+  inputs: Group;
+  core: Group;
+  outputs: Group;
+  base?: Group | undefined;
+  links?: { in?: string; out?: string; base?: string };
+  note?: string | undefined;
+}
+
+const { title, inputs, core, outputs, base, links = {}, note } = Astro.props;
+---
+
+<figure class="arch-wrap" data-reveal>
+  <div class="arch" role="group" aria-label={title}>
+    <div class="arch__group arch__in" data-part="in">
+      <p class="arch__label">{inputs.label}</p>
+      <ul class="arch__items">{inputs.items.map((i) => <li>{i}</li>)}</ul>
+    </div>
+
+    <div class="arch__link arch__link--l1" aria-hidden="true" data-part="l1">
+      {links.in && <span class="arch__link-label">{links.in}</span>}
+    </div>
+
+    <div class="arch__core" data-part="core">
+      <p class="arch__label arch__label--core">{core.label}</p>
+      <ul class="arch__modules">{core.items.map((item, i) => <li data-part={`m${i}`}>{item}</li>)}</ul>
+    </div>
+
+    <div class="arch__link arch__link--l2" aria-hidden="true" data-part="l2">
+      {links.out && <span class="arch__link-label">{links.out}</span>}
+    </div>
+
+    <div class="arch__group arch__out" data-part="out">
+      <p class="arch__label">{outputs.label}</p>
+      <ul class="arch__items">{outputs.items.map((i) => <li>{i}</li>)}</ul>
+    </div>
+
+    {
+      base && (
+        <>
+          <div class="arch__link arch__link--v" aria-hidden="true" data-part="lv">
+            {links.base && <span class="arch__link-label">{links.base}</span>}
+          </div>
+          <div class="arch__group arch__base" data-part="base">
+            <p class="arch__label">{base.label}</p>
+            <ul class="arch__items arch__items--row">{base.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        </>
+      )
+    }
+  </div>
+  {note && <figcaption class="arch__note">{note}</figcaption>}
+</figure>
+
+<style>
+  .arch-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Le schéma s'adapte à la largeur qui lui est donnée, pas à celle de l'écran */
+    container: arch / inline-size;
+  }
+
+  .arch {
+    --link-color: var(--brand);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'in' 'l1' 'core' 'l2' 'out' 'lv' 'base';
+  }
+
+  .arch__in { grid-area: in; }
+  .arch__core { grid-area: core; }
+  .arch__out { grid-area: out; }
+  .arch__base { grid-area: base; }
+  .arch__link--l1 { grid-area: l1; }
+  .arch__link--l2 { grid-area: l2; }
+  .arch__link--v { grid-area: lv; }
+
+  .arch__group,
+  .arch__core {
+    padding: 18px 20px 8px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .arch__core {
+    padding-bottom: 20px;
+    border: 2px solid var(--brand);
+    background-color: #f3f7fd;
+  }
+
+  .arch__label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 12px;
+  }
+
+  .arch__label--core {
+    color: var(--brand-text);
+    font-weight: 600;
+  }
+
+  .arch__items li {
+    padding-block: 11px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  .arch__modules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .arch__modules li {
+    padding: 14px 12px;
+    border: 1px solid #c9dbf3;
+    border-radius: var(--radius-sm);
+    background-color: var(--white);
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+  }
+
+  /* Liaisons : verticales par défaut (mobile) */
+  .arch__link {
+    position: relative;
+    min-height: 64px;
+  }
+
+  .arch__link::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 7px;
+    width: 1px;
+    background-color: var(--link-color);
+  }
+
+  .arch__link::after {
+    content: '';
+    position: absolute;
+    left: calc(50% - 4px);
+    bottom: 0;
+    border-top: 7px solid var(--link-color);
+    border-inline: 4.5px solid transparent;
+  }
+
+  .arch__link-label {
+    position: absolute;
+    left: calc(50% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    line-height: 1.3;
+  }
+
+  /* Sur mobile, la liaison avec la base devient un séparateur annoté */
+  .arch__link--v {
+    min-height: 0;
+    padding-block: 28px 12px;
+  }
+
+  .arch__link--v::before,
+  .arch__link--v::after {
+    display: none;
+  }
+
+  .arch__link--v .arch__link-label {
+    position: static;
+    transform: none;
+    display: block;
+  }
+
+  /* Mise en évidence pilotée par un récit collant (ScrollStory) */
+  [data-part] {
+    transition:
+      opacity 600ms var(--ease),
+      border-color 600ms var(--ease),
+      background-color 600ms var(--ease);
+  }
+
+  .arch__note {
+    font-size: var(--fs-small);
+    color: var(--fg-muted);
+    max-width: 44rem;
+  }
+
+  /* Schéma horizontal mais étroit : modules sur une seule colonne */
+  @container arch (min-width: 680px) and (max-width: 919.98px) {
+    .arch__modules {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .arch__modules li {
+      padding-block: 11px;
+    }
+  }
+
+  @container arch (min-width: 680px) {
+    .arch {
+      grid-template-columns: minmax(0, 1fr) clamp(56px, 9cqi, 112px) minmax(0, 1.4fr) clamp(56px, 9cqi, 112px) minmax(0, 1fr);
+      grid-template-areas:
+        'in l1 core l2 out'
+        '. . lv . .'
+        '. . base . .';
+      align-items: center;
+    }
+
+    .arch__link {
+      min-height: 0;
+      height: 48px;
+    }
+
+    .arch__link::before {
+      left: 0;
+      right: 7px;
+      top: 50%;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+
+    .arch__link::after {
+      left: auto;
+      right: 0;
+      top: calc(50% - 4px);
+      bottom: auto;
+      border-top: 4.5px solid transparent;
+      border-bottom: 4.5px solid transparent;
+      border-left: 7px solid var(--link-color);
+      border-right: 0;
+    }
+
+    .arch__link-label {
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: calc(50% + 8px);
+      transform: none;
+      text-align: center;
+      padding-inline: 6px;
+    }
+
+    /* Liaison bidirectionnelle vers la base */
+    .arch__link--v {
+      height: 72px;
+      padding: 0;
+    }
+
+    .arch__link--v::before,
+    .arch__link--v::after {
+      display: block;
+    }
+
+    .arch__link--v::before {
+      left: 50%;
+      right: auto;
+      top: 7px;
+      bottom: 7px;
+      width: 1px;
+      height: auto;
+    }
+
+    .arch__link--v::after {
+      left: calc(50% - 4px);
+      right: auto;
+      top: auto;
+      bottom: 0;
+      border-left: 4.5px solid transparent;
+      border-right: 4.5px solid transparent;
+      border-top: 7px solid var(--link-color);
+      border-bottom: 0;
+    }
+
+    .arch__link--v .arch__link-label {
+      position: absolute;
+      left: calc(50% + 14px);
+      right: auto;
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+      text-align: left;
+      padding: 0;
+      white-space: nowrap;
+    }
+
+    .arch__items--row {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 24px;
+    }
+
+    .arch__items--row li {
+      flex: 1 1 140px;
+    }
+  }
+</style>

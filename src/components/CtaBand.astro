@@ -1,0 +1,48 @@
+---
+/** Bandeau d'appel à l'action, fond ardoise. */
+import Button from './Button.astro';
+
+interface Props {
+  before?: string | undefined;
+  hl: string;
+  after?: string | undefined;
+  text?: string | undefined;
+  href?: string | undefined;
+  label?: string | undefined;
+}
+
+const { before = '', hl, after = '', text, href = '/contact/', label = 'Nous contacter' } = Astro.props;
+---
+
+<section class="cta on-dark" aria-labelledby="cta-title">
+  <div class="container cta__inner" data-reveal>
+    <h2 class="cta__title" id="cta-title">{before}<span class="hl">{hl}</span>{after}</h2>
+    {text && <p class="cta__text">{text}</p>}
+    <Button href={href}>{label}</Button>
+  </div>
+</section>
+
+<style>
+  .cta {
+    background-color: var(--navy);
+  }
+
+  .cta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-block: clamp(56px, 7vw, 88px);
+    text-align: center;
+  }
+
+  .cta__title {
+    font-size: var(--fs-h1);
+    color: var(--gray-100);
+  }
+
+  .cta__text {
+    max-width: 48rem;
+    color: var(--white);
+  }
+</style>

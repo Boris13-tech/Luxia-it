@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroHome from '../components/HeroHome.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import IconFeature from '../components/IconFeature.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import CaseCard from '../components/CaseCard.astro';
+import LogoStrip from '../components/LogoStrip.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import Vision from '../components/Vision.astro';
+import { platforms, platformHref } from '../data/site';
+import type { IconName } from '../data/icons';
+
+const audiences: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'monitor-cog',
+    title: 'Directions des systèmes d’information',
+    text: 'Centralisez l’authentification de vos applications et réduisez le nombre de comptes et de règles à administrer.',
+  },
+  {
+    icon: 'shield-check',
+    title: 'Responsables de la sécurité',
+    text: 'Appliquez des politiques d’accès cohérentes et disposez d’un journal unique pour chaque connexion et chaque action d’administration.',
+  },
+  {
+    icon: 'handshake',
+    title: 'Intégrateurs et ESN',
+    text: 'Intégrez LUXIA Identity aux environnements de vos clients : dans le cloud, sur site ou en environnement souverain.',
+  },
+];
+
+const solutions = [
+  ...platforms.map((p) => ({
+    icon: p.icon as IconName,
+    title: p.name,
+    text: p.summary,
+    tbd: p.summaryTbd,
+    href: platformHref(p.slug),
+  })),
+  {
+    icon: 'workflow' as IconName,
+    title: 'Services d’intégration',
+    text: 'Cadrage, intégration, migration et exploitation : une même équipe vous accompagne jusqu’à la mise en production.',
+    tbd: undefined,
+    href: '/services/',
+  },
+];
+
+const reasons: { icon: IconName; title: string; text: string; tbd?: string }[] = [
+  {
+    icon: 'globe-lock',
+    title: 'Souveraineté',
+    text: 'Cloud, on-premise ou environnement isolé : vos données d’identité restent dans le périmètre que vous choisissez.',
+  },
+  {
+    icon: 'plug',
+    title: 'Intégration simple',
+    text: 'Connexion à vos annuaires et à vos applications par des protocoles standards.',
+    tbd: 'À CONFIRMER : OIDC, SAML 2.0, LDAP',
+  },
+  {
+    icon: 'scroll-text',
+    title: 'Traçabilité complète',
+    text: 'Chaque authentification et chaque action d’administration est horodatée et consultable depuis la console.',
+  },
+  {
+    icon: 'life-buoy',
+    title: 'Accompagnement',
+    text: 'Du cadrage à l’exploitation, une équipe identifiée suit votre projet et reste votre interlocuteur.',
+  },
+];
+
+const cases: { icon: IconName; title: string; text: string; href: string }[] = [
+  {
+    icon: 'user-check',
+    title: 'Accès des prestataires',
+    text: 'Donner à des intervenants externes un accès nominatif, limité et tracé aux seules applications dont ils ont besoin.',
+    href: '/architectures/#federation',
+  },
+  {
+    icon: 'git-merge',
+    title: 'Fédération entre entités',
+    text: 'Unifier l’authentification de plusieurs entités d’un même groupe, sans fusionner leurs annuaires.',
+    href: '/architectures/#federation',
+  },
+  {
+    icon: 'arrow-left-right',
+    title: 'Reprise d’un service externe',
+    text: 'Ramener dans votre périmètre une authentification aujourd’hui confiée à un service que vous ne contrôlez pas.',
+    href: '/services/#migration',
+  },
+  {
+    icon: 'lock',
+    title: 'Environnement isolé',
+    text: 'Authentifier les opérateurs d’un système qui ne dispose d’aucune connexion extérieure.',
+    href: '/architectures/#souverain',
+  },
+  {
+    icon: 'search',
+    title: 'Audit des accès',
+    text: 'Établir qui a accédé à quoi, et quand, à partir d’un journal unique et horodaté.',
+    href: '/plateformes/luxia-identity/#capacites',
+  },
+  {
+    icon: 'log-in',
+    title: 'Authentification unifiée',
+    text: 'Offrir à vos utilisateurs un point d’entrée unique pour l’ensemble de leurs applications.',
+    href: '/plateformes/luxia-identity/',
+  },
+];
+---
+
+<BaseLayout
+  title="Luxia-IT"
+  description="Luxia-IT conçoit des logiciels d'identité et de confiance : gestion des identités et des accès, fédération, journaux d'audit, en cloud, sur site ou en environnement souverain."
+>
+  <HeroHome
+    pre={['Identités numériques,', 'accès sous contrôle']}
+    phrases={['Sécurisez vos accès', 'Fédérez vos identités', 'Tracez chaque connexion', 'Déployez chez vous']}
+    suffix="sans perdre le contrôle."
+    sub={['Gestion des identités et des accès', 'Fédération des fournisseurs', 'Journaux d’audit', 'Cloud, on-premise ou souverain']}
+    next="#complexite"
+  />
+
+  <!-- 1. Maîtriser la complexité -->
+  <section class="section" id="complexite" aria-labelledby="complexite-title">
+    <div class="container">
+      <SectionTitle id="complexite-title" before="Maîtrisez la " hl="complexité" after=" de vos identités numériques" />
+      <div class="split">
+        <div class="split__aside" data-reveal>
+          <p class="t-lead split__lead">
+            Unifiez vos annuaires, vos fournisseurs d’identité et vos applications derrière un point d’entrée unique.
+            Gardez la main sur vos données, quel que soit votre modèle de déploiement.
+          </p>
+          <Button href="/contact/?sujet=demo" variant="outline">Demander une démo</Button>
+        </div>
+        <div class="split__main">
+          {audiences.map((a) => <IconFeature icon={a.icon} title={a.title} text={a.text} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Références -->
+  <LogoStrip />
+
+  <!-- 3. Plateformes et services, sur fond bleu Luxia -->
+  <section class="section on-brand bg-brand" aria-labelledby="solutions-title">
+    <div class="container">
+      <SectionTitle id="solutions-title" before="Protégez vos accès, " hl="simplifiez vos opérations" />
+      <div class="split">
+        <div class="split__aside" data-reveal>
+          <p class="t-lead split__lead">
+            Nos plateformes et nos services couvrent le cycle de vie des identités, de l’authentification jusqu’à
+            l’audit.
+          </p>
+          <Button href="/contact/?sujet=demo" variant="outline-white">Demander une démo</Button>
+        </div>
+        <div class="split__main">
+          {solutions.map((s) => <IconFeature icon={s.icon} title={s.title} text={s.text} tbd={s.tbd} href={s.href} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Vision, autour de l'emblème du logo -->
+  <Vision />
+
+  <!-- 5. Pourquoi Luxia-IT -->
+  <section class="section bg-gray" aria-labelledby="pourquoi-title">
+    <div class="container">
+      <SectionTitle id="pourquoi-title" before="Pourquoi " hl="Luxia-IT" />
+      <ul class="grid grid--4">
+        {
+          reasons.map((r, i) => (
+            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
+              <FeatureCard icon={r.icon} title={r.title} text={r.text} tbd={r.tbd} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. Cas d'usage -->
+  <section class="section" aria-labelledby="cas-title">
+    <div class="container">
+      <SectionTitle id="cas-title" before="Ce que " hl="Luxia-IT" after=" rend possible" />
+      <ul class="grid grid--3 grid--cases">
+        {
+          cases.map((c) => (
+            <li>
+              <CaseCard icon={c.icon} title={c.title} text={c.text} href={c.href} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand
+    before="Parlons de votre "
+    hl="projet"
+    text="Pour découvrir comment Luxia-IT peut sécuriser vos accès sans complexité inutile, contactez-nous."
+    label="Nous contacter"
+  />
+</BaseLayout>

@@ -1,0 +1,298 @@
+---
+/**
+ * Gabarit des pages plateformes : problème résolu, captures, fonctionnement,
+ * architecture, capacités, déploiement, sécurité, statut, démo.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from './PageBanner.astro';
+import SectionTitle from './SectionTitle.astro';
+import IconFeature from './IconFeature.astro';
+import FeatureCard from './FeatureCard.astro';
+import Steps from './Steps.astro';
+import Media from './Media.astro';
+import ArchDiagram from './ArchDiagram.astro';
+import InfoTable from './InfoTable.astro';
+import CtaBand from './CtaBand.astro';
+import Button from './Button.astro';
+import Status from './Status.astro';
+import Tbd from './Tbd.astro';
+import type { ComponentProps } from 'astro/types';
+import type { IconName } from '../data/icons';
+import type { Platform } from '../data/site';
+
+interface Item {
+  icon: IconName;
+  title: string;
+  text: string;
+  tbd?: string | undefined;
+}
+
+interface Row {
+  key: string;
+  value?: string | undefined;
+  tbd?: string | undefined;
+  live?: boolean | undefined;
+}
+
+interface Props {
+  platform: Platform;
+  description: string;
+  titleBefore: string;
+  titleHl: string;
+  lead: string;
+  leadTbd?: string | undefined;
+  problemIntro: string;
+  problemIntroTbd?: string | undefined;
+  problems: readonly Item[];
+  screens: readonly {
+    need: string;
+    caption: string;
+    kind?: 'capture' | 'video' | undefined;
+    src?: string | undefined;
+    poster?: string | undefined;
+    alt?: string | undefined;
+  }[];
+  steps: readonly { title: string; text: string }[];
+  diagram?: Omit<ComponentProps<typeof ArchDiagram>, 'title'> | undefined;
+  capabilities: readonly Item[];
+  deploymentTbd?: string | undefined;
+  security: readonly Item[];
+  referentials: readonly Row[];
+  statusRows: readonly Row[];
+}
+
+const p = Astro.props;
+const demo = `/contact/?plateforme=${p.platform.slug}`;
+const [mainScreen, ...otherScreens] = p.screens;
+
+const deployments: { icon: IconName; title: string; text: string; rows: Row[] }[] = [
+  {
+    icon: 'cloud',
+    title: 'Cloud',
+    text: 'Opéré par Luxia-IT sur une infrastructure dédiée. Vous administrez, nous exploitons.',
+    rows: [
+      { key: 'Exploitation', value: 'Luxia-IT' },
+      { key: 'Données', tbd: 'À CONFIRMER : hébergeur et pays' },
+      { key: 'Mises à jour', value: 'Appliquées par Luxia-IT' },
+    ],
+  },
+  {
+    icon: 'server',
+    title: 'On-premise',
+    text: 'Installé dans vos centres de données et exploité par vos équipes, avec notre support.',
+    rows: [
+      { key: 'Exploitation', value: 'Vos équipes' },
+      { key: 'Données', value: 'Vos centres de données' },
+      { key: 'Mises à jour', value: 'Planifiées avec vous' },
+    ],
+  },
+  {
+    icon: 'lock',
+    title: 'Souverain',
+    text: 'Déployé dans un environnement isolé, sans dépendance à un service extérieur à votre périmètre.',
+    rows: [
+      { key: 'Exploitation', value: 'Dans votre périmètre' },
+      { key: 'Données', value: 'Environnement isolé' },
+      { key: 'Mises à jour', tbd: 'À CONFIRMER : livraison hors ligne' },
+    ],
+  },
+];
+---
+
+<BaseLayout title={p.platform.name} description={p.description}>
+  <PageBanner
+    crumbs={[{ label: 'Plateformes', href: '/plateformes/' }, { label: p.platform.name }]}
+    kicker="Plateforme"
+    title={p.titleBefore}
+    hl={p.titleHl}
+    lead={p.lead}
+  >
+    <Status slot="meta" status={p.platform.status} />
+    <Fragment slot="actions">
+      <Button href={demo}>Demander une démo</Button>
+      <Button href="/contact/" variant="light">Nous contacter</Button>
+    </Fragment>
+  </PageBanner>
+  {p.leadTbd && <p class="container lead-tbd t-small"><Tbd text={p.leadTbd} /></p>}
+
+  <!-- Ce que la plateforme résout -->
+  <section class="section" id="resout" aria-labelledby="resout-title">
+    <div class="container">
+      <SectionTitle id="resout-title" before="Ce que la plateforme " hl="résout" />
+      <div class="split">
+        <div class="split__aside" data-reveal>
+          <p class="t-lead">
+            {p.problemIntro} {p.problemIntroTbd && <Tbd text={p.problemIntroTbd} />}
+          </p>
+          <Button href={demo} variant="outline">Demander une démo</Button>
+        </div>
+        <div class="split__main">
+          {p.problems.map((item) => <IconFeature icon={item.icon} title={item.title} text={item.text} tbd={item.tbd} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Captures du logiciel -->
+  <section class="section bg-gray" aria-labelledby="images-title">
+    <div class="container">
+      <SectionTitle id="images-title" before="La plateforme en " hl="images" />
+      {mainScreen && <Media ratio="wide" {...mainScreen} />}
+      {
+        otherScreens.length > 0 && (
+          <ul class="grid grid--3 screens">
+            {otherScreens.map((s) => (
+              <li>
+                <Media {...s} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Fonctionnement -->
+  <section class="section on-brand bg-brand" id="fonctionnement" aria-labelledby="fonctionnement-title">
+    <div class="container">
+      <SectionTitle id="fonctionnement-title" before="Comment ça " hl="fonctionne" />
+      <Steps steps={p.steps} onBrand />
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="section" aria-labelledby="architecture-title">
+    <div class="container">
+      <SectionTitle id="architecture-title" before="Schéma d’" hl="architecture" />
+      {
+        p.diagram ? (
+          <ArchDiagram title={`Architecture de ${p.platform.name}`} {...p.diagram} />
+        ) : (
+          <Media ratio="wide" need={`schéma d'architecture ${p.platform.name}`} caption="Schéma d’architecture" />
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Capacités -->
+  <section class="section bg-gray" id="capacites" aria-labelledby="capacites-title">
+    <div class="container">
+      <SectionTitle id="capacites-title" before="Capacités " hl="clés" />
+      <ul class="grid grid--3">
+        {
+          p.capabilities.map((c, i) => (
+            <li class:list={[i % 3 > 0 && `d${i % 3}`]}>
+              <FeatureCard icon={c.icon} title={c.title} text={c.text} tbd={c.tbd} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Déploiement -->
+  <section class="section" id="deploiement" aria-labelledby="deploiement-title">
+    <div class="container">
+      <SectionTitle id="deploiement-title" before="Le même logiciel, " hl="là où vous le décidez">
+        {p.deploymentTbd && <p class="t-small"><Tbd text={p.deploymentTbd} /></p>}
+      </SectionTitle>
+      <ul class="grid grid--3">
+        {
+          deployments.map((d, i) => (
+            <li class:list={[i > 0 && `d${i}`]}>
+              <FeatureCard icon={d.icon} title={d.title} text={d.text}>
+                <dl class="deploy-rows">
+                  {d.rows.map((r) => (
+                    <div>
+                      <dt>{r.key}</dt>
+                      <dd>
+                        {r.value} {r.tbd && <Tbd text={r.tbd} />}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </FeatureCard>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sécurité -->
+  <section class="section bg-gray" id="securite" aria-labelledby="securite-title">
+    <div class="container">
+      <SectionTitle id="securite-title" before="Sécurité et " hl="conformité" />
+      <div class="split">
+        <div class="split__aside" data-reveal>
+          <p class="t-lead">
+            Nous documentons les mécanismes de sécurité de la plateforme et fournissons les éléments nécessaires à vos
+            audits.
+          </p>
+          <Button href="/securite/" variant="outline">Signaler une vulnérabilité</Button>
+        </div>
+        <div class="split__main">
+          {p.security.map((item) => <IconFeature icon={item.icon} title={item.title} text={item.text} tbd={item.tbd} />)}
+          <InfoTable label="Référentiels" rows={p.referentials} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statut -->
+  <section class="section" id="statut" aria-labelledby="statut-title">
+    <div class="container narrow">
+      <SectionTitle id="statut-title" before="Statut de la " hl="plateforme" />
+      <InfoTable label={`Statut de ${p.platform.name}`} rows={p.statusRows} />
+    </div>
+  </section>
+
+  <CtaBand
+    before="Demander une démo de "
+    hl={p.platform.name}
+    text="Nous présentons la plateforme à partir de vos fournisseurs d’identité, de vos applications et de vos contraintes de déploiement."
+    href={demo}
+    label="Demander une démo"
+  />
+</BaseLayout>
+
+<style>
+  .lead-tbd {
+    padding-top: 16px;
+    text-align: center;
+  }
+
+  .screens {
+    margin-top: var(--gap);
+  }
+
+  .narrow {
+    max-width: 900px;
+  }
+
+  .deploy-rows {
+    width: 100%;
+    margin-top: 8px;
+    text-align: left;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .deploy-rows div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.875rem;
+  }
+
+  .deploy-rows dt {
+    font-weight: 500;
+    color: var(--slate-darker);
+  }
+
+  .deploy-rows dd {
+    text-align: right;
+    color: var(--fg-muted);
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+/** Cas d'usage : pictogramme, titre, texte et bouton « En savoir plus ». */
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import type { IconName } from '../data/icons';
+
+interface Props {
+  icon: IconName;
+  title: string;
+  text: string;
+  href: string;
+}
+
+const { icon, title, text, href } = Astro.props;
+---
+
+<article class="case" data-reveal>
+  <span class="case__badge"><Icon name={icon} size={44} stroke={1.25} /></span>
+  <h3 class="case__title">{title}</h3>
+  <p class="case__text">{text}</p>
+  <Button href={href} variant="light" size="sm" class="case__btn">En savoir plus</Button>
+</article>
+
+<style>
+  .case {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    text-align: center;
+  }
+
+  .case__badge {
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    margin-bottom: 6px;
+    border-radius: 50%;
+    background-color: rgb(31 95 191 / 0.1);
+    color: var(--brand);
+    transition:
+      background-color 300ms var(--ease),
+      color 300ms var(--ease),
+      transform 300ms var(--ease);
+  }
+
+  .case:hover .case__badge {
+    background-color: var(--brand);
+    color: var(--white);
+    transform: scale(1.04);
+  }
+
+  .case__title {
+    font-size: var(--fs-h4);
+    color: var(--slate-darker);
+  }
+
+  .case__text {
+    max-width: 22rem;
+    font-size: 0.9375rem;
+    color: var(--fg-muted);
+  }
+
+  .case :global(.case__btn) {
+    margin-top: auto;
+  }
+</style>

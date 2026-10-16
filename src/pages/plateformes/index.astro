@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+import FeatureCard from '../../components/FeatureCard.astro';
+import Status from '../../components/Status.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Button from '../../components/Button.astro';
+import { platforms, platformHref } from '../../data/site';
+import type { IconName } from '../../data/icons';
+
+const models: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'cloud', title: 'Cloud', text: 'Opéré par Luxia-IT sur une infrastructure dédiée. Vous administrez, nous exploitons.' },
+  { icon: 'server', title: 'On-premise', text: 'Installé dans vos centres de données et exploité par vos équipes, avec notre support.' },
+  { icon: 'lock', title: 'Souverain', text: 'Déployé dans un environnement isolé, sans dépendance à un service extérieur.' },
+];
+---
+
+<BaseLayout
+  title="Plateformes"
+  description="Les plateformes de Luxia-IT : LUXIA Identity, LUXIA Key et ALMA. Des logiciels déployés et contrôlés par les organisations qui les utilisent."
+>
+  <PageBanner
+    crumbs={[{ label: 'Plateformes' }]}
+    kicker="Nos plateformes"
+    title="Des logiciels que vous "
+    hl="contrôlez"
+    lead="Chaque plateforme Luxia-IT peut être exploitée par nos équipes ou par les vôtres, dans le périmètre que vous définissez."
+  >
+    <Fragment slot="actions">
+      <Button href="/contact/?sujet=demo">Demander une démo</Button>
+    </Fragment>
+  </PageBanner>
+
+  <section class="section" aria-labelledby="liste-title">
+    <div class="container">
+      <SectionTitle id="liste-title" before="Trois plateformes, " hl="une même exigence" />
+      <ul class="grid grid--3">
+        {
+          platforms.map((p, i) => (
+            <li class:list={[i > 0 && `d${i}`]}>
+              <FeatureCard icon={p.icon} title={p.name} text={p.summary} tbd={p.summaryTbd} href={platformHref(p.slug)}>
+                <Status status={p.status} />
+              </FeatureCard>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section bg-gray" aria-labelledby="deploiement-title">
+    <div class="container">
+      <SectionTitle id="deploiement-title" before="Trois modèles de " hl="déploiement" />
+      <ul class="grid grid--3">
+        {
+          models.map((m, i) => (
+            <li class:list={[i > 0 && `d${i}`]}>
+              <FeatureCard icon={m.icon} title={m.title} text={m.text} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand
+    before="Quelle plateforme pour "
+    hl="votre contexte"
+    after=" ?"
+    text="Décrivez votre environnement : nous vous indiquons ce que nos plateformes couvrent, et ce qu’elles ne couvrent pas."
+  />
+</BaseLayout>

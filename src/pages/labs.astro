@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import InfoTable from '../components/InfoTable.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Tbd from '../components/Tbd.astro';
+import type { IconName } from '../data/icons';
+
+const axes: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'fingerprint', title: 'Authentification sans mot de passe', text: 'Clés d’accès et authentificateurs matériels dans des environnements contraints.' },
+  { icon: 'server-cog', title: 'Identités des machines', text: 'Authentification des services, des charges de travail et des agents logiciels.' },
+  { icon: 'key-round', title: 'Cryptographie post-quantique', text: 'Évaluation des algorithmes normalisés et de leur intégration dans nos plateformes.' },
+  { icon: 'scroll-text', title: 'Journaux vérifiables', text: 'Journaux d’audit dont l’intégrité peut être démontrée à un tiers.' },
+];
+---
+
+<BaseLayout title="Labs" description="Luxia-IT Labs : travaux exploratoires sur l'identité, l'authentification et la cryptographie.">
+  <PageBanner
+    crumbs={[{ label: 'Entreprise', href: '/entreprise/' }, { label: 'Labs' }]}
+    kicker="Recherche appliquée"
+    title="Luxia-IT "
+    hl="Labs"
+    lead="Les Labs explorent ce que l’identité devra protéger demain. Leurs travaux ne sont pas des produits."
+  />
+
+  <section class="section bg-gray" aria-labelledby="axes-title">
+    <div class="container">
+      <SectionTitle id="axes-title" before="Nos axes de " hl="recherche">
+        <p class="t-small"><Tbd text="À CONFIRMER : axes de recherche réels" /></p>
+      </SectionTitle>
+      <ul class="grid grid--4">
+        {
+          axes.map((a, i) => (
+            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
+              <FeatureCard icon={a.icon} title={a.title} text={a.text} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="publications-title">
+    <div class="container narrow">
+      <SectionTitle id="publications-title" before="Publications et " hl="notes techniques" />
+      <InfoTable
+        label="Publications"
+        rows={[
+          { key: 'Première publication', tbd: 'À FOURNIR : titre, date et lien' },
+          { key: 'Notes techniques', tbd: 'À FOURNIR' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <CtaBand before="Échanger avec nos " hl="équipes" text="Vous travaillez sur ces sujets ? Nous serons heureux d’en discuter." />
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 900px;
+  }
+</style>

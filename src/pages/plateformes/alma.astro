@@ -1,0 +1,46 @@
+---
+import PlatformPage from '../../components/PlatformPage.astro';
+import { platforms } from '../../data/site';
+
+const platform = platforms.find((p) => p.slug === 'alma')!;
+const tbd = 'À FOURNIR';
+---
+
+<PlatformPage
+  platform={platform}
+  description="ALMA, plateforme de Luxia-IT."
+  titleBefore=""
+  titleHl="ALMA"
+  lead=""
+  leadTbd="À FOURNIR : ce que fait ALMA, en une phrase"
+  problemIntro=""
+  problemIntroTbd="À FOURNIR : problème résolu par ALMA"
+  problems={[
+    { icon: 'target', title: 'Constat 1', text: '', tbd: tbd },
+    { icon: 'target', title: 'Constat 2', text: '', tbd: tbd },
+    { icon: 'target', title: 'Constat 3', text: '', tbd: tbd },
+  ]}
+  screens={[
+    { need: 'capture — interface principale ALMA', caption: 'ALMA — vue principale' },
+    { need: 'capture — ALMA', caption: 'Capture 2' },
+    { need: 'capture — ALMA', caption: 'Capture 3' },
+    { need: 'capture — ALMA', caption: 'Capture 4' },
+  ]}
+  steps={[
+    { title: 'Étape 1', text: '[À FOURNIR]' },
+    { title: 'Étape 2', text: '[À FOURNIR]' },
+    { title: 'Étape 3', text: '[À FOURNIR]' },
+  ]}
+  capabilities={[
+    { icon: 'blocks', title: 'Capacité 1', text: '', tbd: tbd },
+    { icon: 'blocks', title: 'Capacité 2', text: '', tbd: tbd },
+    { icon: 'blocks', title: 'Capacité 3', text: '', tbd: tbd },
+  ]}
+  deploymentTbd="À CONFIRMER : modèles disponibles pour ALMA"
+  security={[{ icon: 'shield-check', title: 'Mécanismes de sécurité', text: '', tbd: tbd }]}
+  referentials={[{ key: 'Référentiels', tbd: tbd }]}
+  statusRows={[
+    { key: 'Statut', tbd: tbd },
+    { key: 'Disponibilité', tbd: tbd },
+  ]}
+/>

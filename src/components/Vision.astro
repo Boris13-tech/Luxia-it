@@ -1,0 +1,243 @@
+---
+/**
+ * La vision de Luxia-IT, présentée autour de l'emblème du logo :
+ * deux traits, deux bleus, qui se rejoignent au sommet.
+ * Formulation proposée, à confirmer par Luxia-IT.
+ */
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import Tbd from './Tbd.astro';
+import type { IconName } from '../data/icons';
+
+interface Props {
+  id?: string | undefined;
+  link?: boolean | undefined;
+}
+
+const { id = 'vision', link = true } = Astro.props;
+
+const pillars: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'globe-lock',
+    title: 'Souveraineté',
+    text: 'Vos identités et vos données d’accès restent dans le périmètre que vous choisissez.',
+  },
+  {
+    icon: 'shield-check',
+    title: 'Confiance',
+    text: 'Chaque accès est vérifié, autorisé et tracé, pour que la confiance se démontre.',
+  },
+  {
+    icon: 'route',
+    title: 'Simplicité',
+    text: 'Une sécurité exigeante, sans complexité inutile pour vos équipes ni vos utilisateurs.',
+  },
+];
+---
+
+<section class="vision section" aria-labelledby={`${id}-title`}>
+  <div class="container vision__inner">
+    <div class="vision__emblem" aria-hidden="true" data-reveal>
+      <svg viewBox="6.5 1 39 35" focusable="false">
+        <polygon class="vision__light" points="23.6,8.4 32.2,8.4 44,34.6 34.6,34.6"></polygon>
+        <polygon class="vision__dark" points="22,2 32.2,2 18.2,34.6 8,34.6"></polygon>
+      </svg>
+      <p class="vision__legend">
+        <span><b class="vision__dot vision__dot--dark"></b>Identité</span>
+        <span><b class="vision__dot vision__dot--light"></b>Confiance</span>
+      </p>
+    </div>
+
+    <div class="vision__body">
+      <p class="kicker" data-reveal>Notre vision</p>
+      <h2 class="vision__title" id={`${id}-title`} data-reveal>
+        Un numérique où chaque organisation <span class="hl">garde la maîtrise</span> de ses identités.
+      </h2>
+      <p class="t-lead vision__lead" data-reveal>
+        Comme les deux traits de notre emblème, l’identité et la confiance se rejoignent : l’une ne tient pas sans
+        l’autre. Luxia-IT construit les logiciels qui les réunissent, sous le contrôle de ceux qui en ont la charge.
+      </p>
+      <p class="t-small" data-reveal><Tbd text="À CONFIRMER : formulation de la vision et lecture de l’emblème" /></p>
+
+      <ul class="vision__pillars">
+        {
+          pillars.map((p, i) => (
+            <li class:list={['vision__pillar', i > 0 && `d${i}`]} data-reveal>
+              <span class="vision__icon">
+                <Icon name={p.icon} size={26} stroke={1.5} />
+              </span>
+              <div>
+                <h3 class="vision__ptitle">{p.title}</h3>
+                <p class="t-small">{p.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      {link && <Button href="/entreprise/" variant="outline">Découvrir Luxia-IT</Button>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .vision {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--white);
+  }
+
+  .vision__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px var(--gap);
+    align-items: center;
+  }
+
+  .vision__emblem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: clamp(32px, 5vw, 64px);
+    border-radius: 50%;
+    aspect-ratio: 1;
+    max-width: 420px;
+    width: 100%;
+    margin-inline: auto;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 45%, var(--brand-tint) 0%, var(--brand-tint) 55%, rgb(234 241 251 / 0) 72%);
+  }
+
+  .vision__emblem svg {
+    width: 72%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .vision__dark,
+  .vision__light {
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+  .vision__dark {
+    fill: var(--brand);
+    stroke: var(--brand);
+  }
+
+  .vision__light {
+    fill: var(--brand-light);
+    stroke: var(--brand-light);
+  }
+
+  .vision__legend {
+    display: flex;
+    gap: 22px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--slate-darker);
+  }
+
+  .vision__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vision__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .vision__dot--dark {
+    background-color: var(--brand);
+  }
+
+  .vision__dot--light {
+    background-color: var(--brand-light);
+  }
+
+  .vision__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .vision__title {
+    font-size: var(--fs-h1);
+    line-height: 1.12;
+    max-width: 18em;
+  }
+
+  .vision__lead {
+    max-width: 40rem;
+  }
+
+  .vision__pillars {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    width: 100%;
+    margin-block: 12px 10px;
+  }
+
+  .vision__pillar {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    padding: 18px;
+    border-radius: var(--radius);
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    transition:
+      border-color var(--dur) var(--ease),
+      transform 300ms var(--ease);
+  }
+
+  .vision__pillar:hover {
+    border-color: var(--brand-light);
+    transform: translateY(-3px);
+  }
+
+  .vision__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: var(--brand);
+    color: var(--white);
+  }
+
+  .vision__pillar:nth-child(2) .vision__icon {
+    background-color: var(--brand-light);
+    color: var(--navy);
+  }
+
+  .vision__ptitle {
+    margin-bottom: 4px;
+    font-size: var(--fs-h4);
+  }
+
+  @media (min-width: 720px) {
+    .vision__pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .vision__pillar {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .vision__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 64px;
+    }
+  }
+</style>

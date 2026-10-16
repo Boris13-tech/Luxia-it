@@ -1,0 +1,209 @@
+---
+/**
+ * Ouverture de l'accueil : plein écran, phrase dont la première partie
+ * change toutes les quelques secondes (fixe avec prefers-reduced-motion).
+ */
+import HeroArt from './HeroArt.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  pre: readonly string[];
+  phrases: readonly string[];
+  suffix: string;
+  sub: readonly string[];
+  next: string;
+  image?: string | undefined;
+}
+
+const { pre, phrases, suffix, sub, next, image } = Astro.props;
+---
+
+<section class="hero on-dark" aria-labelledby="hero-title">
+  <HeroArt image={image} />
+
+  <div class="container hero__inner">
+    <p class="hero__pre rise">
+      {pre.map((line) => <span>{line}</span>)}
+    </p>
+
+    <h1 id="hero-title" class="hero__title rise rise-2">
+      <span class="visually-hidden">{phrases[0]} {suffix}</span>
+      <span class="hero__visual" aria-hidden="true">
+        <span class="rot" data-rotator>
+          {phrases.map((p, i) => <span class:list={['rot__item', i === 0 && 'is-active']}>{p}</span>)}
+        </span>
+        <span class="hero__suffix">{suffix}</span>
+      </span>
+    </h1>
+
+    <p class="hero__sub rise rise-3">
+      {sub.map((s, i) => (i > 0 ? <><span class="hero__pipe">|</span>{s}</> : s))}
+    </p>
+
+    <div class="hero__actions rise rise-3">
+      <Button href="/contact/">Nous contacter</Button>
+      <Button href="/contact/?sujet=demo" variant="light">Demander une démo</Button>
+    </div>
+  </div>
+
+  <a class="hero__scroll" href={next} aria-label="Faire défiler vers la suite">
+    <Icon name="mouse" size={30} stroke={1.25} />
+  </a>
+
+  <svg class="hero__curve" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M0 90 L0 50 Q720 -30 1440 50 L1440 90 Z"></path>
+  </svg>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: max(640px, 100svh);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-align: center;
+    color: var(--gray-100);
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(20px, 2.6vw, 30px);
+    padding-block: calc(var(--header-h) + 40px) 140px;
+  }
+
+  .hero__pre {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--fs-pre);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    font-size: var(--fs-hero);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--gray-100);
+  }
+
+  .hero__visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Phrases empilées dans la même cellule : pas de saut de mise en page */
+  .rot {
+    display: inline-grid;
+    color: var(--brand-light);
+  }
+
+  .rot__item {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(0.35em);
+    transition:
+      opacity 600ms var(--ease),
+      transform 600ms var(--ease);
+  }
+
+  .rot__item.is-active {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Petits écrans : chaque phrase tient sur une ligne, sans trou sous le texte tournant */
+  @media (max-width: 479.98px) {
+    .hero__title {
+      font-size: 1.75rem;
+    }
+  }
+
+  .hero__sub {
+    max-width: 52rem;
+    font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.3rem);
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--white);
+  }
+
+  .hero__pipe {
+    margin-inline: 0.45em;
+    opacity: 0.6;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    padding-top: 10px;
+  }
+
+  .hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    z-index: 2;
+    transform: translateX(-50%);
+    color: var(--slate);
+    animation: nudge 2.4s var(--ease) infinite;
+  }
+
+  .hero__curve {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: 100%;
+    height: clamp(40px, 6vw, 90px);
+    fill: var(--white);
+  }
+
+  @keyframes nudge {
+    0%,
+    100% {
+      transform: translate(-50%, 0);
+    }
+    50% {
+      transform: translate(-50%, 6px);
+    }
+  }
+
+  /* Apparition au chargement */
+  .rise {
+    animation: rise 900ms var(--ease) both;
+  }
+
+  .rise-2 {
+    animation-delay: 120ms;
+  }
+
+  .rise-3 {
+    animation-delay: 240ms;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { initRotators } from '../scripts/rotator';
+  initRotators();
+</script>

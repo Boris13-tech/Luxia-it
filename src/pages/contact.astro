@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Icon from '../components/Icon.astro';
+import Tbd from '../components/Tbd.astro';
+import { platforms } from '../data/site';
+import type { IconName } from '../data/icons';
+
+// Adresse de traitement du formulaire (voir .env.example). Vide : envoi désactivé.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT || '';
+
+const channels: { icon: IconName; label: string; tbd: string; href?: string; hrefLabel?: string }[] = [
+  { icon: 'phone', label: 'Téléphone', tbd: 'À FOURNIR : numéro' },
+  { icon: 'mail', label: 'Commercial', tbd: 'À FOURNIR : adresse e-mail' },
+  { icon: 'shield-alert', label: 'Sécurité', tbd: 'À FOURNIR : adresse dédiée', href: '/securite/', hrefLabel: 'Divulgation responsable' },
+  { icon: 'map-pin', label: 'Adresse', tbd: 'À FOURNIR : adresse postale' },
+];
+---
+
+<BaseLayout title="Contact" description="Contacter Luxia-IT ou demander une démonstration de LUXIA Identity, LUXIA Key ou ALMA.">
+  <PageBanner
+    crumbs={[{ label: 'Contact' }]}
+    kicker="Contact"
+    title="Parlons de votre "
+    hl="projet"
+    lead="Décrivez votre contexte : nous revenons vers vous pour organiser un échange ou une démonstration."
+  />
+
+  <section class="section bg-gray" aria-label="Nous contacter">
+    <div class="container contact">
+      <aside class="contact__info" aria-label="Coordonnées" data-reveal>
+        <h2 class="contact__h">Nos <span class="hl">coordonnées</span></h2>
+        <ul class="contact__list">
+          {
+            channels.map((c) => (
+              <li>
+                <span class="contact__icon">
+                  <Icon name={c.icon} size={22} />
+                </span>
+                <div>
+                  <p class="contact__label">{c.label}</p>
+                  <p>
+                    <Tbd text={c.tbd} />
+                  </p>
+                  {c.href && (
+                    <a class="contact__link" href={c.href}>
+                      {c.hrefLabel} <Icon name="chevron-right" size={14} stroke={2} />
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </aside>
+
+      <form class="form" method="post" action={endpoint || undefined} data-contact-form data-endpoint={endpoint} novalidate data-reveal>
+        <h2 class="contact__h">Écrivez-<span class="hl">nous</span></h2>
+        <div class="form__grid">
+          <div class="field">
+            <label for="nom">Nom et prénom *</label>
+            <input id="nom" name="nom" type="text" autocomplete="name" required maxlength="120" />
+          </div>
+          <div class="field">
+            <label for="organisation">Organisation *</label>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" required maxlength="160" />
+          </div>
+          <div class="field">
+            <label for="fonction">Fonction</label>
+            <input id="fonction" name="fonction" type="text" autocomplete="organization-title" maxlength="120" />
+          </div>
+          <div class="field">
+            <label for="email">E-mail professionnel *</label>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" />
+          </div>
+          <div class="field">
+            <label for="plateforme">Sujet *</label>
+            <select id="plateforme" name="plateforme" required>
+              <option value="demo">Demande de démonstration</option>
+              {platforms.map((p) => <option value={p.slug}>{p.name}</option>)}
+              <option value="services">Services</option>
+              <option value="autre">Autre demande</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="deploiement">Modèle de déploiement envisagé</label>
+            <select id="deploiement" name="deploiement">
+              <option value="a-definir">À définir</option>
+              <option value="cloud">Cloud</option>
+              <option value="on-premise">On-premise</option>
+              <option value="souverain">Souverain</option>
+            </select>
+          </div>
+          <div class="field field--full">
+            <label for="message">Votre contexte *</label>
+            <textarea id="message" name="message" rows="6" maxlength="4000" required></textarea>
+          </div>
+
+          <!-- Champ piège anti-robots : invisible pour les personnes -->
+          <div class="hp" aria-hidden="true">
+            <label for="site_web">Ne pas remplir</label>
+            <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="field field--full field--check">
+            <input id="consentement" name="consentement" type="checkbox" required />
+            <label for="consentement">
+              J’accepte que Luxia-IT utilise ces informations pour répondre à ma demande, conformément à la
+              <a href="/confidentialite/">politique de confidentialité</a>. *
+            </label>
+          </div>
+        </div>
+
+        <div class="form__actions">
+          <button class="btn btn--primary" type="submit" data-submit>
+            <Icon name="chevron-right" size={16} stroke={2} />
+            Envoyer la demande
+          </button>
+          <p class="form__status t-small" role="status" aria-live="polite" data-form-status></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gap);
+    align-items: start;
+  }
+
+  .contact__info,
+  .form {
+    padding: clamp(24px, 3.5vw, 44px);
+    border-radius: var(--radius);
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .contact__h {
+    margin-bottom: 24px;
+    font-size: var(--fs-h3);
+  }
+
+  .contact__list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .contact__list li {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  .contact__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: rgb(31 95 191 / 0.1);
+    color: var(--brand);
+  }
+
+  .contact__label {
+    font-weight: 500;
+    color: var(--slate-darker);
+  }
+
+  .contact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--brand-text);
+  }
+
+  .form__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px var(--gap);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--slate-darker);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--slate-darker);
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+    appearance: none;
+  }
+
+  .field select {
+    padding-right: 40px;
+    background-image: url('/select-chevron.svg');
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--brand);
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgb(31 95 191 / 0.18);
+  }
+
+  .field [aria-invalid='true'] {
+    border-color: #c0392b;
+  }
+
+  .field--check {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .field--check input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    min-height: 0;
+    padding: 0;
+    margin-top: 2px;
+    appearance: auto;
+    accent-color: var(--brand);
+  }
+
+  .field--check label {
+    font-weight: 300;
+    line-height: 1.55;
+  }
+
+  .field--check a {
+    color: var(--brand-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    margin-top: 28px;
+  }
+
+  .form__status:empty {
+    display: none;
+  }
+
+  .form__status[data-state='error'],
+  .form__status[data-state='warn'] {
+    color: #b03a2e;
+  }
+
+  .form__status[data-state='ok'] {
+    color: #15703f;
+  }
+
+  @media (min-width: 720px) {
+    .form__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .contact__info {
+      position: sticky;
+      top: 100px;
+    }
+  }
+</style>
+
+<script>
+  import { initContactForm } from '../scripts/contact';
+  initContactForm();
+</script>
