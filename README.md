@@ -123,6 +123,10 @@ L'URL publique se définit au build : `SITE_URL=https://www.exemple.fr npm run b
 **Hébergement statique** (Cloudflare Pages, Netlify ou tout CDN) : publier
 `dist/`. Le fichier `_headers` est pris en compte automatiquement.
 
+**Vercel** : `vercel.json` fixe le préréglage Astro, la commande de build, le
+dossier `dist` et les en-têtes de sécurité (Vercel ne lit pas `_headers`). Ces
+deux fichiers doivent rester alignés avec `deploy/security-headers.conf`.
+
 **Hébergement auto-géré ou souverain** (conteneur) :
 
 ```bash

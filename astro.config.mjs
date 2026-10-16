@@ -3,7 +3,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // URL publique du site : à définir au déploiement (SITE_URL=https://www.exemple.fr npm run build).
-const site = process.env.SITE_URL ?? 'https://luxia-it.example';
+// Sur Vercel, à défaut, on utilise l'adresse de production du projet.
+const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const site = process.env.SITE_URL ?? (vercelUrl ? `https://${vercelUrl}` : 'https://luxia-it.example');
 
 export default defineConfig({
   site,
