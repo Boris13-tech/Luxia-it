@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import IconFeature from '../components/IconFeature.astro';
+import InfoTable from '../components/InfoTable.astro';
+import Media from '../components/Media.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import Tbd from '../components/Tbd.astro';
+import Vision from '../components/Vision.astro';
+import type { IconName } from '../data/icons';
+
+const principles: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'globe-lock',
+    title: 'La souveraineté se démontre',
+    text: 'Elle se vérifie dans le code, l’architecture et le modèle de déploiement, pas dans un discours.',
+  },
+  {
+    icon: 'badge-check',
+    title: 'Nous décrivons ce que nous livrons',
+    text: 'Nos documents décrivent des fonctionnalités disponibles. Ce qui est en développement est présenté comme tel.',
+  },
+  {
+    icon: 'handshake',
+    title: 'Le client garde la main',
+    text: 'Chaque déploiement doit pouvoir être audité et exploité par les équipes du client, y compris sans nous.',
+  },
+  {
+    icon: 'target',
+    title: 'La précision avant le volume',
+    text: 'Nous construisons peu de plateformes, et nous les construisons pour durer.',
+  },
+];
+---
+
+<BaseLayout title="Entreprise" description="Luxia-IT conçoit des logiciels d'identité pour les organisations qui doivent garder le contrôle de leurs accès.">
+  <PageBanner
+    crumbs={[{ label: 'Entreprise' }]}
+    kicker="À propos"
+    title="Rendre le contrôle des identités "
+    hl="à ceux qui en ont la charge"
+    lead="Luxia-IT conçoit des logiciels d’identité pour les organisations qui doivent garder le contrôle de leurs accès."
+  />
+
+  <Vision id="vision" link={false} />
+
+  <section class="section bg-gray" aria-labelledby="mission-title">
+    <div class="container">
+      <SectionTitle id="mission-title" before="Notre " hl="mission" />
+      <div class="split">
+        <div class="split__aside" data-reveal>
+          <p class="t-lead">
+            Les accès aux systèmes critiques reposent de plus en plus sur des services que leurs utilisateurs ne
+            maîtrisent pas. Luxia-IT développe des plateformes qui peuvent être déployées, exploitées et auditées dans le
+            périmètre de chaque organisation.
+          </p>
+          <p class="t-small"><Tbd text="À CONFIRMER : formulation de la mission" /></p>
+          <Button href="/contact/" variant="outline">Nous contacter</Button>
+        </div>
+        <div class="split__main">
+          <IconFeature icon="shield-check" title="Des plateformes" text="LUXIA Identity, LUXIA Key et ALMA : des logiciels conçus pour être déployés et contrôlés par leurs utilisateurs." href="/plateformes/" />
+          <IconFeature icon="workflow" title="Des services" text="Cadrage, intégration, migration et exploitation, assurés par une même équipe." href="/services/" />
+          <IconFeature icon="flask-conical" title="Des Labs" text="Une activité de recherche appliquée sur l’authentification et la cryptographie." href="/labs/" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="principes-title">
+    <div class="container">
+      <SectionTitle id="principes-title" before="Nos " hl="principes" />
+      <ul class="grid grid--4">
+        {
+          principles.map((p, i) => (
+            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
+              <FeatureCard icon={p.icon} title={p.title} text={p.text} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section bg-gray" aria-labelledby="reperes-title">
+    <div class="container narrow">
+      <SectionTitle id="reperes-title" before="Luxia-IT " hl="en bref" />
+      <InfoTable
+        label="Repères"
+        rows={[
+          { key: 'Création', tbd: 'À FOURNIR : année' },
+          { key: 'Siège', tbd: 'À FOURNIR : ville, pays' },
+          { key: 'Forme juridique', tbd: 'À FOURNIR' },
+          { key: 'Équipe', tbd: 'À FOURNIR : effectif' },
+          { key: 'Plateformes', value: 'LUXIA Identity, LUXIA Key, ALMA' },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="direction-title">
+    <div class="container">
+      <SectionTitle id="direction-title" before="L’équipe de " hl="direction">
+        <p class="t-small"><Tbd text="À FOURNIR : noms, fonctions et photographies réelles" /></p>
+      </SectionTitle>
+      <ul class="grid grid--3">
+        {
+          [1, 2, 3].map((n, i) => (
+            <li class:list={['person', i > 0 && `d${i}`]} data-reveal>
+              <Media ratio="standard" need={`photographie — dirigeant ${n}`} />
+              <p class="person__name"><Tbd text="Nom" /></p>
+              <p class="t-small"><Tbd text="Fonction" /></p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand before="Rejoignez " hl="Luxia-IT" text="Nous recrutons des personnes qui préfèrent la précision à l’effet." href="/carrieres/" label="Voir les carrières" />
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 900px;
+  }
+
+  .person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .person :global(.media) {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .person__name {
+    font-size: var(--fs-h4);
+    font-weight: 600;
+  }
+</style>

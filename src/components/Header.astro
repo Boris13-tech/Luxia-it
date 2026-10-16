@@ -1,0 +1,353 @@
+---
+/**
+ * En-tête : transparent sur le bandeau d'ouverture, blanc dès que l'on
+ * fait défiler. Menus déroulants au survol et au clavier (sans JS) ;
+ * menu plein écran sur mobile.
+ */
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import { mainNav } from '../data/site';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="hdr" data-header>
+  <div class="container hdr__bar">
+    <a class="hdr__brand" href="/" aria-label="Luxia-IT — accueil">
+      <Logo />
+    </a>
+
+    <nav class="hdr__nav" aria-label="Navigation principale">
+      <ul class="hdr__menu">
+        {
+          mainNav.map((item) => (
+            <li class:list={['hdr__item', item.children && 'has-sub']}>
+              <a class="hdr__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+                {item.children && <Icon name="chevron-down" size={14} stroke={2} class="hdr__caret" />}
+              </a>
+              {item.children && (
+                <ul class="hdr__sub">
+                  {item.children.map((child) => (
+                    <li>
+                      <a class="hdr__sublink" href={child.href}>
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <Button href="/contact/" size="sm" class="hdr__cta">Demander une démo</Button>
+
+    <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-trigger>
+      <span class="visually-hidden" data-menu-label>Ouvrir le menu</span>
+      <span class="hdr__burger-icon hdr__burger-icon--open"><Icon name="menu" size={26} /></span>
+      <span class="hdr__burger-icon hdr__burger-icon--close"><Icon name="x" size={26} /></span>
+    </button>
+  </div>
+
+  <div class="mnav" id="menu-mobile" data-menu>
+    <nav class="container mnav__inner" aria-label="Navigation mobile">
+      <ul>
+        {
+          mainNav.map((item) =>
+            item.children ? (
+              <li class="mnav__item">
+                <details class="mnav__group">
+                  <summary class="mnav__link">
+                    {item.label}
+                    <Icon name="chevron-down" size={18} stroke={2} class="mnav__caret" />
+                  </summary>
+                  <ul class="mnav__sub">
+                    {item.children.map((child) => (
+                      <li>
+                        <a href={child.href}>{child.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </li>
+            ) : (
+              <li class="mnav__item">
+                <a class="mnav__link" href={item.href}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+      <Button href="/contact/" class="mnav__cta">Demander une démo</Button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    color: var(--white);
+    transition:
+      background-color 300ms var(--ease),
+      color 300ms var(--ease),
+      box-shadow 300ms var(--ease);
+  }
+
+  /* Après défilement (ou menu ouvert) : fond blanc, texte ardoise */
+  .hdr:global(.is-solid) {
+    background-color: var(--white);
+    color: var(--slate);
+    box-shadow: 0 2px 16px rgb(44 52 58 / 0.1);
+  }
+
+  .hdr__bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: var(--header-h);
+    transition: height 300ms var(--ease);
+  }
+
+  .hdr:global(.is-solid) .hdr__bar {
+    height: 68px;
+  }
+
+  .hdr__brand {
+    flex: none;
+    display: inline-flex;
+    margin-right: auto;
+  }
+
+  /* Sur le bandeau d'ouverture (fond marine) : logo en version inversée,
+     survol et soulignement en bleu clair */
+  :global(.hdr:not(.is-solid) .hdr__brand .logo) {
+    --logo-dark: #ffffff;
+    --logo-light: #a9c8f2;
+    --logo-name: #ffffff;
+    --logo-tagline: #c6dbf7;
+  }
+
+  :global(.hdr:not(.is-solid)) .hdr__link:hover,
+  :global(.hdr:not(.is-solid)) .hdr__item:focus-within > .hdr__link {
+    color: var(--brand-pale);
+  }
+
+  :global(.hdr:not(.is-solid)) .hdr__link[aria-current]::after {
+    background-color: var(--brand-light);
+  }
+
+  .hdr__nav {
+    display: none;
+  }
+
+  .hdr__menu {
+    display: flex;
+    align-items: center;
+  }
+
+  .hdr__item {
+    position: relative;
+  }
+
+  .hdr__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 19px 14px;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .hdr__link:hover,
+  .hdr__item:focus-within > .hdr__link {
+    color: var(--brand);
+  }
+
+  .hdr__link[aria-current]::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--brand);
+  }
+
+  .hdr__link :global(.hdr__caret) {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .has-sub:hover :global(.hdr__caret),
+  .has-sub:focus-within :global(.hdr__caret) {
+    transform: rotate(180deg);
+  }
+
+  /* Menu déroulant */
+  .hdr__sub {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 240px;
+    padding: 10px 0;
+    background-color: var(--white);
+    color: var(--slate);
+    border-top: 3px solid var(--brand);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    box-shadow: var(--shadow-hover);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition:
+      opacity 220ms var(--ease),
+      transform 220ms var(--ease),
+      visibility 0s linear 220ms;
+  }
+
+  .has-sub:hover > .hdr__sub,
+  .has-sub:focus-within > .hdr__sub {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 220ms var(--ease),
+      transform 220ms var(--ease);
+  }
+
+  .hdr__sublink {
+    display: block;
+    padding: 9px 22px;
+    font-size: 0.9375rem;
+    transition:
+      color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease),
+      padding-left var(--dur) var(--ease);
+  }
+
+  .hdr__sublink:hover {
+    color: var(--brand-text);
+    background-color: var(--gray-50);
+    padding-left: 28px;
+  }
+
+  .hdr :global(.hdr__cta) {
+    display: none;
+  }
+
+  /* Bouton menu mobile */
+  .hdr__burger {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -8px;
+  }
+
+  .hdr__burger-icon--close,
+  .hdr__burger[aria-expanded='true'] .hdr__burger-icon--open {
+    display: none;
+  }
+
+  .hdr__burger[aria-expanded='true'] .hdr__burger-icon--close {
+    display: block;
+  }
+
+  /* Menu mobile */
+  .mnav {
+    position: fixed;
+    inset: 68px 0 0 0;
+    background-color: var(--white);
+    color: var(--slate);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition:
+      opacity 280ms var(--ease),
+      transform 280ms var(--ease),
+      visibility 0s linear 280ms;
+  }
+
+  .mnav:global([data-open]) {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 280ms var(--ease),
+      transform 280ms var(--ease);
+  }
+
+  .mnav__inner {
+    padding-block: 16px 40px;
+  }
+
+  .mnav__item {
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .mnav__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    font-size: 1.125rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mnav__link::-webkit-details-marker {
+    display: none;
+  }
+
+  .mnav__group[open] :global(.mnav__caret) {
+    transform: rotate(180deg);
+  }
+
+  .mnav__sub {
+    padding: 0 0 14px 14px;
+    border-left: 2px solid var(--brand);
+  }
+
+  .mnav__sub a {
+    display: block;
+    padding: 8px 0;
+    color: var(--fg-muted);
+  }
+
+  .mnav :global(.mnav__cta) {
+    margin-top: 28px;
+  }
+
+  @media (min-width: 1100px) {
+    .hdr__nav {
+      display: block;
+    }
+
+    .hdr :global(.hdr__cta) {
+      display: inline-flex;
+    }
+
+    .hdr__burger,
+    .mnav {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initHeader } from '../scripts/header';
+  initHeader();
+</script>

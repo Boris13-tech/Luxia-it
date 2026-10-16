@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ArchDiagram from '../components/ArchDiagram.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Tbd from '../components/Tbd.astro';
+import type { ComponentProps } from 'astro/types';
+
+interface Architecture {
+  id: string;
+  name: string;
+  summary: string;
+  when: string;
+  components: readonly string[];
+  diagram: ComponentProps<typeof ArchDiagram>;
+}
+
+const architectures: readonly Architecture[] = [
+  {
+    id: 'federation',
+    name: 'Fédération multi-fournisseurs',
+    summary:
+      'LUXIA Identity sert de point d’entrée unique devant plusieurs fournisseurs d’identité : annuaire interne, fournisseurs de partenaires, comptes de prestataires.',
+    when: 'Plusieurs populations d’utilisateurs accèdent aux mêmes applications avec des identités d’origines différentes.',
+    components: ['LUXIA Identity', 'Annuaire d’entreprise', 'Fournisseurs externes (OIDC, SAML)', 'Applications'],
+    diagram: {
+      title: 'Fédération multi-fournisseurs',
+      inputs: { label: 'Utilisateurs', items: ['Collaborateurs', 'Partenaires', 'Prestataires'] },
+      core: { label: 'LUXIA Identity', items: ['Découverte du fournisseur', 'Fédération', 'Politiques d’accès', 'Journal d’audit'] },
+      outputs: { label: 'Applications', items: ['Applications métier', 'Portails partenaires'] },
+      base: { label: 'Fournisseurs d’identité', items: ['Annuaire interne', 'Fournisseur partenaire A', 'Fournisseur partenaire B'] },
+      links: { in: 'Connexion', out: 'Jeton signé', base: 'Fédération' },
+    },
+  },
+  {
+    id: 'cloud',
+    name: 'Déploiement cloud opéré',
+    summary: 'Luxia-IT exploite la plateforme sur une infrastructure dédiée. Vos équipes administrent les utilisateurs, les applications et les politiques.',
+    when: 'Vous voulez disposer de la plateforme sans en assurer l’exploitation.',
+    components: ['Instance dédiée', 'Sauvegardes', 'Supervision par Luxia-IT', 'Console d’administration client'],
+    diagram: {
+      title: 'Déploiement cloud opéré',
+      inputs: { label: 'Votre organisation', items: ['Utilisateurs', 'Administrateurs'] },
+      core: { label: 'Instance dédiée', items: ['LUXIA Identity', 'Base de données', 'Sauvegardes', 'Supervision'] },
+      outputs: { label: 'Votre système d’information', items: ['Applications', 'Annuaire'] },
+      links: { in: 'HTTPS', out: 'Fédération' },
+      note: 'Hébergeur et localisation des données : à confirmer.',
+    },
+  },
+  {
+    id: 'on-premise',
+    name: 'Déploiement on-premise',
+    summary: 'La plateforme est installée dans vos centres de données, sur votre infrastructure, et exploitée par vos équipes avec le support de Luxia-IT.',
+    when: 'Vos politiques internes imposent que les données d’identité restent dans vos centres de données.',
+    components: ['Nœuds applicatifs', 'Base de données', 'Répartiteur de charge', 'Supervision existante'],
+    diagram: {
+      title: 'Déploiement on-premise',
+      inputs: { label: 'Réseau interne', items: ['Utilisateurs', 'Administrateurs'] },
+      core: { label: 'Votre centre de données', items: ['Répartiteur de charge', 'Nœud applicatif 1', 'Nœud applicatif 2', 'Base de données'] },
+      outputs: { label: 'Applications internes', items: ['Applications métier', 'Outils internes'] },
+      base: { label: 'Services existants', items: ['Annuaire Active Directory', 'Supervision', 'Sauvegarde'] },
+      links: { in: 'Connexion', out: 'Jeton signé', base: 'Intégration' },
+      note: 'Dimensionnement et haute disponibilité : à confirmer selon la volumétrie.',
+    },
+  },
+  {
+    id: 'souverain',
+    name: 'Environnement souverain isolé',
+    summary: 'La plateforme fonctionne dans un environnement sans connexion à un service extérieur. Les mises à jour sont livrées sous forme de paquets vérifiables.',
+    when: 'Vos systèmes opèrent dans un périmètre isolé ou classifié.',
+    components: ['Instance isolée', 'Paquets de mise à jour signés', 'Journal d’audit local', 'Annuaire local'],
+    diagram: {
+      title: 'Environnement souverain isolé',
+      inputs: { label: 'Périmètre isolé', items: ['Opérateurs', 'Administrateurs'] },
+      core: { label: 'LUXIA Identity', items: ['Authentification', 'Politiques d’accès', 'Journal d’audit local', 'Vérification des mises à jour'] },
+      outputs: { label: 'Systèmes du périmètre', items: ['Applications critiques'] },
+      base: { label: 'Livraison hors ligne', items: ['Paquets signés', 'Support physique'] },
+      links: { in: 'Connexion', out: 'Jeton signé', base: 'Mise à jour' },
+      note: 'Mode de livraison hors ligne : à confirmer.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Architectures de référence"
+  description="Architectures de référence Luxia-IT : fédération multi-fournisseurs, déploiement cloud opéré, on-premise et environnement souverain isolé."
+>
+  <PageBanner
+    crumbs={[{ label: 'Architectures de référence' }]}
+    kicker="Architectures de référence"
+    title="Des schémas de déploiement "
+    hl="documentés"
+    lead="Chaque architecture décrit les composants, les flux et les conditions dans lesquelles elle s’applique."
+  >
+    <Fragment slot="actions">
+      {architectures.map((a) => <Button href={`#${a.id}`} variant="light" size="sm">{a.name}</Button>)}
+    </Fragment>
+  </PageBanner>
+
+  {
+    architectures.map((a, i) => (
+      <section class:list={['section', 'arch-sec', i % 2 === 1 && 'bg-gray']} id={a.id} aria-labelledby={`${a.id}-title`}>
+        <div class="container">
+          <SectionTitle id={`${a.id}-title`} kicker={`Architecture A${i + 1}`} hl={a.name} />
+          <div class="arch-sec__info" data-reveal>
+            <div class="arch-sec__card">
+              <p class="t-lead">{a.summary}</p>
+            </div>
+            <div class="arch-sec__card">
+              <h3 class="arch-sec__h"><Icon name="target" size={22} /> Quand l’utiliser</h3>
+              <p>{a.when}</p>
+              <h3 class="arch-sec__h"><Icon name="blocks" size={22} /> Composants</h3>
+              <ul class="arch-sec__chips">
+                {a.components.map((c) => (
+                  <li>{c}</li>
+                ))}
+              </ul>
+              <h3 class="arch-sec__h"><Icon name="file-check" size={22} /> Dossier technique</h3>
+              <p><Tbd text="À FOURNIR : PDF téléchargeable" /></p>
+            </div>
+          </div>
+          <ArchDiagram {...a.diagram} />
+        </div>
+      </section>
+    ))
+  }
+
+  <CtaBand
+    before="Validons une architecture sur "
+    hl="votre cas"
+    text="Nos équipes adaptent ces schémas à vos contraintes de sécurité, de disponibilité et de localisation."
+  />
+</BaseLayout>
+
+<style>
+  .arch-sec {
+    scroll-margin-top: 60px;
+  }
+
+  .arch-sec__info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gap);
+    margin-bottom: clamp(36px, 5vw, 56px);
+  }
+
+  .arch-sec__card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius);
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .arch-sec__h {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 1.0625rem;
+  }
+
+  .arch-sec__h:first-child {
+    margin-top: 0;
+  }
+
+  .arch-sec__h :global(svg) {
+    color: var(--brand);
+  }
+
+  .arch-sec__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .arch-sec__chips li {
+    padding: 4px 14px;
+    border-radius: 999px;
+    background-color: rgb(31 95 191 / 0.1);
+    color: var(--brand-text);
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+
+  @media (min-width: 900px) {
+    .arch-sec__info {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    }
+  }
+</style>

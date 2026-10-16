@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import Steps from '../components/Steps.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Tbd from '../components/Tbd.astro';
+import type { IconName } from '../data/icons';
+
+const services: { id: string; icon: IconName; name: string; text: string; deliverables: string[] }[] = [
+  {
+    id: 'cadrage',
+    icon: 'compass',
+    name: 'Cadrage et architecture',
+    text: 'Nous inventorions vos fournisseurs d’identité, vos applications et vos contraintes réglementaires, puis nous définissons l’architecture cible et le modèle de déploiement.',
+    deliverables: ['Dossier d’architecture', 'Plan de déploiement'],
+  },
+  {
+    id: 'integration',
+    icon: 'plug',
+    name: 'Intégration',
+    text: 'Nous connectons la plateforme à vos annuaires, à vos fournisseurs d’identité et à vos applications, puis nous conduisons les tests de recette avec vos équipes.',
+    deliverables: ['Configuration documentée', 'Procès-verbal de recette'],
+  },
+  {
+    id: 'migration',
+    icon: 'arrow-left-right',
+    name: 'Migration',
+    text: 'Nous migrons les identités et les applications depuis votre solution existante, par lots, selon un calendrier défini avec vous.',
+    deliverables: ['Plan de migration', 'Bilan par lot'],
+  },
+  {
+    id: 'exploitation',
+    icon: 'life-buoy',
+    name: 'Exploitation et support',
+    text: 'Nous assurons le maintien en condition opérationnelle et de sécurité, selon le modèle de déploiement retenu.',
+    deliverables: ['Niveaux de service', 'Rapports d’exploitation'],
+  },
+];
+
+const method = [
+  { title: 'Cadrage', text: 'Périmètre, contraintes et critères de réussite.' },
+  { title: 'Conception', text: 'Architecture cible et plan de déploiement validés.' },
+  { title: 'Déploiement', text: 'Intégration, recette et mise en production par lots.' },
+  { title: 'Exploitation', text: 'Suivi, mises à jour et support.' },
+];
+---
+
+<BaseLayout
+  title="Services"
+  description="Services Luxia-IT : cadrage et architecture, intégration, migration, exploitation et support des plateformes d'identité."
+>
+  <PageBanner
+    crumbs={[{ label: 'Services' }]}
+    kicker="Services"
+    title="Nous déployons nos plateformes "
+    hl="avec vous"
+    lead="Une même équipe conduit votre projet, du cadrage jusqu’à la mise en production."
+  >
+    <Fragment slot="actions">
+      <Button href="/contact/">Nous contacter</Button>
+    </Fragment>
+  </PageBanner>
+
+  <section class="section" aria-labelledby="services-title">
+    <div class="container">
+      <SectionTitle id="services-title" before="Quatre services, " hl="un seul interlocuteur">
+        <p class="t-small"><Tbd text="À CONFIRMER : périmètre des services proposés" /></p>
+      </SectionTitle>
+      <ul class="svc">
+        {
+          services.map((s, i) => (
+            <li class:list={['svc__item', i % 2 === 1 && 'd1']} id={s.id} data-reveal>
+              <span class="svc__icon">
+                <Icon name={s.icon} size={40} stroke={1.25} />
+              </span>
+              <div class="svc__body">
+                <h3 class="svc__title">{s.name}</h3>
+                <p class="svc__text">{s.text}</p>
+                <ul class="svc__deliv" aria-label="Livrables">
+                  {s.deliverables.map((d) => (
+                    <li>
+                      <Icon name="circle-check" size={18} stroke={1.75} />
+                      {d}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section on-brand bg-brand" aria-labelledby="methode-title">
+    <div class="container">
+      <SectionTitle id="methode-title" before="Notre " hl="méthode" />
+      <Steps steps={method} onBrand />
+    </div>
+  </section>
+
+  <CtaBand
+    before="Préparons votre "
+    hl="déploiement"
+    text="Décrivez votre environnement et vos échéances : nous revenons vers vous avec une proposition de cadrage."
+  />
+</BaseLayout>
+
+<style>
+  .svc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gap);
+  }
+
+  .svc__item {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 24px;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius);
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    scroll-margin-top: 110px;
+    transition:
+      transform 300ms var(--ease),
+      box-shadow 300ms var(--ease);
+  }
+
+  .svc__item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .svc__icon {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgb(31 95 191 / 0.1);
+    color: var(--brand);
+  }
+
+  .svc__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .svc__title {
+    font-size: var(--fs-h3);
+  }
+
+  .svc__text {
+    color: var(--fg-muted);
+  }
+
+  .svc__deliv {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding-top: 4px;
+  }
+
+  .svc__deliv li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--slate-darker);
+  }
+
+  .svc__deliv :global(svg) {
+    color: var(--brand);
+  }
+
+  @media (min-width: 900px) {
+    .svc {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 559.98px) {
+    .svc__item {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

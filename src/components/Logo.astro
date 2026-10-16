@@ -1,0 +1,92 @@
+---
+/**
+ * Logo Luxia-IT : emblème « A » (jambe bleu foncé, jambe bleu clair),
+ * redessiné en vecteur à partir du fichier fourni
+ * (public/brand/luxia-it-logo-original.png), suivi du nom.
+ *
+ * Variante « reverse » pour les fonds sombres ou bleus : jambe gauche blanche.
+ */
+interface Props {
+  tone?: 'color' | 'reverse' | undefined;
+  /** Afficher le nom à côté de l'emblème. */
+  wordmark?: boolean | undefined;
+}
+
+const { tone = 'color', wordmark = true } = Astro.props;
+---
+
+<span class:list={['logo', `logo--${tone}`]}>
+  <svg class="logo__mark" viewBox="6.5 1 39 35" width="42" height="38" aria-hidden="true" focusable="false">
+    <polygon class="logo__light" points="23.6,8.4 32.2,8.4 44,34.6 34.6,34.6"></polygon>
+    <polygon class="logo__dark" points="22,2 32.2,2 18.2,34.6 8,34.6"></polygon>
+  </svg>
+  {
+    wordmark && (
+      <span class="logo__text">
+        <span class="logo__name">LUXIA-IT</span>
+        <span class="logo__tagline">Identité &amp; confiance</span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo {
+    --logo-dark: #1f5fbf;
+    --logo-light: #8db3e8;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+  }
+
+  .logo__mark {
+    width: 42px;
+    height: 38px;
+  }
+
+  .logo__dark,
+  .logo__light {
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+  .logo__dark {
+    fill: var(--logo-dark);
+    stroke: var(--logo-dark);
+  }
+
+  .logo__light {
+    fill: var(--logo-light);
+    stroke: var(--logo-light);
+  }
+
+  .logo__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .logo__name {
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--logo-name, var(--navy));
+  }
+
+  .logo__tagline {
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--logo-tagline, var(--brand));
+  }
+
+  /* Fonds sombres et bleus */
+  .logo--reverse {
+    --logo-dark: #ffffff;
+    --logo-light: #a9c8f2;
+    --logo-name: #ffffff;
+    --logo-tagline: #c6dbf7;
+  }
+</style>

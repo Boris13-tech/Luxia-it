@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Button from '../components/Button.astro';
+---
+
+<BaseLayout title="Page introuvable" description="Cette page n'existe pas ou a été déplacée." noindex>
+  <PageBanner kicker="Erreur 404" title="Cette page est " hl="introuvable" lead="Elle n’existe pas ou a été déplacée.">
+    <Fragment slot="actions">
+      <Button href="/">Retour à l’accueil</Button>
+      <Button href="/contact/" variant="light">Nous contacter</Button>
+    </Fragment>
+  </PageBanner>
+</BaseLayout>
