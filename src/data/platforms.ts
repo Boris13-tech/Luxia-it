@@ -60,7 +60,7 @@ const identity: Platform = {
   stage: 'development',
   stageNote: 'Bêta privée en préparation, sur invitation. Aucune offre commerciale à ce jour.',
   description:
-    'LUXIA Identity : gestion des identités et des accès. Organisations isolées, passkeys, Microsoft Entra ID, habilitations, revues d’accès et journal en ajout seul. Capacités et niveau de preuve de chacune.',
+    'LUXIA Identity, identités et accès : organisations isolées, passkeys, Microsoft Entra ID, habilitations et journal en ajout seul. Le niveau de preuve de chaque capacité.',
   lead: 'La plateforme d’identités et d’accès de Luxia-IT. Les fournisseurs d’identité s’y branchent ; l’identité, les droits et l’historique restent dans son cœur.',
   problem: {
     intro:
