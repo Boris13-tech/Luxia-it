@@ -5,6 +5,8 @@
  * une traduction professionnelle (voir docs/suivi-contenus.md, section 4).
  */
 
+import { parsePublished } from './route-map.mjs';
+
 export const locales = ['fr', 'en'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'fr';
@@ -18,12 +20,7 @@ const isLocale = (value: string): value is Locale => (locales as readonly string
 
 /** Langues publiées, lues dans PUBLIC_LOCALES (ex. « fr,en »). Le français l'est toujours. */
 export function publishedLocales(): Locale[] {
-  const raw = String(import.meta.env.PUBLIC_LOCALES ?? '');
-  const requested = raw
-    .split(',')
-    .map((s) => s.trim().toLowerCase())
-    .filter(isLocale);
-  return [...new Set<Locale>([defaultLocale, ...requested])];
+  return parsePublished(import.meta.env.PUBLIC_LOCALES).filter(isLocale);
 }
 
 /** Langue d'une page d'après son chemin. */

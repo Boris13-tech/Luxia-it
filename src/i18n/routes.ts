@@ -4,24 +4,9 @@
  * existe dans src/pages : on ne pointe jamais vers une page absente.
  */
 import { defaultLocale, publishedLocales, type Locale } from './config';
+import { routes as routeMap } from './route-map.mjs';
 
-export const routes = {
-  home: { fr: '/', en: '/en/' },
-  platforms: { fr: '/plateformes/', en: '/en/platforms/' },
-  identity: { fr: '/plateformes/luxia-identity/', en: '/en/platforms/luxia-identity/' },
-  key: { fr: '/plateformes/luxia-key/', en: '/en/platforms/luxia-key/' },
-  alma: { fr: '/plateformes/alma/', en: '/en/platforms/alma/' },
-  services: { fr: '/services/', en: '/en/services/' },
-  architectures: { fr: '/architectures/', en: '/en/architectures/' },
-  runtime: { fr: '/architectures/plateforme-execution/', en: '/en/architectures/runtime-platform/' },
-  labs: { fr: '/labs/', en: '/en/labs/' },
-  company: { fr: '/entreprise/', en: '/en/company/' },
-  careers: { fr: '/carrieres/', en: '/en/careers/' },
-  contact: { fr: '/contact/', en: '/en/contact/' },
-  legal: { fr: '/mentions-legales/', en: '/en/legal-notice/' },
-  privacy: { fr: '/confidentialite/', en: '/en/privacy/' },
-  security: { fr: '/securite/', en: '/en/security/' },
-} as const satisfies Record<string, Partial<Record<Locale, string>>>;
+export const routes: Readonly<Record<keyof typeof routeMap, Partial<Record<Locale, string>> & { fr: string }>> = routeMap;
 
 export type RouteId = keyof typeof routes;
 
@@ -40,7 +25,7 @@ export const pageExists = (path: string): boolean => builtPaths.has(path);
 
 /** Chemin d'une page dans une langue, ou null si elle n'y est ni traduite ni publiée. */
 export function localizedPath(id: RouteId, locale: Locale): string | null {
-  const path = (routes[id] as Partial<Record<Locale, string>>)[locale];
+  const path = routes[id][locale];
   if (!path) return null;
   if (locale !== defaultLocale && (!publishedLocales().includes(locale) || !pageExists(path))) return null;
   return path;
