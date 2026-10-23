@@ -1,8 +1,14 @@
 ---
-/** Pages légales : ouverture commune, texte long en colonne de lecture. */
+/**
+ * Pages légales : lecture calme, sans narration. Sommaire latéral fixe sur
+ * grand écran, replié sur mobile ; ancres par section ; date de mise à jour,
+ * historique des versions et bloc de contact ; impression sans navigation.
+ * Chaque section passée dans `toc` doit exister dans la page (h2 avec cet id) :
+ * le test des liens internes le vérifie.
+ */
 import BaseLayout from './BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
-import { formatDate } from '../data/facts';
+import { facts, formatDate } from '../data/facts';
 
 interface Props {
   title: string;
@@ -11,9 +17,13 @@ interface Props {
   lead?: string | undefined;
   /** Date ISO de dernière mise à jour du texte. */
   updated: string;
+  toc: readonly { id: string; label: string }[];
+  /** Historique des modifications importantes, du plus récent au plus ancien. */
+  history: readonly { date: string; text: string }[];
 }
 
-const { title, description, kicker = 'Informations légales', lead, updated } = Astro.props;
+const { title, description, kicker = 'Informations légales', lead, updated, toc, history } = Astro.props;
+const { email, phone, phoneHref } = facts.contact;
 ---
 
 <BaseLayout title={title} description={description} crumbs={[{ label: title }]}>
@@ -21,10 +31,173 @@ const { title, description, kicker = 'Informations légales', lead, updated } = 
     <p class="t-meta">Dernière mise à jour : <time datetime={updated}>{formatDate(updated)}</time></p>
   </PageHead>
   <section class="section">
-    <div class="wrap">
-      <article class="prose">
-        <slot />
-      </article>
+    <div class="wrap legal">
+      <aside class="legal__aside">
+        <nav class="legal__toc legal__toc--wide" aria-label="Sommaire">
+          <p class="kicker">Sommaire</p>
+          <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}</ol>
+        </nav>
+        <details class="disclosure legal__toc legal__toc--narrow">
+          <summary>Sommaire</summary>
+          <nav class="disclosure__body" aria-label="Sommaire de la page">
+            <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}</ol>
+          </nav>
+        </details>
+      </aside>
+
+      <div class="legal__main">
+        <article class="prose">
+          <slot />
+          <h2 id="historique">Historique des versions</h2>
+          <ol class="legal__history">
+            {
+              history.map((h) => (
+                <li>
+                  <time datetime={h.date}>{formatDate(h.date)}</time>
+                  <span>{h.text}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </article>
+
+        <aside class="legal__contact" aria-labelledby="legal-contact-title">
+          <h2 class="t-h4" id="legal-contact-title">Une question sur cette page ?</h2>
+          <p>
+            Écrivez à <a class="link" href={`mailto:${email}`}>{email}</a> ou appelez le{' '}
+            <a class="link" href={phoneHref}>{phone}</a>.
+          </p>
+        </aside>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .legal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px var(--gap);
+  }
+
+  .legal__toc ol {
+    margin-top: 12px;
+    counter-reset: toc;
+  }
+
+  .legal__toc li {
+    counter-increment: toc;
+    display: flex;
+    gap: 10px;
+    padding-block: 6px;
+    font-size: var(--fs-small);
+  }
+
+  .legal__toc li::before {
+    content: counter(toc, decimal-leading-zero);
+    flex: none;
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+    padding-top: 2px;
+  }
+
+  .legal__toc a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 3px;
+  }
+
+  .legal__toc a:hover {
+    color: var(--link);
+    text-decoration-color: currentColor;
+  }
+
+  .legal__toc--wide {
+    display: none;
+  }
+
+  .legal__main {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    min-width: 0;
+  }
+
+  .prose :global(h2) {
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+
+  .legal__history li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px 20px;
+    padding-block: 10px;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .legal__history {
+    padding-left: 0 !important;
+  }
+
+  .legal__history time {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+  }
+
+  .legal__contact {
+    max-width: 46rem;
+    padding: 20px 22px;
+    background-color: var(--white);
+    border-left: 3px solid var(--blue);
+  }
+
+  .legal__contact h2 {
+    margin-bottom: 8px;
+  }
+
+  @media (min-width: 720px) {
+    .legal__history li {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .legal {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+      align-items: start;
+    }
+
+    .legal__aside {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+
+    .legal__toc--wide {
+      display: block;
+    }
+
+    .legal__toc--narrow {
+      display: none;
+    }
+  }
+
+  @media print {
+    .legal {
+      display: block;
+    }
+
+    .legal__aside,
+    .legal__contact {
+      display: none;
+    }
+
+    .prose :global(a)::after {
+      content: ' (' attr(href) ')';
+      font-size: 0.85em;
+    }
+  }
+</style>
