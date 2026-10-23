@@ -1,16 +1,17 @@
 import type { APIRoute } from 'astro';
+import { facts } from '../../data/facts';
 
 /**
- * security.txt (RFC 9116), régénéré à chaque build : la date d'expiration
- * reste toujours à un an. Remplacer Contact par l'adresse sécurité dédiée
- * (mailto:) dès qu'elle existe.
+ * security.txt (RFC 9116), régénéré à chaque build : l'expiration reste à un
+ * an. Contact : l'adresse sécurité dédiée si elle existe, sinon l'adresse de
+ * contact validée.
  */
 export const GET: APIRoute = ({ site }) => {
   const expires = new Date();
-  expires.setFullYear(expires.getFullYear() + 1);
+  expires.setUTCFullYear(expires.getUTCFullYear() + 1);
 
   const body = [
-    `Contact: ${new URL('securite/', site).href}`,
+    `Contact: mailto:${facts.contact.securityEmail ?? facts.contact.email}`,
     `Expires: ${expires.toISOString()}`,
     'Preferred-Languages: fr, en',
     `Canonical: ${new URL('.well-known/security.txt', site).href}`,

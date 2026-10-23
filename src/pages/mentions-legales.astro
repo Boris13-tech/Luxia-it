@@ -1,27 +1,74 @@
 ---
+/**
+ * Mentions légales. Le bloc « Éditeur » ne s'affiche qu'avec les faits du
+ * registre ; tant qu'ils manquent, npm run release:check bloque la publication.
+ */
 import LegalLayout from '../layouts/LegalLayout.astro';
-import Tbd from '../components/Tbd.astro';
+import { facts } from '../data/facts';
+
+const p = facts.publisher;
+const publisher = [
+  { key: 'Raison sociale', value: p.legalName },
+  { key: 'Forme juridique', value: p.legalForm },
+  { key: 'Immatriculation', value: p.registration },
+  { key: 'TVA intracommunautaire', value: p.vatId },
+  { key: 'Siège', value: p.address },
+].filter((row): row is { key: string; value: string } => row.value !== null);
 ---
 
-<LegalLayout title="Mentions légales" description="Mentions légales du site de Luxia-IT.">
-  <h2>Éditeur du site</h2>
-  <p>
-    <strong>Luxia-IT</strong>, <Tbd text="À FOURNIR : forme juridique et capital social" />.<br />
-    Siège social : <Tbd text="À FOURNIR : adresse" />.<br />
-    Immatriculation : <Tbd text="À FOURNIR : RCS et numéro SIREN" />.<br />
-    TVA intracommunautaire : <Tbd text="À FOURNIR" />.<br />
-    Contact : <Tbd text="À FOURNIR : adresse e-mail et téléphone" />.
-  </p>
+<LegalLayout title="Mentions légales" description="Mentions légales du site luxia-it.com : éditeur, contact, hébergement, propriété intellectuelle et crédits." updated="2026-10-23">
+  {
+    publisher.length > 0 && (
+      <>
+        <h2>Éditeur du site</h2>
+        <dl>
+          {publisher.map((row) => (
+            <div>
+              <dt>{row.key}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </>
+    )
+  }
 
-  <h2>Directeur de la publication</h2>
-  <p><Tbd text="À FOURNIR : nom et fonction" /></p>
+  {
+    p.publicationDirector && (
+      <>
+        <h2>Directeur de la publication</h2>
+        <p>{p.publicationDirector}</p>
+      </>
+    )
+  }
+
+  <h2>Contact</h2>
+  <dl>
+    <div>
+      <dt>E-mail</dt>
+      <dd><a href={`mailto:${facts.contact.email}`}>{facts.contact.email}</a></dd>
+    </div>
+    <div>
+      <dt>Téléphone</dt>
+      <dd><a href={facts.contact.phoneHref}>{facts.contact.phone}</a></dd>
+    </div>
+  </dl>
 
   <h2>Hébergement</h2>
-  <p><Tbd text="À FOURNIR : nom, adresse et téléphone de l’hébergeur" /></p>
+  <p>
+    Le site est hébergé par {facts.siteHost.name}, {facts.siteHost.address} (<a href={facts.siteHost.url} rel="noopener">{facts.siteHost.url.replace('https://', '')}</a>).
+  </p>
 
   <h2>Propriété intellectuelle</h2>
   <p>
-    L’ensemble des contenus de ce site (textes, captures d’écran, schémas, marques et logos) est la propriété de
-    Luxia-IT, sauf mention contraire. Toute reproduction sans autorisation écrite préalable est interdite.
+    Les textes, schémas, marques et logos de ce site appartiennent à Luxia-IT, sauf mention contraire. Leur reproduction
+    sans autorisation écrite préalable est interdite.
   </p>
+
+  <h2>Crédits</h2>
+  <ul>
+    <li>Police de caractères Roboto, par Christian Robertson pour Google, sous licence Apache 2.0, hébergée sur ce site.</li>
+    <li>Icônes Lucide, sous licence ISC.</li>
+    <li>Aucune photographie de banque d’images ni aucune image générée n’est utilisée.</li>
+  </ul>
 </LegalLayout>
