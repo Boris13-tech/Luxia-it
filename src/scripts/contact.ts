@@ -21,10 +21,18 @@ const LABELS: Record<string, string> = {
   message: 'Votre contexte',
 };
 
+const REQUIRED: Record<string, string> = {
+  nom: 'Indiquez votre nom et votre prénom.',
+  organisation: 'Indiquez votre organisation.',
+  email: 'Indiquez votre adresse e-mail professionnelle.',
+  sujet: 'Choisissez un sujet.',
+  message: 'Décrivez votre contexte.',
+};
+
 function messageFor(control: Control): string {
   const v = control.validity;
   const label = LABELS[control.name] ?? control.name;
-  if (v.valueMissing) return `Indiquez ${label.toLowerCase()}.`;
+  if (v.valueMissing) return REQUIRED[control.name] ?? `${label} : champ obligatoire.`;
   if (v.typeMismatch) return 'Indiquez une adresse e-mail valide, par exemple nom@organisation.fr.';
   if (v.tooShort && control instanceof HTMLTextAreaElement)
     return `Décrivez votre contexte en au moins ${control.minLength} caractères.`;
@@ -130,6 +138,7 @@ export function initContactForm(): void {
       });
       const result = (await response.json().catch(() => ({}))) as { ok?: boolean; message?: string; fields?: string[] };
       if (response.ok && result.ok) {
+        if (status) status.textContent = '';
         form.reset();
         form.hidden = true;
         if (success) {

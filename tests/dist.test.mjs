@@ -185,3 +185,10 @@ test('les en-têtes de sécurité sont identiques sur Vercel, Cloudflare/Netlify
   assert.match(fromVercel['content-security-policy'], /script-src 'self'/);
   assert.match(fromVercel['content-security-policy'], /require-trusted-types-for 'script'/);
 });
+
+test('aucun mot n’est collé à un lien', () => {
+  for (const p of pages) {
+    const glued = p.html.match(/[\p{L}\p{N}:,.’)]<a\s/u);
+    assert.equal(glued, null, `${p.path} : texte collé à un lien (« ${glued?.[0]} »)`);
+  }
+});

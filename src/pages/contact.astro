@@ -51,7 +51,7 @@ const { email, phone, phoneHref, responseTime } = facts.contact;
           <div>
             <dt class="kicker">Sécurité</dt>
             <dd>
-              Pour signaler une vulnérabilité :
+              Pour signaler une vulnérabilité :{' '}
               <a class="link" href={href('security')}>divulgation responsable</a>.
             </dd>
           </div>
@@ -62,7 +62,7 @@ const { email, phone, phoneHref, responseTime } = facts.contact;
         <div class="notice" data-fallback hidden tabindex="-1">
           <p class="notice__title">Le formulaire est momentanément indisponible.</p>
           <p>
-            Écrivez-nous à <a class="link" href={`mailto:${email}`}>{email}</a> ou appelez le
+            Écrivez-nous à <a class="link" href={`mailto:${email}`}>{email}</a> ou appelez le{' '}
             <a class="link" href={phoneHref}>{phone}</a>.
           </p>
         </div>

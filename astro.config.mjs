@@ -66,6 +66,9 @@ export default defineConfig({
     build: {
       // Aucun script ni ressource en ligne (data: URI) : CSP `script-src 'self'`.
       assetsInlineLimit: 0,
+      // Une seule feuille de style pour tout le site (environ 8 Ko compressés) :
+      // une requête bloquante au lieu d'une par composant, en cache d'une page à l'autre.
+      cssCodeSplit: false,
     },
   },
   i18n: {
