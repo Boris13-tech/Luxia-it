@@ -1,49 +1,114 @@
 ---
+/**
+ * Politique de confidentialité et cookies, cohérente avec le fonctionnement
+ * réel du site (api/contact.ts : aucune conservation, journaux sans donnée
+ * personnelle, empreinte d'adresse IP en mémoire seulement).
+ * Texte rédigé, à faire relire par un juriste avant publication (facts.reviews.legalPages).
+ */
 import LegalLayout from '../layouts/LegalLayout.astro';
-import Tbd from '../components/Tbd.astro';
+import { facts } from '../data/facts';
+
+const { publisher, contact, contactForm, siteHost } = facts;
+const controller = [publisher.legalName, publisher.legalForm, publisher.address].filter((v): v is string => v !== null).join(', ');
+const processors = [
+  {
+    name: siteHost.name,
+    purpose: 'Hébergement du site et exécution du formulaire',
+    country: 'États-Unis ; le formulaire est exécuté dans l’Union européenne (Francfort). Vercel déclare adhérer au Data Privacy Framework UE–États-Unis.',
+    url: siteHost.url,
+  },
+  contactForm.deliveryProcessor,
+  contactForm.mailboxProcessor,
+].filter((p): p is NonNullable<typeof p> => p !== null);
 ---
 
-<LegalLayout title="Politique de confidentialité" description="Politique de confidentialité et de protection des données personnelles du site de Luxia-IT.">
-  <h2>Responsable du traitement</h2>
+<LegalLayout
+  title="Confidentialité et cookies"
+  description="Données traitées par le site luxia-it.com : formulaire de contact sans conservation, aucun cookie, aucune mesure d’audience. Vos droits."
+  lead="Ce site ne dépose aucun cookie et ne mesure pas votre navigation. Le formulaire transmet votre message par e-mail, sans le conserver."
+  updated="2026-10-23"
+>
+  {
+    controller !== '' && (
+      <>
+        <h2>Responsable du traitement</h2>
+        <p>{controller}.</p>
+      </>
+    )
+  }
+
+  <h2>Données traitées</h2>
+  <h3>Formulaire de contact</h3>
   <p>
-    Luxia-IT, <Tbd text="À FOURNIR : adresse du siège" />. Contact pour toute question relative aux données
-    personnelles : <Tbd text="À FOURNIR : adresse e-mail ou délégué à la protection des données" />.
+    Nom et prénom, organisation, fonction (facultative), adresse e-mail professionnelle, sujet, déploiement envisagé
+    (facultatif) et message. Ces données servent uniquement à répondre à votre demande et, le cas échéant, à préparer les
+    échanges qui suivent.
+  </p>
+  <h3>Navigation</h3>
+  <p>
+    Le site n’utilise ni cookie, ni stockage dans votre navigateur, ni mesure d’audience, ni traceur, ni contenu tiers.
+    Les polices de caractères sont servies par le site lui-même. L’hébergeur traite des journaux techniques (adresse IP,
+    date, page demandée) pour fournir le service et le protéger.
   </p>
 
-  <h2>Données collectées</h2>
-  <p>Ce site ne collecte des données personnelles que par le formulaire de contact :</p>
+  <h2>Base légale</h2>
+  <p>
+    L’intérêt légitime de Luxia-IT à répondre aux demandes qui lui sont adressées et, lorsque vous sollicitez une
+    proposition, les mesures précontractuelles prises à votre demande (article 6, paragraphe 1, points f et b, du
+    règlement général sur la protection des données).
+  </p>
+
+  <h2>Ce que le site conserve</h2>
   <ul>
-    <li>nom et prénom, organisation, fonction ;</li>
-    <li>adresse e-mail professionnelle ;</li>
-    <li>sujet de la demande, modèle de déploiement envisagé et message.</li>
+    <li>
+      <strong>Aucun message.</strong> Le formulaire transmet votre message par e-mail à {contact.email}, puis l’oublie.
+    </li>
+    <li>
+      <strong>Aucune donnée personnelle dans ses journaux.</strong> Ils indiquent seulement le résultat d’un envoi (transmis
+      ou refusé), son motif et sa durée.
+    </li>
+    <li>
+      <strong>Une empreinte temporaire de votre adresse IP</strong>, salée et gardée en mémoire sans jamais être écrite, pour
+      limiter les envois répétés. Elle cesse d’être prise en compte après dix minutes et disparaît au plus tard à l’arrêt du
+      service.
+    </li>
   </ul>
-
-  <h2>Finalité et base légale</h2>
   <p>
-    Ces données servent uniquement à répondre à votre demande et à organiser, le cas échéant, une démonstration. Le
-    traitement repose sur votre consentement, recueilli dans le formulaire. <Tbd text="À CONFIRMER : base légale retenue" />
+    Les messages reçus sont conservés par Luxia-IT dans sa messagerie pendant {contactForm.retention}, puis supprimés.
   </p>
 
-  <h2>Durée de conservation</h2>
-  <p><Tbd text="À FOURNIR : durée de conservation, par exemple trois ans après le dernier contact" /></p>
-
-  <h2>Destinataires</h2>
-  <p>
-    Les données sont destinées aux seules équipes de Luxia-IT chargées de traiter votre demande.
-    Sous-traitants techniques : <Tbd text="À FOURNIR : hébergeur, service de traitement du formulaire" />.
-    Transferts hors de l’Union européenne : <Tbd text="À CONFIRMER : aucun" />.
-  </p>
+  <h2>Destinataires et sous-traitants</h2>
+  <p>Vos données sont destinées aux seules personnes de Luxia-IT chargées de répondre à votre demande.</p>
+  <dl>
+    {
+      processors.map((p) => (
+        <div>
+          <dt>{p.name}</dt>
+          <dd>
+            {p.purpose}. {p.country}
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
 
   <h2>Vos droits</h2>
   <p>
-    Vous disposez d’un droit d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité de
-    vos données, ainsi que du droit de retirer votre consentement à tout moment. Pour les exercer, écrivez à l’adresse
-    indiquée ci-dessus. Vous pouvez également introduire une réclamation auprès de la CNIL.
+    Vous pouvez demander l’accès à vos données, leur rectification ou leur effacement, vous opposer à leur traitement, en
+    demander la limitation ou la portabilité. Écrivez à <a href={`mailto:${contact.email}`}>{contact.email}</a>. Vous
+    pouvez aussi introduire une réclamation auprès de l’autorité de protection des données de votre pays de résidence.
   </p>
 
-  <h2>Cookies et mesure d’audience</h2>
+  <h2 id="cookies">Cookies</h2>
   <p>
-    Ce site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience. Les polices de caractères sont
-    hébergées sur nos propres serveurs : aucune donnée n’est transmise à un tiers lors de votre visite.
+    Ce site ne dépose aucun cookie, ni technique, ni de mesure d’audience, ni publicitaire. Aucun bandeau de consentement
+    n’est donc nécessaire. Si cela devait changer, cette page serait mise à jour avant.
+  </p>
+
+  <h2>Sécurité</h2>
+  <p>
+    Le site est servi exclusivement en HTTPS, avec une politique de sécurité du contenu stricte : aucun script ni style
+    n’est chargé depuis un autre domaine. Pour signaler une vulnérabilité, voir la page{' '}
+    <a href="/securite/">Divulgation responsable</a>.
   </p>
 </LegalLayout>

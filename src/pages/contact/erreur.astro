@@ -1,0 +1,47 @@
+---
+/** Résultat d'un envoi impossible, sans JavaScript : solution de repli. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import { facts } from '../../data/facts';
+import { href } from '../../i18n/routes';
+
+const { email, phone, phoneHref } = facts.contact;
+---
+
+<BaseLayout title="Message non transmis" description="Votre message n’a pas pu être transmis à Luxia-IT." noindex>
+  <PageHead
+    kicker="Contact"
+    title="Votre message n’a pas pu être transmis"
+    lead="Un champ était peut-être incomplet, ou le formulaire est momentanément indisponible. Vous pouvez nous joindre directement."
+  >
+    <dl class="fallback">
+      <div>
+        <dt class="kicker">E-mail</dt>
+        <dd><a class="link" href={`mailto:${email}`}>{email}</a></dd>
+      </div>
+      <div>
+        <dt class="kicker">Téléphone</dt>
+        <dd><a class="link" href={phoneHref}>{phone}</a></dd>
+      </div>
+    </dl>
+    <Fragment slot="actions">
+      <a class="btn btn--secondary" href={href('contact')}>Revenir au formulaire</a>
+    </Fragment>
+  </PageHead>
+</BaseLayout>
+
+<style>
+  .fallback {
+    border-top: 2px solid var(--ink);
+  }
+
+  .fallback > div {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fallback dd {
+    margin-top: 4px;
+    font-size: 1.125rem;
+  }
+</style>

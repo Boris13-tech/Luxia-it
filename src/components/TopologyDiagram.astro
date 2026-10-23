@@ -1,0 +1,155 @@
+---
+/**
+ * Topologie cible d'un déploiement Kubernetes sur trois zones. Schéma en
+ * HTML (listes imbriquées) : lisible par les lecteurs d'écran, sans image.
+ * Il décrit une architecture CIBLE, non disponible : la légende le dit.
+ */
+import LevelTag from './LevelTag.astro';
+
+const zones = [
+  { name: 'Zone A', db: 'PostgreSQL primaire' },
+  { name: 'Zone B', db: 'Réplique synchrone' },
+  { name: 'Zone C', db: 'Réplique' },
+];
+const workloads = ['Interface', 'API', 'Traitements asynchrones'];
+const sharedServices = ['Stockage objet', 'Coffre de secrets (Vault ou KMS)', 'Registre d’images privé', 'Observabilité (OpenTelemetry, Prometheus, Grafana)'];
+---
+
+<figure class="topo">
+  <div class="topo__frame" role="group" aria-label="Topologie cible sur trois zones">
+    <p class="topo__edge">
+      <span class="topo__label">Entrée</span>
+      Passerelle ou ingress · TLS · limitation de débit · protection WAF et DDoS
+    </p>
+    <ul class="topo__zones">
+      {
+        zones.map((z) => (
+          <li class="topo__zone">
+            <p class="topo__label">{z.name}</p>
+            <ul class="topo__pods">
+              {workloads.map((w) => (
+                <li>{w}</li>
+              ))}
+            </ul>
+            <p class="topo__db">{z.db}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="topo__shared">
+      <p class="topo__label">Services partagés</p>
+      <ul>
+        {sharedServices.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </div>
+  <figcaption class="topo__cap">
+    <LevelTag level="target" />
+    <span>
+      Architecture cible pour les déploiements sur site et souverains. Non disponible : aucune plateforme Luxia-IT ne
+      fonctionne aujourd’hui sur Kubernetes.
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .topo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .topo__frame {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: clamp(16px, 2.5vw, 28px);
+    background-color: var(--white);
+    border: 1.5px dashed var(--line-strong);
+  }
+
+  .topo__label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .topo__edge {
+    padding: 12px 14px;
+    border: 1px solid var(--ink);
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  .topo__zones {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .topo__zone {
+    padding: 12px;
+    border: 1px solid var(--line-strong);
+  }
+
+  .topo__pods {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .topo__pods li {
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    background-color: var(--paper);
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  .topo__db {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border: 1.5px solid var(--ink);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .topo__shared {
+    padding: 12px 14px;
+    border: 1px solid var(--line-strong);
+  }
+
+  .topo__shared ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .topo__shared li {
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    background-color: var(--paper);
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  .topo__cap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 720px) {
+    .topo__zones {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -8,9 +8,14 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && node scripts/check-dist.mjs",
     "preview": "astro preview",
     "check": "astro check",
+    "lint": "astro check && node scripts/lint-content.mjs",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "verify": "npm run lint && npm run build && npm test",
+    "release:check": "node scripts/release-check.mjs",
+    "audit:deps": "npm audit --omit=dev",
     "preview:secure": "node tools/preview-secure.mjs"
   },
   "dependencies": {

@@ -1,109 +1,71 @@
 /* ==========================================================================
-   Luxia-IT — système de design
-   Couleurs du logo : bleu Luxia (#1f5fbf) et bleu clair (#8db3e8), marine
-   pour les fonds sombres, gris bleutés ; Roboto ; boutons « pilule ».
-   Les couleurs se changent ici, en un seul endroit.
+   Luxia-IT — système éditorial
+   Fond blanc cassé, encre presque noire, bleu Luxia réservé aux liens, au
+   focus et aux statuts. Filets plutôt que cartes ; grille stricte ; aucune
+   animation au défilement. Contrastes vérifiés (WCAG 2.2 AA) :
+   ink-3 sur paper-2 5,45:1 ; link sur paper-2 6,41:1 ; on-dark-2 sur dark 8,82:1.
    ========================================================================== */
 
 :root {
-  /* Marque (logo) */
-  --brand: #1f5fbf;
-  --brand-hover: #194fa3;
-  --brand-deep: #163f82;
-  --brand-text: #1f5fbf;
-  --brand-light: #8db3e8;
-  --brand-pale: #a9c8f2;
-  --brand-tint: #eaf1fb;
-
-  /* Marine (fonds sombres) */
-  --navy: #0f2547;
-  --navy-2: #15325f;
-  --navy-3: #1c417a;
-
-  /* Textes */
-  --slate: #3c4a5e;
-  --slate-dark: #15325f;
-  --slate-darker: #0f2547;
-
-  /* Gris bleutés */
-  --gray-50: #f5f8fc;
-  --gray-100: #eaf0f7;
-  --gray-200: #dbe3ee;
-  --gray-400: #a8b4c4;
-  --gray-600: #637083;
+  /* Fonds */
+  --paper: #f6f6f3;
+  --paper-2: #eeeee9;
   --white: #ffffff;
+  --dark: #0f1216;
+  --dark-2: #181c22;
 
-  /* Statut « En production » */
-  --live: #1e9e5a;
+  /* Encre */
+  --ink: #111418;
+  --ink-2: #2c3138;
+  --ink-3: #5a6069;
 
-  /* Jetons de contexte (fond clair par défaut) */
-  --bg: var(--white);
-  --fg: var(--slate);
-  --fg-strong: var(--slate-darker);
-  --fg-muted: #56647a;
-  --fg-subtle: var(--gray-600);
-  --line: var(--gray-200);
-  --line-strong: var(--gray-400);
-  --surface: var(--gray-50);
-  --accent: var(--brand);
-  --accent-text: var(--brand-text);
+  /* Filets : --line décoratif, --line-strong pour les bords de champ (3,2:1 sur blanc) */
+  --line: #d6d6cf;
+  --line-soft: #e4e4de;
+  --line-strong: #8d9096;
+
+  /* Bleu Luxia (logo) */
+  --blue: #1f5fbf;
+  --blue-hover: #174a96;
+  --link: #1a52a8;
+  --blue-tint: #e6edf8;
+  --blue-light: #8db3e8;
+
+  /* Sur fond sombre */
+  --on-dark: #ecebe6;
+  --on-dark-2: #aeb2b8;
+  --on-dark-line: #2c3138;
+
+  /* États */
+  --error: #a3261b;
+  --success: #1d6b3a;
 
   /* Typographie */
   --font: 'Roboto Variable', 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --fs-hero: clamp(2.125rem, 1.25rem + 3.4vw, 3.3rem);
-  --fs-pre: clamp(1.125rem, 0.9rem + 1vw, 2rem);
-  --fs-h1: clamp(1.875rem, 1.2rem + 2.6vw, 3.1rem);
-  --fs-h2: clamp(1.625rem, 1.15rem + 1.8vw, 2.5rem);
-  --fs-h3: clamp(1.375rem, 1.1rem + 0.9vw, 1.9rem);
-  --fs-h4: clamp(1.125rem, 1.05rem + 0.3vw, 1.3rem);
-  --fs-lead: clamp(1.125rem, 1rem + 0.45vw, 1.4rem);
-  --fs-body: 1rem;
-  --fs-small: 0.875rem;
+  --mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --fs-display: clamp(2.375rem, 1.45rem + 3.9vw, 4.5rem);
+  --fs-h1: clamp(2.125rem, 1.5rem + 2.6vw, 3.5rem);
+  --fs-h2: clamp(1.75rem, 1.35rem + 1.6vw, 2.625rem);
+  --fs-h3: clamp(1.25rem, 1.12rem + 0.5vw, 1.5rem);
+  --fs-h4: 1.125rem;
+  --fs-lead: clamp(1.125rem, 1.04rem + 0.4vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-meta: 0.8125rem;
 
   /* Mise en page */
-  --max: 1240px;
-  --gutter: clamp(16px, 4vw, 32px);
-  --gap: clamp(20px, 2.5vw, 32px);
-  --header-h: 80px;
-  --section-y: clamp(64px, 8vw, 104px);
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 6px 24px rgb(15 37 71 / 0.08);
-  --shadow-hover: 0 14px 36px rgb(15 37 71 / 0.16);
+  --max: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --gap: clamp(20px, 2.6vw, 40px);
+  --header-h: 68px;
+  --section-y: clamp(64px, 9vw, 128px);
+  --radius: 4px;
 
-  /* Mouvement */
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --dur: 250ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.3, 1);
+  --dur: 180ms;
 }
 
-/* Fonds marine et bleu Luxia : on inverse les jetons */
-.on-dark {
-  --bg: var(--navy);
-  --fg: #e3ebf6;
-  --fg-strong: var(--white);
-  --fg-muted: #c3d2e6;
-  --fg-subtle: #a9bad1;
-  --line: rgb(255 255 255 / 0.16);
-  --line-strong: rgb(255 255 255 / 0.32);
-  --surface: rgb(255 255 255 / 0.06);
-  --accent-text: var(--brand-light);
-  color: var(--fg);
-}
-
-.on-brand {
-  --bg: var(--brand);
-  --fg: var(--white);
-  --fg-strong: var(--white);
-  --fg-muted: #e6effb;
-  --fg-subtle: #d3e3f8;
-  --line: rgb(255 255 255 / 0.3);
-  --line-strong: rgb(255 255 255 / 0.55);
-  --surface: rgb(255 255 255 / 0.1);
-  --accent-text: #ffffff;
-  color: var(--fg);
-}
-
-/* Base ------------------------------------------------------------------- */
+/* Base -------------------------------------------------------------------- */
 
 *,
 *::before,
@@ -114,7 +76,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--header-h) + 16px);
+  scroll-padding-top: calc(var(--header-h) + 24px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -128,10 +90,10 @@ body {
   min-height: 100svh;
   font-family: var(--font);
   font-size: var(--fs-body);
-  font-weight: 300;
-  line-height: 1.65;
-  color: var(--fg);
-  background-color: var(--white);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-2);
+  background-color: var(--paper);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -172,9 +134,10 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.15;
-  color: var(--fg-strong);
+  letter-spacing: -0.015em;
+  color: var(--ink);
   text-wrap: balance;
 }
 
@@ -183,7 +146,8 @@ ul,
 ol,
 dl,
 dd,
-figure {
+figure,
+blockquote {
   margin: 0;
 }
 
@@ -193,32 +157,40 @@ ol {
   list-style: none;
 }
 
-p {
+p,
+li,
+dd {
   text-wrap: pretty;
 }
 
 strong {
   font-weight: 500;
+  color: var(--ink);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
 }
 
 ::selection {
-  background: var(--brand);
+  background: var(--blue);
   color: var(--white);
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--blue);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 main:focus {
   outline: none;
 }
 
-/* Utilitaires ------------------------------------------------------------ */
+/* Utilitaires ------------------------------------------------------------- */
 
-.container {
+.wrap {
   width: 100%;
   max-width: var(--max);
   margin-inline: auto;
@@ -229,20 +201,16 @@ main:focus {
   padding-block: var(--section-y);
 }
 
-.bg-gray {
-  background-color: var(--gray-100);
+.section + .section:not(.section--alt):not(.section--dark) {
+  border-top: 1px solid var(--line);
 }
 
-.bg-light {
-  background-color: var(--gray-50);
+.section--alt {
+  background-color: var(--paper-2);
 }
 
-.bg-navy {
-  background-color: var(--navy);
-}
-
-.bg-brand {
-  background-color: var(--brand);
+.section--tight {
+  padding-block: clamp(48px, 6vw, 80px);
 }
 
 .visually-hidden {
@@ -262,9 +230,8 @@ main:focus {
   left: var(--gutter);
   top: -100px;
   z-index: 200;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: var(--brand);
+  padding: 10px 16px;
+  background: var(--ink);
   color: var(--white);
   font-weight: 500;
 }
@@ -273,258 +240,380 @@ main:focus {
   top: 12px;
 }
 
-/* Typographie ------------------------------------------------------------ */
+/* Typographie ------------------------------------------------------------- */
+
+.t-display {
+  font-size: var(--fs-display);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
 
 .t-h1 {
   font-size: var(--fs-h1);
-  line-height: 1.12;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 .t-h2 {
   font-size: var(--fs-h2);
-  line-height: 1.15;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .t-h3 {
   font-size: var(--fs-h3);
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .t-h4 {
   font-size: var(--fs-h4);
   line-height: 1.35;
+  letter-spacing: 0;
 }
 
 .t-lead {
   font-size: var(--fs-lead);
-  font-weight: 200;
-  line-height: 1.65;
-  color: var(--fg);
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 44rem;
 }
 
 .t-small {
   font-size: var(--fs-small);
-  color: var(--fg-muted);
+  color: var(--ink-3);
 }
 
-.t-center {
-  text-align: center;
+.t-meta {
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
 }
 
-/* Mot mis en valeur dans un titre : bleu Luxia sur fond clair,
-   bleu clair (la seconde couleur du logo) sur fond marine ou bleu */
-.hl {
-  color: var(--brand);
-}
-
-.on-dark .hl {
-  color: var(--brand-light);
-}
-
-.on-brand .hl {
-  color: var(--brand-pale);
-}
-
+/* Libellé technique au-dessus d'un titre */
 .kicker {
-  font-size: var(--fs-small);
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-text);
+  color: var(--ink-3);
 }
 
-/* Marqueur de contenu à fournir : ambre, pour rester visible et ne pas se
-   confondre avec les couleurs de la marque */
-.tbd {
-  display: inline;
-  padding: 0 4px;
-  font-size: 0.85em;
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: 0;
-  text-transform: none;
-  color: #8a4b00;
-  background-color: rgb(245 158 11 / 0.14);
-  border: 1px dashed currentColor;
-  border-radius: 4px;
+.measure {
+  max-width: 44rem;
 }
 
-.on-dark .tbd {
-  color: #ffd28a;
-  background-color: rgb(245 158 11 / 0.14);
+/* Liens de texte : soulignés, bleu Luxia */
+.link,
+.prose a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
-.on-brand .tbd {
-  color: #fff3d6;
-  background-color: rgb(255 255 255 / 0.14);
+.link:hover,
+.prose a:hover {
+  text-decoration-thickness: 2px;
 }
 
-/* Boutons « pilule » avec chevron ------------------------------------------ */
-
-.btn {
+/* Lien d'action, flèche à droite */
+.more {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 8px 24px 8px 18px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.4;
-  white-space: nowrap;
-  transition:
-    background-color var(--dur) var(--ease),
-    color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    transform var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease);
+  gap: 8px;
+  font-weight: 500;
+  color: var(--link);
 }
 
-.btn svg {
+.more svg {
   flex: none;
   transition: transform var(--dur) var(--ease);
 }
 
-.btn:hover svg {
+.more:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.more:hover svg {
   transform: translateX(3px);
 }
 
+/* Boutons ----------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.btn svg {
+  flex: none;
+}
+
 .btn--primary {
-  background-color: var(--brand);
+  background-color: var(--blue);
   color: var(--white);
 }
 
 .btn--primary:hover {
-  background-color: var(--brand-hover);
-  box-shadow: 0 6px 18px rgb(31 95 191 / 0.35);
+  background-color: var(--blue-hover);
 }
 
-/* Sur fond bleu, le bouton principal passe en blanc */
-.on-brand .btn--primary {
-  background-color: var(--white);
-  color: var(--brand);
+.btn--secondary {
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
-.btn--light {
-  background-color: var(--gray-50);
-  color: var(--brand-text);
-}
-
-.btn--light:hover {
-  background-color: var(--brand);
+.btn--secondary:hover {
+  background-color: var(--ink);
   color: var(--white);
-}
-
-.btn--outline {
-  border-color: var(--brand);
-  color: var(--brand-text);
-}
-
-.btn--outline:hover {
-  background-color: var(--brand);
-  color: var(--white);
-}
-
-.btn--outline-white {
-  border-color: var(--white);
-  color: var(--white);
-}
-
-.btn--outline-white:hover {
-  background-color: var(--white);
-  color: var(--brand);
 }
 
 .btn--sm {
-  min-height: 38px;
-  padding: 6px 18px 6px 14px;
+  min-height: 40px;
+  padding: 7px 16px;
   font-size: 0.9375rem;
 }
 
-/* Compositions ----------------------------------------------------------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
 
-/* Colonne d'introduction à gauche, contenu à droite */
+/* Grilles ----------------------------------------------------------------- */
+
+/* Deux colonnes : libellé à gauche (4/12), contenu à droite (8/12) */
 .split {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 40px var(--gap);
-  align-items: start;
+  gap: 24px var(--gap);
 }
 
-.split__aside {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 28px;
-}
-
-.split__main {
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-}
-
-.grid {
+/* Listes éditoriales : éléments séparés par un filet supérieur */
+.ruled {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--gap);
+  gap: 0 var(--gap);
 }
 
-.grid--cases {
-  row-gap: 56px;
+.ruled > li,
+.ruled > div {
+  padding-block: 24px 28px;
+  border-top: 1px solid var(--line);
+}
+
+.ruled__title {
+  margin-bottom: 8px;
+  font-size: var(--fs-h4);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.ruled__text {
+  color: var(--ink-2);
 }
 
 @media (min-width: 720px) {
-  .grid--2,
-  .grid--3,
-  .grid--4 {
+  .ruled--2,
+  .ruled--3,
+  .ruled--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
   .split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 64px;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   }
 
-  .split--even {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .split__aside {
-    position: sticky;
-    top: 120px;
-  }
-
-  .grid--3 {
+  .ruled--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .grid--4 {
+  .ruled--4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-/* Apparition au défilement (activée par JS, hors du premier écran) -------- */
+/* Tableaux ----------------------------------------------------------------
+   Sur petit écran, chaque ligne devient un bloc ; l'intitulé de colonne
+   est repris depuis data-label. */
 
-.reveal {
-  opacity: 0;
-  transform: translate3d(0, 24px, 0);
+.table {
+  font-size: var(--fs-small);
 }
 
-.reveal.is-in {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 700ms var(--ease),
-    transform 700ms var(--ease);
+.table caption {
+  padding-bottom: 12px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
-.reveal.is-in.d1 { transition-delay: 100ms; }
-.reveal.is-in.d2 { transition-delay: 200ms; }
-.reveal.is-in.d3 { transition-delay: 300ms; }
+.table th,
+.table td {
+  padding: 14px 16px 14px 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.table thead th {
+  padding-top: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+
+.table tbody th {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+@media (max-width: 719.98px) {
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+  }
+
+  .table tr {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .table tbody tr:first-child {
+    border-top: 1px solid var(--ink);
+  }
+
+  .table th,
+  .table td {
+    padding: 2px 0;
+    border: 0;
+  }
+
+  .table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+}
+
+/* Texte long (pages légales) ---------------------------------------------- */
+
+.prose {
+  max-width: 46rem;
+}
+
+.prose > * + * {
+  margin-top: 1em;
+}
+
+.prose h2 {
+  margin-top: 2.4em;
+  font-size: var(--fs-h3);
+}
+
+.prose h2:first-child {
+  margin-top: 0;
+}
+
+.prose h3 {
+  margin-top: 1.8em;
+  font-size: var(--fs-h4);
+}
+
+.prose ul {
+  padding-left: 1.2em;
+  list-style: disc;
+}
+
+.prose li + li {
+  margin-top: 0.4em;
+}
+
+.prose dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid var(--line);
+}
+
+.prose dl > div {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.prose dt {
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.prose dd {
+  margin-top: 2px;
+  color: var(--ink);
+}
+
+@media (min-width: 720px) {
+  .prose dl > div {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .prose dd {
+    margin-top: 0;
+  }
+}
+
+/* Mouvement --------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -535,9 +624,19 @@ main:focus {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
 
-  .reveal {
-    opacity: 1;
-    transform: none;
+/* Impression -------------------------------------------------------------- */
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .hdr,
+  .ftr,
+  .skip-link {
+    display: none !important;
   }
 }

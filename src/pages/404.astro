@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from '../components/PageBanner.astro';
-import Button from '../components/Button.astro';
+import PageHead from '../components/PageHead.astro';
+import { href } from '../i18n/routes';
 ---
 
-<BaseLayout title="Page introuvable" description="Cette page n'existe pas ou a été déplacée." noindex>
-  <PageBanner kicker="Erreur 404" title="Cette page est " hl="introuvable" lead="Elle n’existe pas ou a été déplacée.">
+<BaseLayout title="Page introuvable" description="Cette page n’existe pas ou a été déplacée." noindex>
+  <PageHead kicker="Erreur 404" title="Cette page est introuvable" lead="Elle n’existe pas ou a été déplacée.">
     <Fragment slot="actions">
-      <Button href="/">Retour à l’accueil</Button>
-      <Button href="/contact/" variant="light">Nous contacter</Button>
+      <a class="btn btn--primary" href={href('home')}>Retour à l’accueil</a>
+      <a class="btn btn--secondary" href={href('platforms')}>Voir les plateformes</a>
     </Fragment>
-  </PageBanner>
+  </PageHead>
 </BaseLayout>

@@ -1,39 +1,47 @@
 ---
-/** Pied de page bleu Luxia : marque, coordonnées, plan du site, certifications. */
+/**
+ * Pied de page sur fond encre. Contrastes : texte 15,7:1, texte secondaire
+ * 8,8:1, liens au survol 8,7:1. Seules les coordonnées validées s'affichent.
+ */
 import Logo from './Logo.astro';
-import Icon from './Icon.astro';
-import Tbd from './Tbd.astro';
-import { company, footerColumns, legalLinks } from '../data/site';
+import { facts } from '../data/facts';
+import { localeFromPath } from '../i18n/config';
+import { href } from '../i18n/routes';
+import { ui } from '../i18n/ui';
 
+const locale = localeFromPath(Astro.url.pathname);
+const t = ui[locale];
 const year = new Date().getFullYear();
+const { email, phone, phoneHref, linkedin } = facts.contact;
 ---
 
-<footer class="ftr on-brand">
-  <div class="container ftr__top">
+<footer class="ftr">
+  <div class="wrap ftr__top">
     <div class="ftr__brand">
-      <a href="/" aria-label="Luxia-IT — accueil"><Logo tone="reverse" /></a>
-      <p class="ftr__descriptor">{company.descriptor}</p>
-      <ul class="ftr__contact">
-        <li><Icon name="phone" size={18} /> <Tbd text="À FOURNIR : téléphone" /></li>
-        <li><Icon name="mail" size={18} /> <Tbd text="À FOURNIR : adresse e-mail" /></li>
-        <li><Icon name="map-pin" size={18} /> <Tbd text="À FOURNIR : adresse" /></li>
-      </ul>
-      <ul class="ftr__social" aria-label="Réseaux sociaux">
-        <li>
-          <span class="ftr__social-link" aria-disabled="true" title="Lien LinkedIn à fournir">in</span>
-        </li>
-      </ul>
+      <a class="ftr__logo" href={href('home', locale)}>
+        <Logo tone="reverse" />
+        <span class="visually-hidden">{t.homeSuffix}</span>
+      </a>
+      <p class="ftr__tagline">{t.footerTagline}</p>
+      <div>
+        <p class="ftr__title" id="ftr-contact">{t.footerContact}</p>
+        <ul class="ftr__links" aria-labelledby="ftr-contact">
+          <li><a href={`mailto:${email}`}>{email}</a></li>
+          <li><a href={phoneHref}>{phone}</a></li>
+          {linkedin && <li><a href={linkedin} rel="noopener">LinkedIn</a></li>}
+        </ul>
+      </div>
     </div>
 
-    <nav class="ftr__cols" aria-label="Plan du site">
+    <nav class="ftr__cols" aria-label={t.footerNav}>
       {
-        footerColumns.map((col) => (
+        t.footerColumns.map((col, i) => (
           <div>
-            <p class="ftr__title">{col.title}</p>
-            <ul class="ftr__links">
+            <p class="ftr__title" id={`ftr-col-${i}`}>{col.title}</p>
+            <ul class="ftr__links" aria-labelledby={`ftr-col-${i}`}>
               {col.links.map((l) => (
                 <li>
-                  <a href={l.href}>{l.label}</a>
+                  <a href={href(l.id, locale)}>{l.label}</a>
                 </li>
               ))}
             </ul>
@@ -41,171 +49,116 @@ const year = new Date().getFullYear();
         ))
       }
     </nav>
-
-    <div class="ftr__badges">
-      <p class="ftr__title">Certifications et adhésions</p>
-      <ul class="ftr__badge-list">
-        <li class="ftr__badge"><Tbd text="À FOURNIR" /></li>
-        <li class="ftr__badge"><Tbd text="À FOURNIR" /></li>
-        <li class="ftr__badge"><Tbd text="À FOURNIR" /></li>
-      </ul>
-    </div>
   </div>
 
-  <div class="ftr__bottom">
-    <div class="container ftr__bottom-inner">
-      <p>© {year} Luxia-IT</p>
-      <ul class="ftr__legal">
-        {
-          legalLinks.map((l) => (
-            <li>
-              <a href={l.href}>{l.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+  <div class="wrap ftr__bottom">
+    <p>© {year} {facts.brand.name}</p>
+    <ul class="ftr__legal" aria-label={t.footerLegal}>
+      {
+        t.legalItems.map((l) => (
+          <li>
+            <a href={href(l.id, locale)}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </footer>
 
 <style>
   .ftr {
-    background-color: var(--brand);
-    font-size: 0.9375rem;
+    background-color: var(--dark);
+    color: var(--on-dark-2);
+    font-size: var(--fs-small);
+  }
+
+  .ftr :focus-visible {
+    outline-color: var(--blue-light);
   }
 
   .ftr__top {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px var(--gap);
-    padding-block: 56px;
+    gap: 48px var(--gap);
+    padding-block: clamp(56px, 7vw, 88px) 48px;
   }
 
   .ftr__brand {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
+    gap: 24px;
   }
 
-  .ftr__descriptor {
+  .ftr__logo {
+    display: inline-flex;
+  }
+
+  .ftr__tagline {
     max-width: 22rem;
-    font-weight: 300;
-  }
-
-  .ftr__contact {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .ftr__contact li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .ftr__social {
-    display: flex;
-    gap: 10px;
-  }
-
-  .ftr__social-link {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--white);
-    border-radius: 50%;
-    font-weight: 500;
-    font-size: 0.875rem;
+    color: var(--on-dark);
   }
 
   .ftr__cols {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 32px var(--gap);
+    gap: 40px var(--gap);
   }
 
   .ftr__title {
     margin-bottom: 14px;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--on-dark-2);
   }
 
   .ftr__links {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
   }
 
   .ftr__links a,
   .ftr__legal a {
-    transition: opacity var(--dur) var(--ease);
+    display: inline-block;
+    padding-block: 6px;
+    color: var(--on-dark);
   }
 
   .ftr__links a:hover,
   .ftr__legal a:hover {
-    opacity: 0.75;
+    color: var(--blue-light);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
-  .ftr__badge-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .ftr__badge {
-    display: grid;
-    place-items: center;
-    width: 112px;
-    height: 64px;
-    padding: 8px;
-    border-radius: var(--radius-sm);
-    background-color: rgb(255 255 255 / 0.14);
-    font-size: 0.75rem;
-  }
-
   .ftr__bottom {
-    background-color: var(--brand-deep);
-    font-size: 0.8125rem;
-  }
-
-  .ftr__bottom-inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px 24px;
-    padding-block: 14px;
+    gap: 8px 32px;
+    padding-block: 20px 28px;
+    border-top: 1px solid var(--on-dark-line);
   }
 
   .ftr__legal {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 0;
+    gap: 0 24px;
   }
 
-  .ftr__legal li + li::before {
-    content: '|';
-    margin-inline: 10px;
-    opacity: 0.6;
-  }
-
-  /* Laisse la place au bouton « haut de page » */
-  @media (max-width: 719.98px) {
-    .ftr__bottom-inner {
-      padding-right: 64px;
+  @media (min-width: 720px) {
+    .ftr__cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .ftr__top {
-      grid-template-columns: 1.3fr 1fr 1fr;
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
     }
   }
 </style>

@@ -1,98 +1,155 @@
 ---
+/**
+ * Gabarit commun : métadonnées, référencement (canonique, hreflang, Open
+ * Graph, Twitter Card, JSON-LD), en-tête et pied de page.
+ * Les données structurées ne reprennent que des faits du registre.
+ */
 import '@fontsource-variable/roboto';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Icon from '../components/Icon.astro';
+import { facts } from '../data/facts';
+import { defaultLocale, localeFromPath, localeMeta } from '../i18n/config';
+import { alternatesOf, href } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+
+export interface Crumb {
+  label: string;
+  href?: string | undefined;
+}
 
 interface Props {
   title: string;
   description: string;
-  /** Exclure la page des moteurs de recherche (404, pages en préparation). */
-  noindex?: boolean;
+  /** Fil d'Ariane (sans l'accueil), repris en BreadcrumbList. */
+  crumbs?: readonly Crumb[] | undefined;
+  /** Exclure la page des moteurs (404, pages de résultat du formulaire). */
+  noindex?: boolean | undefined;
+  /** Image de partage, chemin public (1200 × 630). */
+  image?: string | undefined;
+  imageAlt?: string | undefined;
 }
 
-const { title, description, noindex = false } = Astro.props;
-const fullTitle = title === 'Luxia-IT' ? title : `${title} — Luxia-IT`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const {
+  title,
+  description,
+  crumbs = [],
+  noindex = false,
+  image = '/og/luxia-it.png',
+  imageAlt = 'LUXIA-IT, Identité & confiance : plateformes d’identité et de confiance pour les opérations critiques.',
+} = Astro.props;
+
+const site = Astro.site ?? new URL(facts.brand.origin);
+const path = Astro.url.pathname;
+const locale = localeFromPath(path);
+const t = ui[locale];
+const isHome = path === href('home', locale);
+const fullTitle = isHome ? `${facts.brand.name} — ${title}` : `${title} — ${facts.brand.name}`;
+const canonical = new URL(path, site).href;
+const imageUrl = new URL(image, site).href;
+const alternates = noindex ? [] : alternatesOf(path);
+const xDefault = alternates.find((a) => a.locale === defaultLocale);
+
+const organization = {
+  '@type': 'Organization',
+  '@id': new URL('/#organisation', site).href,
+  name: facts.brand.name,
+  ...(facts.publisher.legalName ? { legalName: facts.publisher.legalName } : {}),
+  url: new URL('/', site).href,
+  logo: new URL('/brand/luxia-it-logo-512.png', site).href,
+  slogan: facts.brand.signature,
+  email: facts.contact.email,
+  telephone: facts.contact.phoneHref.replace('tel:', ''),
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      email: facts.contact.email,
+      telephone: facts.contact.phoneHref.replace('tel:', ''),
+      availableLanguage: ['fr'],
+    },
+  ],
+  ...(facts.contact.linkedin ? { sameAs: [facts.contact.linkedin] } : {}),
+};
+
+const graph: Record<string, unknown>[] = [organization];
+
+if (isHome) {
+  graph.push({
+    '@type': 'WebSite',
+    '@id': new URL('/#site', site).href,
+    name: facts.brand.name,
+    url: new URL('/', site).href,
+    inLanguage: localeMeta[locale].lang,
+    publisher: { '@id': organization['@id'] },
+  });
+}
+
+if (crumbs.length > 0) {
+  const trail = [{ label: t.home, href: href('home', locale) }, ...crumbs];
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.label,
+      item: new URL(c.href ?? path, site).href,
+    })),
+  });
+}
+
+// « < » échappé : le JSON ne peut pas refermer la balise <script>.
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
-<html lang="fr" id="top">
+<html lang={localeMeta[locale].lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#1f5fbf" />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {
+      alternates.length > 0 &&
+        alternates.map((a) => <link rel="alternate" hreflang={localeMeta[a.locale].lang} href={new URL(a.path, site).href} />)
+    }
+    {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, site).href} />}
+    <meta name="theme-color" content="#f6f6f3" />
     <meta name="color-scheme" content="light" />
-    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="Luxia-IT" />
+    <meta property="og:site_name" content={facts.brand.name} />
+    <meta property="og:locale" content={localeMeta[locale].og} />
+    {
+      alternates
+        .filter((a) => a.locale !== locale)
+        .map((a) => <meta property="og:locale:alternate" content={localeMeta[a.locale].og} />)
+    }
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
-    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <a class="skip-link" href="#contenu">{t.skip}</a>
     <Header />
     <main id="contenu" tabindex="-1">
       <slot />
     </main>
     <Footer />
-    <a class="to-top" href="#top" data-to-top aria-label="Revenir en haut de la page">
-      <Icon name="arrow-up" size={20} stroke={2} />
-    </a>
-    <script>
-      import { initReveal } from '../scripts/reveal';
-      import { initMedia } from '../scripts/media';
-      initReveal();
-      initMedia();
-    </script>
   </body>
 </html>
-
-<style>
-  .to-top {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 90;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-sm);
-    background-color: var(--gray-400);
-    color: var(--white);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition:
-      opacity 300ms var(--ease),
-      transform 300ms var(--ease),
-      background-color var(--dur) var(--ease),
-      visibility 0s linear 300ms;
-  }
-
-  .to-top:global(.is-visible) {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition:
-      opacity 300ms var(--ease),
-      transform 300ms var(--ease),
-      background-color var(--dur) var(--ease);
-  }
-
-  .to-top:hover {
-    background-color: var(--brand);
-  }
-</style>

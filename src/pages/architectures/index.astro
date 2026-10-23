@@ -1,0 +1,321 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArchDiagram from '../../components/ArchDiagram.astro';
+import DataTable from '../../components/DataTable.astro';
+import ClaimList from '../../components/ClaimList.astro';
+import LevelTag from '../../components/LevelTag.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import Icon from '../../components/Icon.astro';
+import { getPlatform } from '../../data/platforms';
+import type { Claim } from '../../data/platforms';
+import { href } from '../../i18n/routes';
+
+const identity = getPlatform('luxia-identity');
+
+const federation: Claim[] = [
+  {
+    title: 'Le fournisseur prouve, le registre décide',
+    text: 'Une connexion de fournisseur atteste une identité. Le compte, les droits et l’historique restent dans LUXIA Identity : changer de fournisseur ne les remet pas en cause.',
+    level: 'production',
+  },
+  {
+    title: 'Connexions isolées et coupure d’urgence',
+    text: 'Chaque organisation a ses propres connexions, isolées par la base de données. Chaque connexion peut être coupée sans toucher aux autres.',
+    level: 'production',
+  },
+  {
+    title: 'Ce que Microsoft atteste, rien de plus',
+    text: 'Une connexion Microsoft Entra ID est enregistrée telle que Microsoft l’atteste. La plateforme ne revendique pas de second facteur qu’elle ne peut pas prouver.',
+    level: 'production',
+  },
+];
+
+const operated = [
+  { part: 'Application', today: { text: 'Fonctions serverless managées, sans état ; sessions conservées en base.', level: 'production' as const } },
+  { part: 'Base de données', today: { text: 'PostgreSQL managé, sécurité au niveau des lignes forcée.', level: 'production' as const } },
+  { part: 'Région actuelle', today: { text: 'États-Unis (côte est).', level: 'production' as const } },
+  { part: 'Région cible', today: { text: 'Union européenne (Francfort), avant toute bêta commerciale. Restauration et bascule répétées le 18 octobre 2026.', level: 'ci' as const } },
+  { part: 'Sauvegardes', today: { text: 'Chiffrées, hors du fournisseur de base de données, dans l’Union européenne (Paris), protégées contre la suppression pendant 30 jours.', level: 'production' as const } },
+  { part: 'Alerte de sauvegarde', today: { text: 'Émise hors de la chaîne de sauvegarde si une sauvegarde manque.', level: 'production' as const } },
+  { part: 'Supervision applicative', today: { text: 'Disponibilité, erreurs, latence et base de données, avec alertes.', level: 'designed' as const } },
+];
+
+const onPremise = [
+  'Le même code et le même modèle de données que la version opérée.',
+  'Un conditionnement en conteneurs, installé sur l’infrastructure du client.',
+  'Une base PostgreSQL dédiée, avec la même isolation par ligne.',
+  'Une intégration aux annuaires, à la supervision et aux sauvegardes du client.',
+  'Des mises à jour livrées avec leur procédure de retour arrière.',
+];
+
+const sovereign = [
+  'Authentifier, autoriser et journaliser sans dépendre d’un service extérieur au périmètre.',
+  'Un registre d’images privé, à l’intérieur du périmètre.',
+  'Des mises à jour livrées hors ligne : artefacts signés et nomenclature logicielle (SBOM).',
+  'Un journal conservé localement.',
+  'Une exploitation par les équipes du client, avec des procédures écrites.',
+];
+
+const continuity: Claim[] = [
+  {
+    title: 'Restauration démontrée',
+    text: 'Exercice du 13 octobre 2026 : base de production reconstruite à partir d’une sauvegarde indépendante, dans un environnement vide. Tables et objets identiques ; base restaurée et vérifiée en 81 secondes ; écart de données mesuré de 2 min 7 s. Ce sont les mesures d’un exercice, pas un engagement.',
+    level: 'production',
+  },
+  {
+    title: 'Bascule répétée',
+    text: 'Le 18 octobre 2026 : restauration de données réelles dans la région cible, puis bascule de l’application vers une base restaurée.',
+    level: 'ci',
+  },
+  {
+    title: 'Haute disponibilité',
+    text: 'Aujourd’hui, celle de la plateforme managée, sans engagement de niveau de service publié. Une répartition sur plusieurs zones est décrite dans l’architecture cible.',
+    level: 'target',
+  },
+  {
+    title: 'Objectifs de reprise (RTO, RPO)',
+    text: 'Fixés avec chaque client, puis vérifiés par un exercice de reprise. Aucun objectif n’est publié à ce jour.',
+    level: 'target',
+  },
+];
+
+const shared = [
+  { area: 'Infrastructure et hébergement', operated: 'Luxia-IT et ses hébergeurs', onprem: 'Client', sovereign: 'Client' },
+  { area: 'Mises à jour de la plateforme', operated: 'Luxia-IT', onprem: 'Client, à partir des versions livrées par Luxia-IT', sovereign: 'Client, par livraison hors ligne' },
+  { area: 'Sauvegardes et restauration', operated: 'Luxia-IT', onprem: 'Client', sovereign: 'Client' },
+  { area: 'Utilisateurs, droits, revues d’accès', operated: 'Client', onprem: 'Client', sovereign: 'Client' },
+  { area: 'Connexions de fournisseurs', operated: 'Client, avec l’appui de Luxia-IT', onprem: 'Client', sovereign: 'Client' },
+  { area: 'Interventions d’urgence', operated: 'Luxia-IT, par procédure journalisée et signalée au client', onprem: 'Selon contrat', sovereign: 'Selon contrat' },
+];
+---
+
+<BaseLayout
+  title="Architectures de référence"
+  description="Architectures de référence Luxia-IT : fédération multi-fournisseurs, plateforme opérée, sur site, souverain, continuité et responsabilité partagée. Ce qui est en service et ce qui est visé."
+  crumbs={[{ label: 'Architectures' }]}
+>
+  <PageHead
+    crumbs={[{ label: 'Architectures' }]}
+    kicker="Architectures de référence"
+    title="Des architectures décrites telles qu’elles sont"
+    lead="Pour chaque architecture : ce qui est en service, ce qui est visé, et qui en a la charge. Une architecture visée est nommée comme telle."
+  >
+    <nav class="toc" aria-label="Sur cette page">
+      <ol>
+        <li><a href="#federation">Fédération multi-fournisseurs</a></li>
+        <li><a href="#cloud">Plateforme opérée</a></li>
+        <li><a href="#on-premise">Sur site</a></li>
+        <li><a href="#souverain">Souverain et isolé</a></li>
+        <li><a href="#continuite">Continuité</a></li>
+        <li><a href="#responsabilite">Responsabilité partagée</a></li>
+        <li><a href={href('runtime')}>Plateforme d’exécution</a></li>
+      </ol>
+    </nav>
+  </PageHead>
+
+  <section class="section" id="federation" aria-labelledby="federation-title">
+    <div class="wrap">
+      <SectionHead
+        id="federation-title"
+        index="01"
+        kicker="Fédération multi-fournisseurs"
+        title="Les fournisseurs se branchent sur le registre"
+        lead="Plusieurs populations accèdent aux mêmes ressources avec des identités d’origines différentes. LUXIA Identity reste le registre ; chaque fournisseur est un adaptateur remplaçable."
+      />
+      <ArchDiagram
+        title="Fédération multi-fournisseurs"
+        inputs={{ label: 'Personnes', items: ['Collaborateurs', 'Partenaires', 'Prestataires'] }}
+        core={{ label: 'LUXIA Identity', items: ['Connexions par organisation', 'Identité canonique', 'Habilitations', 'Journal en ajout seul'] }}
+        outputs={{ label: 'Gouvernance', items: ['Administrateurs', 'Revues d’accès', 'Auditeurs'] }}
+        base={{ label: 'Fournisseurs connectés', items: ['Passkeys LUXIA', 'Microsoft Entra ID', 'OIDC générique (conçu)'] }}
+        links={{ in: 'Connexion', out: 'Décisions tracées', base: 'Preuve d’identité' }}
+      />
+      <div class="block">
+        <ClaimList claims={federation} columns={3} />
+      </div>
+      <DataTable
+        caption="Fournisseurs et protocoles, niveau de preuve"
+        showCaption
+        columns={[
+          { key: 'name', label: 'Fournisseur ou protocole' },
+          { key: 'level', label: 'Niveau' },
+          { key: 'note', label: 'Précision' },
+        ]}
+        rows={identity.integrations.map((i) => ({ name: i.name, level: { text: '', level: i.level }, note: i.note }))}
+      />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="cloud" aria-labelledby="cloud-title">
+    <div class="wrap">
+      <SectionHead
+        id="cloud-title"
+        index="02"
+        kicker="Plateforme opérée"
+        title="Le modèle en service aujourd’hui"
+        lead="Luxia-IT exploite LUXIA Identity sur une plateforme managée. Les organisations administrent leurs personnes, leurs droits et leurs revues d’accès."
+      />
+      <ArchDiagram
+        title="Plateforme opérée par Luxia-IT"
+        inputs={{ label: 'Navigateurs', items: ['Personnes', 'Administrateurs'] }}
+        core={{ label: 'Plateforme managée', items: ['Fonctions applicatives', 'PostgreSQL managé', 'Isolation par ligne', 'Points de restauration'] }}
+        outputs={{ label: 'Fournisseurs', items: ['Microsoft Entra ID'] }}
+        base={{ label: 'Hors du fournisseur de base de données', items: ['Sauvegardes chiffrées (UE)', 'Alerte de sauvegarde'] }}
+        links={{ in: 'TLS', out: 'OIDC', base: 'Sauvegarde chiffrée' }}
+      />
+      <div class="block">
+        <DataTable
+          caption="Composition de la plateforme opérée"
+          showCaption
+          columns={[
+            { key: 'part', label: 'Composant' },
+            { key: 'today', label: 'Aujourd’hui' },
+          ]}
+          rows={operated}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="on-premise" aria-labelledby="on-premise-title">
+    <div class="wrap split">
+      <div class="side">
+        <p class="kicker"><span class="idx">03</span> Sur site</p>
+        <LevelTag level="target" />
+      </div>
+      <div class="main">
+        <h2 class="t-h2" id="on-premise-title">Sur l’infrastructure du client</h2>
+        <p class="t-lead">
+          Un principe d’architecture retenu : un seul code et un seul modèle de données pour le cloud, l’hybride et le
+          souverain. Aucun déploiement sur site n’existe à ce jour. Un tel déploiement reposerait sur :
+        </p>
+        <ul class="checklist">{onPremise.map((item) => <li>{item}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="souverain" aria-labelledby="souverain-title">
+    <div class="wrap split">
+      <div class="side">
+        <p class="kicker"><span class="idx">04</span> Souverain et isolé</p>
+        <LevelTag level="target" />
+      </div>
+      <div class="main">
+        <h2 class="t-h2" id="souverain-title">Dans un périmètre fermé</h2>
+        <p class="t-lead">
+          Le cœur de LUXIA Identity est conçu pour identifier une personne et évaluer un accès sans dépendre d’un
+          fournisseur externe ni d’une connexion Internet permanente. Aucun déploiement de ce type n’existe à ce jour. Il
+          exigerait :
+        </p>
+        <ul class="checklist">{sovereign.map((item) => <li>{item}</li>)}</ul>
+        <p>
+          <a class="more" href={href('runtime')}>Architecture d’exécution visée pour ces déploiements <Icon name="arrow-right" size={16} /></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="continuite" aria-labelledby="continuite-title">
+    <div class="wrap">
+      <SectionHead
+        id="continuite-title"
+        index="05"
+        kicker="Continuité"
+        title="Disponibilité, sauvegarde et reprise"
+        lead="Une sauvegarde ne compte que si sa restauration a été démontrée. Les mesures ci-dessous viennent d’exercices datés."
+      />
+      <ClaimList claims={continuity} columns={2} />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="responsabilite" aria-labelledby="responsabilite-title">
+    <div class="wrap">
+      <SectionHead
+        id="responsabilite-title"
+        index="06"
+        kicker="Responsabilité partagée"
+        title="Qui a la charge de quoi"
+        lead="La répartition est précisée par contrat. Seul le modèle opéré est en service ; les deux autres colonnes décrivent la répartition visée."
+      />
+      <DataTable
+        caption="Responsabilités par modèle de déploiement"
+        columns={[
+          { key: 'area', label: 'Domaine' },
+          { key: 'operated', label: 'Opéré (en service)' },
+          { key: 'onprem', label: 'Sur site (cible)' },
+          { key: 'sovereign', label: 'Souverain (cible)' },
+        ]}
+        rows={shared}
+      />
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Confronter une architecture à vos contraintes"
+    text="Sécurité, localisation des données, disponibilité, exploitation : nous partons de ce qui existe, et disons ce qui reste à construire."
+    href={`${href('contact')}?sujet=architecture`}
+    label="Nous écrire"
+    secondary={{ href: href('runtime'), label: 'Plateforme d’exécution' }}
+  />
+</BaseLayout>
+
+<style>
+  .toc ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: var(--fs-small);
+  }
+
+  .toc a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .block {
+    margin-block: clamp(36px, 5vw, 56px);
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 0.6em;
+  }
+
+  .idx {
+    margin-right: 12px;
+    color: var(--blue);
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 50rem;
+  }
+
+  .checklist {
+    border-top: 1px solid var(--line);
+  }
+
+  .checklist li {
+    padding: 12px 0 12px 28px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    position: relative;
+  }
+
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.15em;
+    width: 12px;
+    height: 0;
+    border-top: 1.5px dashed var(--ink-3);
+  }
+</style>

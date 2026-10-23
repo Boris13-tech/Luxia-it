@@ -1,50 +1,48 @@
 ---
+/**
+ * Carrières. Les principes de travail reprennent les règles écrites des
+ * dépôts (décisions d'architecture, preuve en production, retour arrière).
+ * Les postes ne s'affichent que s'ils sont renseignés ci-dessous.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from '../components/PageBanner.astro';
-import SectionTitle from '../components/SectionTitle.astro';
-import FeatureCard from '../components/FeatureCard.astro';
-import Steps from '../components/Steps.astro';
-import CtaBand from '../components/CtaBand.astro';
-import Button from '../components/Button.astro';
-import Tbd from '../components/Tbd.astro';
-import type { IconName } from '../data/icons';
+import PageHead from '../components/PageHead.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import { facts } from '../data/facts';
 
-const expectations: { icon: IconName; title: string; text: string }[] = [
-  { icon: 'target', title: 'La rigueur', text: 'Nos logiciels protègent des accès critiques : une erreur a des conséquences réelles.' },
-  { icon: 'book-open', title: 'L’écrit', text: 'Les décisions sont documentées et une conception claire précède le code.' },
-  { icon: 'badge-check', title: 'La responsabilité', text: 'Chacun suit ce qu’il construit, de la conception jusqu’à la production.' },
-  { icon: 'lock', title: 'La discrétion', text: 'Nous travaillons pour des organisations qui attendent de nous de la confidentialité.' },
+const principles = [
+  { title: 'Écrire avant de coder', text: 'Une décision d’architecture précède le code. Elle est relue, puis conservée.' },
+  { title: 'Une preuve, pas une impression', text: 'Une capacité n’est terminée que lorsqu’elle est vérifiée là où elle doit fonctionner.' },
+  { title: 'Le retour arrière d’abord', text: 'Aucune migration sans répétition sur une copie ni retour arrière écrit.' },
+  { title: 'Dire ce qui manque', text: 'Une limite connue s’écrit. Elle ne se tait pas.' },
 ];
 
-const process = [
-  { title: 'Candidature', text: 'Votre CV et quelques lignes sur un projet dont vous êtes fier.' },
-  { title: 'Échange', text: 'Un premier entretien avec la personne qui dirigera votre travail.' },
-  { title: 'Mise en situation', text: 'Un exercice proche du travail réel, discuté avec l’équipe.' },
-  { title: 'Décision', text: 'Une réponse motivée, quelle qu’elle soit.' },
-];
+/** Postes ouverts : à renseigner (intitulé, lieu, contrat, lien vers l'annonce). */
+const openings: readonly { title: string; place: string; contract: string }[] = [];
+const applyHref = `mailto:${facts.contact.email}?subject=${encodeURIComponent('Candidature')}`;
 ---
 
-<BaseLayout title="Carrières" description="Rejoindre Luxia-IT : travailler sur des logiciels d'identité dont dépendent des opérations critiques.">
-  <PageBanner
+<BaseLayout
+  title="Carrières"
+  description="Travailler chez Luxia-IT : des systèmes d’identité dont d’autres dépendent, une méthode fondée sur la preuve. Postes publiés et candidatures spontanées."
+  crumbs={[{ label: 'Entreprise', href: '/entreprise/' }, { label: 'Carrières' }]}
+>
+  <PageHead
     crumbs={[{ label: 'Entreprise', href: '/entreprise/' }, { label: 'Carrières' }]}
     kicker="Carrières"
-    title="Travaillez sur des systèmes "
-    hl="dont d’autres dépendent"
-    lead="Nous recrutons des personnes qui préfèrent la précision à l’effet."
-  >
-    <Fragment slot="actions">
-      <Button href="#postes">Voir les postes</Button>
-    </Fragment>
-  </PageBanner>
+    title="Travailler sur des systèmes dont d’autres dépendent"
+    lead="Les postes ouverts sont publiés sur cette page lorsqu’il y en a. Les candidatures spontanées sont lues."
+  />
 
-  <section class="section bg-gray" aria-labelledby="attentes-title">
-    <div class="container">
-      <SectionTitle id="attentes-title" before="Ce que nous " hl="attendons" />
-      <ul class="grid grid--4">
+  <section class="section" aria-labelledby="principes-title">
+    <div class="wrap">
+      <SectionHead id="principes-title" index="01" kicker="Méthode" title="Comment nous travaillons" />
+      <ul class="ruled ruled--4">
         {
-          expectations.map((e, i) => (
-            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
-              <FeatureCard icon={e.icon} title={e.title} text={e.text} />
+          principles.map((p) => (
+            <li>
+              <h3 class="ruled__title">{p.title}</h3>
+              <p class="ruled__text">{p.text}</p>
             </li>
           ))
         }
@@ -52,79 +50,52 @@ const process = [
     </div>
   </section>
 
-  <section class="section" id="postes" aria-labelledby="postes-title">
-    <div class="container narrow">
-      <SectionTitle id="postes-title" before="Postes " hl="ouverts" />
-      <div class="jobs" data-reveal>
-        <div class="jobs__row jobs__row--head" aria-hidden="true">
-          <span>Poste</span><span>Équipe</span><span>Lieu</span><span>Contrat</span>
-        </div>
-        <div class="jobs__row">
-          <span><Tbd text="À FOURNIR : intitulé" /></span>
-          <span><Tbd text="À FOURNIR" /></span>
-          <span><Tbd text="À FOURNIR" /></span>
-          <span><Tbd text="À FOURNIR" /></span>
-        </div>
-      </div>
-      <p class="jobs__spont t-center">
-        Aucun poste ne correspond à votre profil ? Envoyez une candidature spontanée à
-        <Tbd text="À FOURNIR : adresse e-mail de recrutement" />.
-      </p>
+  <section class="section section--alt" id="postes" aria-labelledby="postes-title">
+    <div class="wrap">
+      <SectionHead id="postes-title" index="02" kicker="Postes" title="Postes ouverts">
+        {
+          openings.length > 0 ? (
+            <ul class="jobs">
+              {openings.map((o) => (
+                <li>
+                  <p class="jobs__title">{o.title}</p>
+                  <p class="t-small">
+                    {o.place} · {o.contract}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="t-lead">Aucun poste n’est publié pour le moment.</p>
+          )
+        }
+        <p>
+          Candidature spontanée : écrivez à{' '}
+          <a class="link" href={applyHref}>{facts.contact.email}</a>, avec l’objet « Candidature ».
+        </p>
+        <p>
+          <a class="btn btn--secondary" href={applyHref}>
+            <Icon name="mail" size={18} />
+            Envoyer une candidature
+          </a>
+        </p>
+      </SectionHead>
     </div>
   </section>
-
-  <section class="section on-brand bg-brand" aria-labelledby="processus-title">
-    <div class="container">
-      <SectionTitle id="processus-title" before="Un processus " hl="court et explicite" />
-      <Steps steps={process} onBrand />
-    </div>
-  </section>
-
-  <CtaBand before="Une question sur un " hl="poste" after=" ?" text="Écrivez-nous : nous répondons à chaque candidature." />
 </BaseLayout>
 
 <style>
-  .narrow {
-    max-width: 960px;
-  }
-
   .jobs {
-    border-radius: var(--radius);
-    background-color: var(--white);
-    box-shadow: var(--shadow);
-    overflow: hidden;
+    border-top: 2px solid var(--ink);
   }
 
-  .jobs__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px var(--gap);
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--gray-200);
+  .jobs li {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
   }
 
-  .jobs__row:last-child {
-    border-bottom: 0;
-  }
-
-  .jobs__row--head {
-    display: none;
-    background-color: var(--navy);
-    color: var(--white);
+  .jobs__title {
     font-weight: 500;
-  }
-
-  .jobs__spont {
-    margin-top: 28px;
-  }
-
-  @media (min-width: 720px) {
-    .jobs__row {
-      grid-template-columns: minmax(0, 2.4fr) repeat(3, minmax(0, 1fr));
-    }
-
-    .jobs__row--head {
-      display: grid;
-    }
+    color: var(--ink);
   }
 </style>

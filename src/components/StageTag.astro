@@ -1,0 +1,50 @@
+---
+/** Étape d'une plateforme, avec sa position sur l'échelle en cinq étapes. */
+import { stageOrder, stages, type Stage } from '../data/evidence';
+
+interface Props {
+  stage: Stage;
+}
+
+const { stage } = Astro.props;
+const position = stageOrder.indexOf(stage) + 1;
+---
+
+<span class="stage">
+  <span class="stage__ticks" aria-hidden="true">
+    {stageOrder.map((_, i) => <span class:list={['stage__tick', i < position && 'is-on']} />)}
+  </span>
+  <span class="stage__label">
+    {stages[stage].label}
+    <span class="visually-hidden">, étape {position} sur {stageOrder.length}</span>
+  </span>
+</span>
+
+<style>
+  .stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .stage__ticks {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .stage__tick {
+    width: 12px;
+    height: 4px;
+    background-color: var(--line);
+  }
+
+  .stage__tick.is-on {
+    background-color: var(--blue);
+  }
+</style>

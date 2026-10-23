@@ -1,13 +1,24 @@
-// Sert dist/ en local avec les en-têtes de sécurité de production
-// (lus dans public/_headers), pour vérifier la CSP avant déploiement.
+// Sert dist/ en local avec les en-têtes de sécurité de production (lus dans
+// public/_headers) et la vraie fonction du formulaire (api/contact.ts), pour
+// vérifier la CSP et le parcours de contact avant déploiement.
 // Usage : npm run build && npm run preview:secure
+// Par défaut, le formulaire fonctionne en mode « log » : rien n'est envoyé.
 
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
+import { handleContact } from '../api/contact.ts';
 
 const root = resolve('dist');
 const port = Number(process.env.PORT ?? 4400);
+const origin = `http://localhost:${port}`;
+const contactEnv = {
+  CONTACT_DELIVERY: process.env.CONTACT_DELIVERY ?? 'log',
+  CONTACT_ALLOWED_ORIGINS: process.env.CONTACT_ALLOWED_ORIGINS ?? `${origin},http://127.0.0.1:${port}`,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  CONTACT_FROM: process.env.CONTACT_FROM,
+  CONTACT_TO: process.env.CONTACT_TO,
+};
 
 const types = {
   '.html': 'text/html; charset=utf-8',
@@ -59,18 +70,35 @@ async function resolveFile(urlPath) {
   return null;
 }
 
+async function readBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  return Buffer.concat(chunks);
+}
+
 const securityHeaders = await loadHeaders();
 
 createServer(async (req, res) => {
   for (const [k, v] of Object.entries(securityHeaders)) res.setHeader(k, v);
+  const url = new URL(req.url ?? '/', origin);
+
+  if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') {
+    const body = req.method === 'POST' ? await readBody(req) : undefined;
+    const request = new Request(url, { method: req.method, headers: req.headers, body });
+    const response = await handleContact(request, contactEnv);
+    res.writeHead(response.status, Object.fromEntries(response.headers));
+    res.end(Buffer.from(await response.arrayBuffer()));
+    return;
+  }
+
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405).end();
     return;
   }
-  const file = await resolveFile(req.url ?? '/');
+  const file = await resolveFile(url.pathname);
   const target = file ?? join(root, '404.html');
   res.writeHead(file ? 200 : 404, { 'Content-Type': types[extname(target)] ?? 'application/octet-stream' });
   res.end(req.method === 'HEAD' ? undefined : await readFile(target));
 }).listen(port, () => {
-  console.log(`Aperçu sécurisé : http://localhost:${port}/`);
+  console.log(`Aperçu sécurisé : ${origin}/ (formulaire en mode ${contactEnv.CONTACT_DELIVERY})`);
 });

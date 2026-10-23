@@ -1,42 +1,52 @@
 ---
+/**
+ * Divulgation responsable. Adresse dédiée : facts.contact.securityEmail si
+ * elle existe, sinon l'adresse de contact validée, avec un objet explicite.
+ */
 import LegalLayout from '../layouts/LegalLayout.astro';
-import Tbd from '../components/Tbd.astro';
+import { facts } from '../data/facts';
+
+const address = facts.contact.securityEmail ?? facts.contact.email;
+const reportHref = `mailto:${address}?subject=${encodeURIComponent('[Sécurité] Signalement')}`;
 ---
 
 <LegalLayout
   title="Divulgation responsable"
-  eyebrow="Sécurité"
-  description="Signaler une vulnérabilité affectant les plateformes ou le site de Luxia-IT."
+  kicker="Sécurité"
+  description="Signaler une vulnérabilité affectant le site luxia-it.com ou les plateformes de Luxia-IT : adresse, informations utiles, règles et engagements."
+  lead="Vous pensez avoir trouvé une vulnérabilité dans ce site ou dans l’une de nos plateformes ? Écrivez-nous avant toute publication."
+  updated="2026-10-23"
 >
-  <h2>Signaler une vulnérabilité</h2>
+  <h2>Signaler</h2>
   <p>
-    Si vous pensez avoir identifié une vulnérabilité dans l’une de nos plateformes ou sur ce site, écrivez-nous à
-    <Tbd text="À FOURNIR : adresse e-mail dédiée à la sécurité" />. Clé de chiffrement OpenPGP :
-    <Tbd text="À FOURNIR : empreinte et lien" />.
+    Écrivez à <a href={reportHref}>{address}</a>{!facts.contact.securityEmail && <>, avec l’objet « [Sécurité] »</>}. Indiquez
+    :
   </p>
-  <p>Merci d’indiquer :</p>
   <ul>
     <li>le produit, la version ou l’adresse concernés ;</li>
-    <li>une description de la vulnérabilité et de son impact ;</li>
-    <li>les étapes permettant de la reproduire.</li>
+    <li>la vulnérabilité et son impact ;</li>
+    <li>les étapes qui permettent de la reproduire.</li>
   </ul>
+  <p>N’envoyez pas de données personnelles de tiers que vous auriez pu obtenir : décrivez-les.</p>
 
   <h2>Périmètre</h2>
-  <p>LUXIA Identity, LUXIA Key, ALMA et le présent site. <Tbd text="À CONFIRMER : périmètre exact" /></p>
+  <p>Le site luxia-it.com et les plateformes LUXIA Identity, LUXIA Key et ALMA, y compris leur code publié.</p>
 
   <h2>Règles</h2>
   <ul>
     <li>N’accédez pas à des données qui ne vous appartiennent pas au-delà de ce qui est nécessaire pour démontrer la vulnérabilité.</li>
-    <li>Ne dégradez pas la disponibilité des services et n’utilisez pas l’ingénierie sociale.</li>
-    <li>Laissez-nous un délai raisonnable pour corriger avant toute publication.</li>
+    <li>Ne dégradez pas la disponibilité des services ; n’utilisez ni ingénierie sociale ni attaque physique.</li>
+    <li>Laissez-nous le temps de corriger avant toute publication.</li>
   </ul>
 
   <h2>Nos engagements</h2>
   <p>
-    Nous accusons réception de votre signalement sous <Tbd text="À CONFIRMER : délai" />, vous informons de son
-    traitement et vous créditons, si vous le souhaitez, une fois la correction publiée.
-    <Tbd text="À CONFIRMER après revue juridique : engagement de non-poursuite pour une recherche de bonne foi" />
+    Nous accusons réception de chaque signalement, nous vous tenons informé de son traitement et, si vous le souhaitez,
+    nous vous créditons une fois la correction publiée.
   </p>
 
-  <p>Ces informations sont également publiées au format standard dans <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</p>
+  <p>
+    Ces informations sont aussi publiées au format standard dans{' '}
+    <a href="/.well-known/security.txt">/.well-known/security.txt</a>.
+  </p>
 </LegalLayout>
