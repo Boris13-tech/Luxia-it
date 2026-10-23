@@ -30,7 +30,7 @@ tant qu'un point bloquant reste ouvert.
 | Fondateur et dirigeants (nom, fonction) | Entreprise | `facts.company.leaders` |
 | Certifications réellement obtenues (aucune à ce jour) | Entreprise, plateformes | `facts.company.certifications` |
 | Postes ouverts | Carrières | `src/pages/carrieres.astro` |
-| Captures et vidéos réelles des plateformes | Pages plateformes (composant `Media`) | `public/media/` |
+| Captures et vidéos réelles des plateformes | Pages plateformes, à intégrer depuis `public/media/` | `src/components/PlatformPage.astro` |
 | Références clients (contexte, contrainte, architecture, réalisation, résultat vérifiable), avec accord écrit | Rubrique « Réalisations », non créée | — |
 | Publications et notes techniques des Labs | Labs | `src/pages/labs.astro` |
 | Lien vers une documentation publique des plateformes | Pages plateformes | `src/data/platforms.ts` |
