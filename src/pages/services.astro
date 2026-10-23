@@ -1,93 +1,127 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from '../components/PageBanner.astro';
-import SectionTitle from '../components/SectionTitle.astro';
-import Steps from '../components/Steps.astro';
-import CtaBand from '../components/CtaBand.astro';
-import Button from '../components/Button.astro';
+import PageHead from '../components/PageHead.astro';
+import SectionHead from '../components/SectionHead.astro';
+import DataTable from '../components/DataTable.astro';
+import Method from '../components/Method.astro';
+import CtaBlock from '../components/CtaBlock.astro';
 import Icon from '../components/Icon.astro';
-import Tbd from '../components/Tbd.astro';
-import type { IconName } from '../data/icons';
+import { href } from '../i18n/routes';
 
-const services: { id: string; icon: IconName; name: string; text: string; deliverables: string[] }[] = [
+const skills = [
   {
-    id: 'cadrage',
-    icon: 'compass',
-    name: 'Cadrage et architecture',
-    text: 'Nous inventorions vos fournisseurs d’identité, vos applications et vos contraintes réglementaires, puis nous définissons l’architecture cible et le modèle de déploiement.',
-    deliverables: ['Dossier d’architecture', 'Plan de déploiement'],
+    title: 'Identité et cybersécurité',
+    text: 'Le point d’entrée : qui accède à quoi, comment chacun le prouve, et qui en garde la trace. Comptes à privilèges, authentification résistante à l’hameçonnage, séparation des tâches, revues d’accès.',
   },
   {
-    id: 'integration',
-    icon: 'plug',
-    name: 'Intégration',
-    text: 'Nous connectons la plateforme à vos annuaires, à vos fournisseurs d’identité et à vos applications, puis nous conduisons les tests de recette avec vos équipes.',
-    deliverables: ['Configuration documentée', 'Procès-verbal de recette'],
+    title: 'Cloud Microsoft Azure et Entra',
+    text: 'L’environnement où vivent beaucoup d’identités d’entreprise : Microsoft Entra ID, accès conditionnel, identités managées, réseau et socle Azure.',
   },
   {
-    id: 'migration',
-    icon: 'arrow-left-right',
-    name: 'Migration',
-    text: 'Nous migrons les identités et les applications depuis votre solution existante, par lots, selon un calendrier défini avec vous.',
-    deliverables: ['Plan de migration', 'Bilan par lot'],
+    title: 'DevSecOps et automatisation',
+    text: 'La manière de livrer : revue de code, tests, contrôles de sécurité et retour arrière écrit à chaque changement ; des pipelines sans secret stocké, par fédération d’identité.',
   },
   {
-    id: 'exploitation',
-    icon: 'life-buoy',
-    name: 'Exploitation et support',
-    text: 'Nous assurons le maintien en condition opérationnelle et de sécurité, selon le modèle de déploiement retenu.',
-    deliverables: ['Niveaux de service', 'Rapports d’exploitation'],
+    title: 'IA appliquée et sécurisée',
+    text: 'La question suivante de l’identité : un agent IA qui agit doit recevoir des droits explicites, limités et journalisés, comme toute identité de service.',
   },
 ];
 
-const method = [
-  { title: 'Cadrage', text: 'Périmètre, contraintes et critères de réussite.' },
-  { title: 'Conception', text: 'Architecture cible et plan de déploiement validés.' },
-  { title: 'Déploiement', text: 'Intégration, recette et mise en production par lots.' },
-  { title: 'Exploitation', text: 'Suivi, mises à jour et support.' },
+const services = [
+  {
+    id: 'cadrage',
+    title: 'Cadrage',
+    goal: 'Établir l’inventaire et les risques avant toute décision.',
+    work: 'Entretiens avec les équipes concernées ; inventaire des populations d’utilisateurs, des fournisseurs d’identité, des applications et des comptes à privilèges ; contraintes réglementaires et de localisation des données.',
+    deliverables: ['Inventaire des identités et des accès', 'Carte des risques priorisée', 'Périmètre et critères de réussite'],
+  },
+  {
+    id: 'architecture',
+    title: 'Architecture',
+    goal: 'Décider où l’identité fait autorité, et comment elle se déploie.',
+    work: 'Frontières de confiance, flux d’authentification et d’autorisation, modèle de déploiement, sauvegarde et reprise.',
+    deliverables: ['Dossier d’architecture', 'Décisions d’architecture écrites', 'Plan de déploiement par lots'],
+  },
+  {
+    id: 'integration',
+    title: 'Intégration',
+    goal: 'Connecter, tester, prouver.',
+    work: 'Connexion des fournisseurs d’identité, configuration des organisations, des ressources et des habilitations, scénarios de recette.',
+    deliverables: ['Configuration documentée', 'Scénarios de recette et résultats', 'Procédure de retour arrière'],
+  },
+  {
+    id: 'migration',
+    title: 'Migration',
+    goal: 'Déplacer sans interrompre.',
+    work: 'Migration des identités et des droits par lots, chaque lot répété sur une copie avant d’être appliqué.',
+    deliverables: ['Plan de migration par lots', 'Critères de bascule et de retour arrière', 'Bilan de chaque lot'],
+  },
+  {
+    id: 'exploitation',
+    title: 'Exploitation',
+    goal: 'Tenir dans la durée.',
+    work: 'Mises à jour, sauvegardes et démonstration de leur restauration, suivi des incidents, selon le modèle de déploiement retenu. Les modalités de support sont fixées avec chaque client avant le démarrage.',
+    deliverables: ['Procédures d’exploitation', 'Sauvegardes vérifiées par restauration', 'Comptes rendus d’exploitation'],
+  },
+  {
+    id: 'securite-operationnelle',
+    title: 'Sécurité opérationnelle',
+    goal: 'Réduire la surface d’attaque des identités.',
+    work: 'Revue des comptes à privilèges, authentification résistante à l’hameçonnage, accès conditionnel, séparation des tâches ; préparation aux incidents d’identité, comme un compte compromis ou un secret exposé.',
+    deliverables: ['Constats priorisés', 'Plan de remédiation', 'Procédures d’incident d’identité'],
+  },
+];
+
+const responsibilities = [
+  { service: 'Cadrage', luxia: 'Conduit les entretiens, analyse les configurations en lecture seule, rédige.', client: 'Désigne les interlocuteurs, donne les accès en lecture, valide le périmètre.' },
+  { service: 'Architecture', luxia: 'Propose les options avec leurs coûts et leurs risques, rédige les décisions.', client: 'Arbitre et valide les décisions.' },
+  { service: 'Intégration', luxia: 'Configure, teste et documente.', client: 'Fournit l’environnement et les comptes de recette, valide la recette.' },
+  { service: 'Migration', luxia: 'Prépare, répète et conduit chaque lot.', client: 'Valide le calendrier et le passage d’un lot au suivant.' },
+  { service: 'Exploitation', luxia: 'Exploite ce qui relève de son périmètre, selon le contrat.', client: 'Administre ses utilisateurs, ses droits et ses revues d’accès.' },
+  { service: 'Sécurité opérationnelle', luxia: 'Analyse, recommande, rédige les procédures.', client: 'Décide des remédiations, les applique ou les confie.' },
+];
+
+const mission = [
+  { title: 'Cadrer', text: 'Se termine par un périmètre et des critères de réussite validés.' },
+  { title: 'Concevoir', text: 'Se termine par des décisions d’architecture écrites et arbitrées.' },
+  { title: 'Intégrer', text: 'Se termine par une recette prouvée sur des scénarios écrits.' },
+  { title: 'Migrer', text: 'Chaque lot se termine par un bilan, ou par un retour arrière déjà répété.' },
+  { title: 'Exploiter', text: 'Chaque période se termine par un compte rendu et une restauration démontrée.' },
 ];
 ---
 
 <BaseLayout
   title="Services"
-  description="Services Luxia-IT : cadrage et architecture, intégration, migration, exploitation et support des plateformes d'identité."
+  description="Services Luxia-IT : cadrage, architecture, intégration, migration, exploitation et sécurité opérationnelle des identités. Livrables et responsabilités."
+  crumbs={[{ label: 'Services' }]}
 >
-  <PageBanner
+  <PageHead
     crumbs={[{ label: 'Services' }]}
     kicker="Services"
-    title="Nous déployons nos plateformes "
-    hl="avec vous"
-    lead="Une même équipe conduit votre projet, du cadrage jusqu’à la mise en production."
+    title="Déployer l’identité sans perdre la preuve"
+    lead="Luxia-IT cadre, conçoit, intègre, migre et exploite des systèmes d’identité. La méthode est celle de nos propres plateformes : écrire, tester, répéter, vérifier, restaurer."
   >
     <Fragment slot="actions">
-      <Button href="/contact/">Nous contacter</Button>
+      <a class="btn btn--primary" href={`${href('contact')}?sujet=services`}>Décrire votre projet</a>
+      <a class="more" href="#responsabilites">Qui fait quoi <Icon name="arrow-down" size={16} /></a>
     </Fragment>
-  </PageBanner>
+  </PageHead>
 
-  <section class="section" aria-labelledby="services-title">
-    <div class="container">
-      <SectionTitle id="services-title" before="Quatre services, " hl="un seul interlocuteur">
-        <p class="t-small"><Tbd text="À CONFIRMER : périmètre des services proposés" /></p>
-      </SectionTitle>
-      <ul class="svc">
+  <section class="section" aria-labelledby="competences-title">
+    <div class="wrap">
+      <SectionHead
+        id="competences-title"
+        index="01"
+        kicker="Compétences"
+        title="Quatre compétences, un point d’entrée"
+        lead="Luxia-IT n’est pas une société de services généraliste. Chaque compétence se rattache à l’identité : là où elle vit, la manière de la livrer, et ceux qui agissent en son nom."
+      />
+      <ul class="ruled ruled--4">
         {
-          services.map((s, i) => (
-            <li class:list={['svc__item', i % 2 === 1 && 'd1']} id={s.id} data-reveal>
-              <span class="svc__icon">
-                <Icon name={s.icon} size={40} stroke={1.25} />
-              </span>
-              <div class="svc__body">
-                <h3 class="svc__title">{s.name}</h3>
-                <p class="svc__text">{s.text}</p>
-                <ul class="svc__deliv" aria-label="Livrables">
-                  {s.deliverables.map((d) => (
-                    <li>
-                      <Icon name="circle-check" size={18} stroke={1.75} />
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          skills.map((s) => (
+            <li>
+              <h3 class="ruled__title">{s.title}</h3>
+              <p class="ruled__text">{s.text}</p>
             </li>
           ))
         }
@@ -95,99 +129,142 @@ const method = [
     </div>
   </section>
 
-  <section class="section on-brand bg-brand" aria-labelledby="methode-title">
-    <div class="container">
-      <SectionTitle id="methode-title" before="Notre " hl="méthode" />
-      <Steps steps={method} onBrand />
+  <section class="section section--alt" aria-labelledby="services-title">
+    <div class="wrap">
+      <SectionHead id="services-title" index="02" kicker="Services" title="Six services, des livrables écrits" />
+      <ol class="svc">
+        {
+          services.map((s, i) => (
+            <li class="svc__item" id={s.id}>
+              <div class="svc__id">
+                <span class="svc__n" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="t-h3">{s.title}</h3>
+                <p class="svc__goal">{s.goal}</p>
+              </div>
+              <div class="svc__body">
+                <p>{s.work}</p>
+                <div>
+                  <p class="kicker svc__label">Livrables</p>
+                  <ul class="svc__deliv">
+                    {s.deliverables.map((d) => (
+                      <li>
+                        <Icon name="check" size={16} />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
-  <CtaBand
-    before="Préparons votre "
-    hl="déploiement"
-    text="Décrivez votre environnement et vos échéances : nous revenons vers vous avec une proposition de cadrage."
+  <section class="section" id="responsabilites" aria-labelledby="responsabilites-title">
+    <div class="wrap">
+      <SectionHead
+        id="responsabilites-title"
+        index="03"
+        kicker="Responsabilités"
+        title="Ce qui revient à Luxia-IT, ce qui revient au client"
+        lead="La répartition est précisée par contrat pour chaque mission. Aucun délai d’intervention n’est promis ici : il se fixe avec chaque client, avant le démarrage."
+      />
+      <DataTable
+        caption="Répartition des responsabilités par service"
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'luxia', label: 'Luxia-IT' },
+          { key: 'client', label: 'Client' },
+        ]}
+        rows={responsibilities}
+      />
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="mission-title">
+    <div class="wrap">
+      <SectionHead
+        id="mission-title"
+        index="04"
+        kicker="Déroulé"
+        title="Chaque étape se termine par une preuve"
+        lead="Une mission avance d’étape en étape ; chacune se clôt sur un élément vérifiable, pas sur une date."
+      />
+      <Method steps={mission} />
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Décrivez votre environnement"
+    text="Fournisseurs d’identité, applications, contraintes de localisation et échéances : nous revenons avec une proposition de cadrage."
+    href={`${href('contact')}?sujet=services`}
+    label="Nous écrire"
+    secondary={{ href: href('architectures'), label: 'Architectures de référence' }}
   />
 </BaseLayout>
 
 <style>
-  .svc {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-  }
-
   .svc__item {
     display: grid;
-    grid-template-columns: 80px minmax(0, 1fr);
-    gap: 24px;
-    padding: clamp(24px, 3vw, 36px);
-    border-radius: var(--radius);
-    background-color: var(--white);
-    box-shadow: var(--shadow);
-    scroll-margin-top: 110px;
-    transition:
-      transform 300ms var(--ease),
-      box-shadow 300ms var(--ease);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px var(--gap);
+    padding-block: 32px 36px;
+    border-top: 1px solid var(--line);
   }
 
-  .svc__item:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
+  .svc__id {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .svc__icon {
-    display: grid;
-    place-items: center;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: rgb(31 95 191 / 0.1);
-    color: var(--brand);
+  .svc__n {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--blue);
+  }
+
+  .svc__goal {
+    color: var(--ink-3);
   }
 
   .svc__body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
+    max-width: 46rem;
   }
 
-  .svc__title {
-    font-size: var(--fs-h3);
-  }
-
-  .svc__text {
-    color: var(--fg-muted);
+  .svc__label {
+    margin-bottom: 10px;
   }
 
   .svc__deliv {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    padding-top: 4px;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .svc__deliv li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9375rem;
-    font-weight: 400;
-    color: var(--slate-darker);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--ink);
   }
 
   .svc__deliv :global(svg) {
-    color: var(--brand);
+    flex: none;
+    align-self: center;
+    color: var(--blue);
   }
 
-  @media (min-width: 900px) {
-    .svc {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 559.98px) {
+  @media (min-width: 1024px) {
     .svc__item {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
     }
   }
 </style>

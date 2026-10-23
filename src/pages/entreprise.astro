@@ -1,117 +1,130 @@
 ---
+/**
+ * Entreprise. Jalons tirés de iam-azure-pme/docs/product/ENTERPRISE-READINESS.md
+ * et des rapports de certification qui y sont cités (lus le 23 octobre 2026).
+ * Repères, dirigeants et certifications : uniquement depuis src/data/facts.ts.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from '../components/PageBanner.astro';
-import SectionTitle from '../components/SectionTitle.astro';
-import FeatureCard from '../components/FeatureCard.astro';
-import IconFeature from '../components/IconFeature.astro';
-import InfoTable from '../components/InfoTable.astro';
-import Media from '../components/Media.astro';
-import CtaBand from '../components/CtaBand.astro';
-import Button from '../components/Button.astro';
-import Tbd from '../components/Tbd.astro';
-import Vision from '../components/Vision.astro';
-import type { IconName } from '../data/icons';
+import PageHead from '../components/PageHead.astro';
+import SectionHead from '../components/SectionHead.astro';
+import EvidenceScale from '../components/EvidenceScale.astro';
+import Timeline from '../components/Timeline.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import { facts } from '../data/facts';
+import { platforms } from '../data/platforms';
+import { href } from '../i18n/routes';
 
-const principles: { icon: IconName; title: string; text: string }[] = [
+const beliefs = [
   {
-    icon: 'globe-lock',
-    title: 'La souveraineté se démontre',
-    text: 'Elle se vérifie dans le code, l’architecture et le modèle de déploiement, pas dans un discours.',
+    title: 'Souveraineté, au sens technique',
+    text: 'Le cœur doit pouvoir identifier une personne et évaluer un accès sans dépendre d’un fournisseur externe.',
   },
   {
-    icon: 'badge-check',
-    title: 'Nous décrivons ce que nous livrons',
-    text: 'Nos documents décrivent des fonctionnalités disponibles. Ce qui est en développement est présenté comme tel.',
+    title: 'Confiance, au sens de la preuve',
+    text: 'Une capacité n’est annoncée qu’une fois démontrée. Ce qui ne l’est pas encore est nommé comme tel.',
   },
   {
-    icon: 'handshake',
-    title: 'Le client garde la main',
-    text: 'Chaque déploiement doit pouvoir être audité et exploité par les équipes du client, y compris sans nous.',
-  },
-  {
-    icon: 'target',
-    title: 'La précision avant le volume',
-    text: 'Nous construisons peu de plateformes, et nous les construisons pour durer.',
+    title: 'Contrôle, au sens de la trace',
+    text: 'Chaque décision d’administration laisse une trace que son auteur ne peut pas réécrire.',
   },
 ];
+
+const rules = [
+  'Un changement fusionné ne vaut pas preuve.',
+  'Aucune affirmation de conformité qui n’a pas été démontrée.',
+  'Ce qui manque est consigné, pas dissimulé.',
+];
+
+const milestones = [
+  {
+    date: '2026-09-20',
+    title: 'Décision d’architecture : un registre d’identité souverain',
+    text: 'Identité canonique au cœur, fournisseurs remplaçables, un seul code pour le cloud, l’hybride et le souverain.',
+  },
+  {
+    date: '2026-10-10',
+    title: 'Ressources, habilitations et revues d’accès',
+    text: 'Ressources, droits, séparation des tâches et revues d’accès vérifiés de bout en bout en production.',
+    level: 'production' as const,
+  },
+  {
+    date: '2026-10-11',
+    title: 'Inscription des organisations',
+    text: 'Une organisation s’inscrit, son fondateur se connecte avec une passkey ; plusieurs organisations coexistent.',
+    level: 'production' as const,
+  },
+  {
+    date: '2026-10-13',
+    title: 'Journal en ajout seul et restauration démontrée',
+    text: 'L’application ne peut plus modifier ni supprimer le journal ; la base est reconstruite à partir d’une sauvegarde indépendante.',
+    level: 'production' as const,
+  },
+  {
+    date: '2026-10-14',
+    title: 'Connexion Microsoft Entra ID',
+    text: 'Le cœur OIDC générique est vérifié en production par une connexion réelle.',
+    level: 'production' as const,
+  },
+  {
+    date: '2026-10-15',
+    title: 'Connexions de fournisseurs pilotées',
+    text: 'Cycle de vie, coupure d’urgence et isolation des connexions vérifiés en production.',
+    level: 'production' as const,
+  },
+  {
+    date: '2026-10-18',
+    title: 'Bascule répétée dans la région cible',
+    text: 'Restauration de données réelles à Francfort et bascule de l’application vers une base restaurée.',
+    level: 'ci' as const,
+  },
+];
+
+const certifications = facts.company.certifications;
+const notClaimed = [
+  certifications.length === 0 ? 'Aucune certification de sécurité à ce jour.' : null,
+  'Aucun audit externe ni test d’intrusion à ce jour.',
+  'Aucune référence client publiée.',
+  'Aucune plateforme proposée commercialement à ce jour.',
+].filter((s): s is string => s !== null);
+
+const landmarks = [
+  { key: 'Activité', value: 'Plateformes d’identité et de confiance, et services associés' },
+  { key: 'Plateformes', value: platforms.map((p) => p.name).join(', ') },
+  { key: 'Création', value: facts.company.founded },
+  { key: 'Siège', value: facts.company.headquarters },
+  { key: 'Forme juridique', value: facts.publisher.legalForm },
+  { key: 'Équipe', value: facts.company.headcount },
+  { key: 'Contact', value: `${facts.contact.email} · ${facts.contact.phone}` },
+].filter((l): l is { key: string; value: string } => l.value !== null);
 ---
 
-<BaseLayout title="Entreprise" description="Luxia-IT conçoit des logiciels d'identité pour les organisations qui doivent garder le contrôle de leurs accès.">
-  <PageBanner
+<BaseLayout
+  title="Entreprise"
+  description="Luxia-IT conçoit des plateformes d’identité et de confiance. Conviction, méthode de preuve, jalons vérifiés et ce que nous ne revendiquons pas."
+  crumbs={[{ label: 'Entreprise' }]}
+>
+  <PageHead
     crumbs={[{ label: 'Entreprise' }]}
-    kicker="À propos"
-    title="Rendre le contrôle des identités "
-    hl="à ceux qui en ont la charge"
-    lead="Luxia-IT conçoit des logiciels d’identité pour les organisations qui doivent garder le contrôle de leurs accès."
+    kicker="Entreprise"
+    title="Luxia-IT conçoit des plateformes d’identité et de confiance"
+    lead="Pour les organisations dont les opérations dépendent de qui accède à quoi. Nous construisons peu de choses, et nous disons exactement où elles en sont."
   />
 
-  <Vision id="vision" link={false} />
-
-  <section class="section bg-gray" aria-labelledby="mission-title">
-    <div class="container">
-      <SectionTitle id="mission-title" before="Notre " hl="mission" />
-      <div class="split">
-        <div class="split__aside" data-reveal>
-          <p class="t-lead">
-            Les accès aux systèmes critiques reposent de plus en plus sur des services que leurs utilisateurs ne
-            maîtrisent pas. Luxia-IT développe des plateformes qui peuvent être déployées, exploitées et auditées dans le
-            périmètre de chaque organisation.
-          </p>
-          <p class="t-small"><Tbd text="À CONFIRMER : formulation de la mission" /></p>
-          <Button href="/contact/" variant="outline">Nous contacter</Button>
-        </div>
-        <div class="split__main">
-          <IconFeature icon="shield-check" title="Des plateformes" text="LUXIA Identity, LUXIA Key et ALMA : des logiciels conçus pour être déployés et contrôlés par leurs utilisateurs." href="/plateformes/" />
-          <IconFeature icon="workflow" title="Des services" text="Cadrage, intégration, migration et exploitation, assurés par une même équipe." href="/services/" />
-          <IconFeature icon="flask-conical" title="Des Labs" text="Une activité de recherche appliquée sur l’authentification et la cryptographie." href="/labs/" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="principes-title">
-    <div class="container">
-      <SectionTitle id="principes-title" before="Nos " hl="principes" />
-      <ul class="grid grid--4">
-        {
-          principles.map((p, i) => (
-            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
-              <FeatureCard icon={p.icon} title={p.title} text={p.text} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <section class="section bg-gray" aria-labelledby="reperes-title">
-    <div class="container narrow">
-      <SectionTitle id="reperes-title" before="Luxia-IT " hl="en bref" />
-      <InfoTable
-        label="Repères"
-        rows={[
-          { key: 'Création', tbd: 'À FOURNIR : année' },
-          { key: 'Siège', tbd: 'À FOURNIR : ville, pays' },
-          { key: 'Forme juridique', tbd: 'À FOURNIR' },
-          { key: 'Équipe', tbd: 'À FOURNIR : effectif' },
-          { key: 'Plateformes', value: 'LUXIA Identity, LUXIA Key, ALMA' },
-        ]}
+  <section class="section" id="vision" aria-labelledby="vision-title">
+    <div class="wrap">
+      <SectionHead
+        id="vision-title"
+        index="01"
+        kicker="Conviction"
+        title="L’identité d’une organisation doit lui appartenir"
+        lead="Un fournisseur d’identité prouve qui est une personne ; il ne devrait posséder ni son compte, ni ses droits, ni son historique. Nos plateformes gardent ce registre au cœur et traitent chaque fournisseur comme un adaptateur remplaçable."
       />
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="direction-title">
-    <div class="container">
-      <SectionTitle id="direction-title" before="L’équipe de " hl="direction">
-        <p class="t-small"><Tbd text="À FOURNIR : noms, fonctions et photographies réelles" /></p>
-      </SectionTitle>
-      <ul class="grid grid--3">
+      <ul class="ruled ruled--3">
         {
-          [1, 2, 3].map((n, i) => (
-            <li class:list={['person', i > 0 && `d${i}`]} data-reveal>
-              <Media ratio="standard" need={`photographie — dirigeant ${n}`} />
-              <p class="person__name"><Tbd text="Nom" /></p>
-              <p class="t-small"><Tbd text="Fonction" /></p>
+          beliefs.map((b) => (
+            <li>
+              <h3 class="ruled__title">{b.title}</h3>
+              <p class="ruled__text">{b.text}</p>
             </li>
           ))
         }
@@ -119,29 +132,139 @@ const principles: { icon: IconName; title: string; text: string }[] = [
     </div>
   </section>
 
-  <CtaBand before="Rejoignez " hl="Luxia-IT" text="Nous recrutons des personnes qui préfèrent la précision à l’effet." href="/carrieres/" label="Voir les carrières" />
+  <section class="section section--alt" id="preuve" aria-labelledby="preuve-title">
+    <div class="wrap">
+      <SectionHead
+        id="preuve-title"
+        index="02"
+        kicker="Méthode"
+        title="Une échelle de preuve, appliquée à tout"
+        lead="Nos dépôts suivent chaque capacité sur une échelle de maturité. Ce site en reprend les niveaux, sans les arrondir."
+      >
+        <ul class="rules">{rules.map((r) => <li>{r}</li>)}</ul>
+      </SectionHead>
+      <EvidenceScale />
+    </div>
+  </section>
+
+  <section class="section" id="jalons" aria-labelledby="jalons-title">
+    <div class="wrap">
+      <SectionHead
+        id="jalons-title"
+        index="03"
+        kicker="Jalons"
+        title="Ce qui a été démontré, et quand"
+        lead="Les jalons de LUXIA Identity, avec le niveau de preuve de chacun."
+      />
+      <Timeline items={milestones} />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="limites" aria-labelledby="limites-title">
+    <div class="wrap">
+      <SectionHead id="limites-title" index="04" kicker="Sans détour" title="Ce que nous ne revendiquons pas">
+        <ul class="plain">{notClaimed.map((n) => <li>{n}</li>)}</ul>
+        {
+          certifications.length > 0 && (
+            <>
+              <h3 class="t-h4">Certifications obtenues</h3>
+              <ul class="plain">{certifications.map((c) => <li>{c}</li>)}</ul>
+            </>
+          )
+        }
+      </SectionHead>
+    </div>
+  </section>
+
+  <section class="section" id="reperes" aria-labelledby="reperes-title">
+    <div class="wrap">
+      <SectionHead id="reperes-title" index="05" kicker="Repères" title="Luxia-IT en bref">
+        <dl class="facts">
+          {
+            landmarks.map((l) => (
+              <div>
+                <dt>{l.key}</dt>
+                <dd>{l.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </SectionHead>
+      {
+        facts.company.leaders.length > 0 && (
+          <div class="leaders">
+            <h3 class="t-h3">Direction</h3>
+            <ul class="ruled ruled--3">
+              {facts.company.leaders.map((person) => (
+                <li>
+                  <p class="ruled__title">{person.name}</p>
+                  <p class="ruled__text">{person.role}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Travailler avec Luxia-IT"
+    text="Un projet d’identité, une question d’architecture ou une candidature : écrivez-nous."
+    href={href('contact')}
+    label="Nous écrire"
+    secondary={{ href: href('careers'), label: 'Carrières' }}
+  />
 </BaseLayout>
 
 <style>
-  .narrow {
-    max-width: 900px;
+  .rules,
+  .plain {
+    border-top: 1px solid var(--line);
   }
 
-  .person {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    text-align: center;
+  .rules li,
+  .plain li {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
   }
 
-  .person :global(.media) {
-    width: 100%;
-    margin-bottom: 10px;
+  .facts {
+    border-top: 2px solid var(--ink);
   }
 
-  .person__name {
-    font-size: var(--fs-h4);
-    font-weight: 600;
+  .facts > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px 24px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .facts dt {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .facts dd {
+    color: var(--ink);
+  }
+
+  .leaders {
+    margin-top: 56px;
+  }
+
+  .leaders h3 {
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 720px) {
+    .facts > div {
+      grid-template-columns: 12rem minmax(0, 1fr);
+    }
   }
 </style>

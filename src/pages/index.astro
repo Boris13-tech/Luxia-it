@@ -1,197 +1,133 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroHome from '../components/HeroHome.astro';
-import SectionTitle from '../components/SectionTitle.astro';
-import IconFeature from '../components/IconFeature.astro';
-import FeatureCard from '../components/FeatureCard.astro';
-import CaseCard from '../components/CaseCard.astro';
-import LogoStrip from '../components/LogoStrip.astro';
-import CtaBand from '../components/CtaBand.astro';
-import Button from '../components/Button.astro';
-import Vision from '../components/Vision.astro';
-import { platforms, platformHref } from '../data/site';
-import type { IconName } from '../data/icons';
+import SectionHead from '../components/SectionHead.astro';
+import ClaimList from '../components/ClaimList.astro';
+import DataTable from '../components/DataTable.astro';
+import Method from '../components/Method.astro';
+import StageTag from '../components/StageTag.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import Icon from '../components/Icon.astro';
+import { facts, formatDate } from '../data/facts';
+import { getPlatform, platformHref, platforms } from '../data/platforms';
+import { href } from '../i18n/routes';
 
-const audiences: { icon: IconName; title: string; text: string }[] = [
+const identity = getPlatform('luxia-identity');
+const highlights = identity.capabilities.filter((c) =>
+  ['Organisations isolées', 'Connexion sans mot de passe', 'Microsoft Entra ID', 'Ressources et habilitations', 'Administration protégée', 'Journal de sécurité en ajout seul'].includes(c.title),
+);
+
+const audiences = [
   {
-    icon: 'monitor-cog',
     title: 'Directions des systèmes d’information',
-    text: 'Centralisez l’authentification de vos applications et réduisez le nombre de comptes et de règles à administrer.',
+    text: 'Un registre unique des identités et des accès, qui ne dépend pas des fournisseurs que vous utilisez aujourd’hui.',
   },
   {
-    icon: 'shield-check',
     title: 'Responsables de la sécurité',
-    text: 'Appliquez des politiques d’accès cohérentes et disposez d’un journal unique pour chaque connexion et chaque action d’administration.',
+    text: 'Des droits explicites, des revues d’accès, une séparation des tâches et un journal que l’application ne peut pas réécrire.',
   },
   {
-    icon: 'handshake',
-    title: 'Intégrateurs et ESN',
-    text: 'Intégrez LUXIA Identity aux environnements de vos clients : dans le cloud, sur site ou en environnement souverain.',
+    title: 'Architectes',
+    text: 'Des décisions d’architecture écrites et des modèles de déploiement décrits sans raccourci, avec ce qui est en service et ce qui ne l’est pas.',
+  },
+  {
+    title: 'Achats et conformité',
+    text: 'Ce qui est démontré, ce qui ne l’est pas encore et où sont les données : dit dès le premier échange.',
   },
 ];
 
-const solutions = [
-  ...platforms.map((p) => ({
-    icon: p.icon as IconName,
-    title: p.name,
-    text: p.summary,
-    tbd: p.summaryTbd,
-    href: platformHref(p.slug),
-  })),
+const answers = [
   {
-    icon: 'workflow' as IconName,
-    title: 'Services d’intégration',
-    text: 'Cadrage, intégration, migration et exploitation : une même équipe vous accompagne jusqu’à la mise en production.',
-    tbd: undefined,
-    href: '/services/',
+    title: 'L’identité reste dans votre registre',
+    text: 'Les fournisseurs d’identité se branchent sur la plateforme. Ils prouvent une identité ; ils ne la possèdent pas.',
+    level: 'production' as const,
+  },
+  {
+    title: 'Chaque droit est explicite',
+    text: 'Ressources, habilitations, règles de séparation des tâches et revues d’accès, organisation par organisation.',
+    level: 'production' as const,
+  },
+  {
+    title: 'La trace ne se réécrit pas',
+    text: 'Le journal d’administration et les preuves de connexion sont en ajout seul : l’application ne peut ni les modifier ni les supprimer.',
+    level: 'production' as const,
   },
 ];
 
-const reasons: { icon: IconName; title: string; text: string; tbd?: string }[] = [
-  {
-    icon: 'globe-lock',
-    title: 'Souveraineté',
-    text: 'Cloud, on-premise ou environnement isolé : vos données d’identité restent dans le périmètre que vous choisissez.',
-  },
-  {
-    icon: 'plug',
-    title: 'Intégration simple',
-    text: 'Connexion à vos annuaires et à vos applications par des protocoles standards.',
-    tbd: 'À CONFIRMER : OIDC, SAML 2.0, LDAP',
-  },
-  {
-    icon: 'scroll-text',
-    title: 'Traçabilité complète',
-    text: 'Chaque authentification et chaque action d’administration est horodatée et consultable depuis la console.',
-  },
-  {
-    icon: 'life-buoy',
-    title: 'Accompagnement',
-    text: 'Du cadrage à l’exploitation, une équipe identifiée suit votre projet et reste votre interlocuteur.',
-  },
+const method = [
+  { title: 'Écrire avant de coder', text: 'Une décision d’architecture, un périmètre et des critères de réussite, écrits et relus.' },
+  { title: 'Tester ce qui protège', text: 'Des tests automatisés à chaque changement, y compris sur les règles d’isolation de la base de données.' },
+  { title: 'Répéter avant d’appliquer', text: 'Chaque migration est répétée sur une copie, avec un retour arrière écrit.' },
+  { title: 'Vérifier en production', text: 'Une vérification en lecture seule, consignée, avant de dire qu’une capacité fonctionne.' },
+  { title: 'Restaurer pour prouver', text: 'Une sauvegarde ne compte que si sa restauration a été démontrée.' },
 ];
 
-const cases: { icon: IconName; title: string; text: string; href: string }[] = [
-  {
-    icon: 'user-check',
-    title: 'Accès des prestataires',
-    text: 'Donner à des intervenants externes un accès nominatif, limité et tracé aux seules applications dont ils ont besoin.',
-    href: '/architectures/#federation',
-  },
-  {
-    icon: 'git-merge',
-    title: 'Fédération entre entités',
-    text: 'Unifier l’authentification de plusieurs entités d’un même groupe, sans fusionner leurs annuaires.',
-    href: '/architectures/#federation',
-  },
-  {
-    icon: 'arrow-left-right',
-    title: 'Reprise d’un service externe',
-    text: 'Ramener dans votre périmètre une authentification aujourd’hui confiée à un service que vous ne contrôlez pas.',
-    href: '/services/#migration',
-  },
-  {
-    icon: 'lock',
-    title: 'Environnement isolé',
-    text: 'Authentifier les opérateurs d’un système qui ne dispose d’aucune connexion extérieure.',
-    href: '/architectures/#souverain',
-  },
-  {
-    icon: 'search',
-    title: 'Audit des accès',
-    text: 'Établir qui a accédé à quoi, et quand, à partir d’un journal unique et horodaté.',
-    href: '/plateformes/luxia-identity/#capacites',
-  },
-  {
-    icon: 'log-in',
-    title: 'Authentification unifiée',
-    text: 'Offrir à vos utilisateurs un point d’entrée unique pour l’ensemble de leurs applications.',
-    href: '/plateformes/luxia-identity/',
-  },
+const services = [
+  { title: 'Cadrage et architecture', text: 'Inventaire des identités et des accès, risques, architecture cible et plan de déploiement.', anchor: '#cadrage' },
+  { title: 'Intégration et migration', text: 'Connexion des fournisseurs, recette, migration par lots avec retour arrière.', anchor: '#integration' },
+  { title: 'Exploitation et sécurité opérationnelle', text: 'Procédures, sauvegardes vérifiées, revue des accès à privilèges.', anchor: '#exploitation' },
 ];
 ---
 
 <BaseLayout
-  title="Luxia-IT"
-  description="Luxia-IT conçoit des logiciels d'identité et de confiance : gestion des identités et des accès, fédération, journaux d'audit, en cloud, sur site ou en environnement souverain."
+  title="Plateformes d’identité et de confiance"
+  description="Luxia-IT conçoit des plateformes d’identité et de confiance pour les opérations critiques : identités, accès et traces d’audit. Chaque capacité indique son niveau de preuve."
 >
-  <HeroHome
-    pre={['Identités numériques,', 'accès sous contrôle']}
-    phrases={['Sécurisez vos accès', 'Fédérez vos identités', 'Tracez chaque connexion', 'Déployez chez vous']}
-    suffix="sans perdre le contrôle."
-    sub={['Gestion des identités et des accès', 'Fédération des fournisseurs', 'Journaux d’audit', 'Cloud, on-premise ou souverain']}
-    next="#complexite"
-  />
-
-  <!-- 1. Maîtriser la complexité -->
-  <section class="section" id="complexite" aria-labelledby="complexite-title">
-    <div class="container">
-      <SectionTitle id="complexite-title" before="Maîtrisez la " hl="complexité" after=" de vos identités numériques" />
-      <div class="split">
-        <div class="split__aside" data-reveal>
-          <p class="t-lead split__lead">
-            Unifiez vos annuaires, vos fournisseurs d’identité et vos applications derrière un point d’entrée unique.
-            Gardez la main sur vos données, quel que soit votre modèle de déploiement.
-          </p>
-          <Button href="/contact/?sujet=demo" variant="outline">Demander une démo</Button>
-        </div>
-        <div class="split__main">
-          {audiences.map((a) => <IconFeature icon={a.icon} title={a.title} text={a.text} />)}
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero__grid">
+      <div class="hero__text">
+        <p class="kicker">{facts.brand.signature}</p>
+        <h1 class="t-display hero__title" id="hero-title">Plateformes d’identité et de confiance pour les opérations critiques.</h1>
+        <p class="t-lead">
+          Luxia-IT conçoit des logiciels qui établissent qui accède à quoi, et qui en conservent la preuve. Sur ce site,
+          chaque capacité indique son niveau de preuve.
+        </p>
+        <div class="actions">
+          <a class="btn btn--primary" href={`${href('contact')}?sujet=cadrage`}>
+            Organiser un échange de cadrage
+            <Icon name="arrow-right" size={18} />
+          </a>
+          <a class="more" href={href('platforms')}>
+            Voir les plateformes
+            <Icon name="arrow-right" size={16} />
+          </a>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- 2. Références -->
-  <LogoStrip />
-
-  <!-- 3. Plateformes et services, sur fond bleu Luxia -->
-  <section class="section on-brand bg-brand" aria-labelledby="solutions-title">
-    <div class="container">
-      <SectionTitle id="solutions-title" before="Protégez vos accès, " hl="simplifiez vos opérations" />
-      <div class="split">
-        <div class="split__aside" data-reveal>
-          <p class="t-lead split__lead">
-            Nos plateformes et nos services couvrent le cycle de vie des identités, de l’authentification jusqu’à
-            l’audit.
-          </p>
-          <Button href="/contact/?sujet=demo" variant="outline-white">Demander une démo</Button>
+      <aside class="ledger" aria-labelledby="ledger-title">
+        <div class="ledger__head">
+          <h2 class="ledger__title" id="ledger-title">État des plateformes</h2>
+          <p class="t-meta">au <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
         </div>
-        <div class="split__main">
-          {solutions.map((s) => <IconFeature icon={s.icon} title={s.title} text={s.text} tbd={s.tbd} href={s.href} />)}
-        </div>
-      </div>
+        <ul class="ledger__list">
+          {
+            platforms.map((p) => (
+              <li>
+                <a class="ledger__row" href={platformHref(p.slug)}>
+                  <span class="ledger__name">{p.name}</span>
+                  <span class="ledger__role">{p.role}</span>
+                  <StageTag stage={p.stage} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="ledger__foot">
+          Aucune plateforme n’est proposée commercialement à ce jour.
+          <a class="link" href={`${href('platforms')}#echelle`}>Comment lire ces étapes</a>
+        </p>
+      </aside>
     </div>
   </section>
 
-  <!-- 4. Vision, autour de l'emblème du logo -->
-  <Vision />
-
-  <!-- 5. Pourquoi Luxia-IT -->
-  <section class="section bg-gray" aria-labelledby="pourquoi-title">
-    <div class="container">
-      <SectionTitle id="pourquoi-title" before="Pourquoi " hl="Luxia-IT" />
-      <ul class="grid grid--4">
+  <section class="section" aria-labelledby="publics-title">
+    <div class="wrap">
+      <SectionHead id="publics-title" index="01" kicker="Publics" title="Pour celles et ceux qui répondent des accès" />
+      <ul class="ruled ruled--4">
         {
-          reasons.map((r, i) => (
-            <li class:list={[i > 0 && `d${Math.min(i, 3)}`]}>
-              <FeatureCard icon={r.icon} title={r.title} text={r.text} tbd={r.tbd} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 6. Cas d'usage -->
-  <section class="section" aria-labelledby="cas-title">
-    <div class="container">
-      <SectionTitle id="cas-title" before="Ce que " hl="Luxia-IT" after=" rend possible" />
-      <ul class="grid grid--3 grid--cases">
-        {
-          cases.map((c) => (
+          audiences.map((a) => (
             <li>
-              <CaseCard icon={c.icon} title={c.title} text={c.text} href={c.href} />
+              <h3 class="ruled__title">{a.title}</h3>
+              <p class="ruled__text">{a.text}</p>
             </li>
           ))
         }
@@ -199,10 +135,238 @@ const cases: { icon: IconName; title: string; text: string; href: string }[] = [
     </div>
   </section>
 
-  <CtaBand
-    before="Parlons de votre "
-    hl="projet"
-    text="Pour découvrir comment Luxia-IT peut sécuriser vos accès sans complexité inutile, contactez-nous."
-    label="Nous contacter"
+  <section class="section section--alt" aria-labelledby="probleme-title">
+    <div class="wrap">
+      <SectionHead
+        id="probleme-title"
+        index="02"
+        kicker="Le problème"
+        title="Les accès critiques reposent sur des identités que personne ne maîtrise entièrement"
+        lead="Annuaires, fournisseurs externes, comptes locaux : chaque source applique ses propres règles. Quand un fournisseur fait autorité, en changer remet en cause les comptes, les droits et l’historique. Après un incident, il faut reconstituer qui a fait quoi à partir de journaux que leurs auteurs peuvent modifier."
+      />
+      <ClaimList claims={answers} columns={3} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="identity-title">
+    <div class="wrap">
+      <SectionHead id="identity-title" index="03" kicker="Plateforme" title={identity.name} lead={identity.summary}>
+        <p class="stage-line"><StageTag stage={identity.stage} /> <span class="t-small">{identity.stageNote}</span></p>
+      </SectionHead>
+      <ClaimList claims={highlights} columns={3} />
+      <p class="after">
+        <a class="more" href={platformHref(identity.slug)}>
+          Toutes les capacités, leur niveau de preuve et les limites actuelles
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="deploiement-title">
+    <div class="wrap">
+      <SectionHead
+        id="deploiement-title"
+        index="04"
+        kicker="Déploiement"
+        title="Un modèle en service, deux modèles visés"
+        lead="LUXIA Identity fonctionne aujourd’hui comme une plateforme opérée par Luxia-IT. Le même code doit pouvoir fonctionner sur site et en environnement souverain : c’est un principe d’architecture, sans déploiement de ce type à ce jour."
+      />
+      <DataTable
+        caption="Modèles de déploiement de LUXIA Identity et niveau de preuve"
+        columns={[
+          { key: 'model', label: 'Modèle' },
+          { key: 'level', label: 'Niveau' },
+          { key: 'detail', label: 'Ce qu’il en est' },
+        ]}
+        rows={identity.deployment.map((d) => ({ model: d.title, level: { text: '', level: d.level }, detail: d.text }))}
+      />
+      <p class="after">
+        <a class="more" href={href('architectures')}>
+          Architectures de référence et plateforme d’exécution
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="methode-title">
+    <div class="wrap">
+      <SectionHead
+        id="methode-title"
+        index="05"
+        kicker="Méthode"
+        title="La méthode que nous appliquons à nos propres plateformes"
+        lead="Un changement fusionné ne vaut pas preuve. Une capacité n’est annoncée qu’une fois démontrée là où elle doit fonctionner."
+      />
+      <Method steps={method} />
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="services-title">
+    <div class="wrap">
+      <SectionHead
+        id="services-title"
+        index="06"
+        kicker="Services"
+        title="Déployer et exploiter l’identité"
+        lead="L’identité reste le point d’entrée. Le cloud Microsoft Azure et Entra, l’automatisation DevSecOps et l’IA appliquée s’y rattachent : là où vivent les identités, la manière de livrer, et les agents qui agissent."
+      />
+      <ul class="ruled ruled--3">
+        {
+          services.map((s) => (
+            <li>
+              <h3 class="ruled__title">
+                <a class="svc-link" href={`${href('services')}${s.anchor}`}>
+                  {s.title}
+                </a>
+              </h3>
+              <p class="ruled__text">{s.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Commençons par un échange de cadrage"
+    text="Un premier échange pour établir votre inventaire d’identités, vos contraintes de déploiement et ce que LUXIA Identity couvre, ou ne couvre pas encore."
+    href={`${href('contact')}?sujet=cadrage`}
+    label="Organiser un échange"
+    secondary={{ href: href('company'), label: 'Qui est Luxia-IT' }}
   />
 </BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(48px, 8vw, 112px) clamp(56px, 8vw, 120px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px var(--gap);
+    align-items: end;
+  }
+
+  .hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .hero__title {
+    max-width: 17ch;
+  }
+
+  .hero__text .actions {
+    margin-top: 4px;
+  }
+
+  .ledger {
+    background-color: var(--white);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--ink);
+  }
+
+  .ledger__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ledger__title {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .ledger__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .ledger__row:hover {
+    background-color: var(--paper);
+  }
+
+  .ledger__row:hover .ledger__name {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ledger__name {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .ledger__role {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+
+  .ledger__foot {
+    padding: 14px 20px 18px;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .stage-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+
+  .after {
+    margin-top: 32px;
+  }
+
+  .svc-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 4px;
+  }
+
+  .svc-link:hover {
+    color: var(--link);
+    text-decoration-color: currentColor;
+  }
+
+  @media (min-width: 560px) {
+    .ledger__row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ledger__row .ledger__role {
+      grid-column: 1;
+    }
+
+    .ledger__row :global(.stage) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+</style>

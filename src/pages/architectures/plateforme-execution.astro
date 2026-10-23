@@ -1,0 +1,314 @@
+---
+/**
+ * Plateforme d'exécution. L'exécution réelle (plateforme managée) est
+ * vérifiée ; l'architecture Kubernetes est une CIBLE, non disponible.
+ * Sources : iam-azure-pme/docs/legal/SECURITY-OVERVIEW.md, DATA-RESIDENCY.md,
+ * docs/architecture/ADR-SOVEREIGN-IDENTITY-CONTROL-PLANE.md (lus le 23 octobre 2026).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import DataTable from '../../components/DataTable.astro';
+import TopologyDiagram from '../../components/TopologyDiagram.astro';
+import LevelTag from '../../components/LevelTag.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import { href } from '../../i18n/routes';
+
+const today = [
+  { load: 'Interface et API', where: { text: 'Fonctions serverless managées, sans état. Les sessions sont en base.', level: 'production' as const } },
+  { load: 'Données', where: { text: 'PostgreSQL managé, sécurité au niveau des lignes forcée.', level: 'production' as const } },
+  { load: 'Retour arrière', where: { text: 'Point de restauration de la base avant chaque mise en production.', level: 'production' as const } },
+  { load: 'Sauvegardes', where: { text: 'Déclenchées et conservées hors de la plateforme applicative, chiffrées, dans l’Union européenne.', level: 'production' as const } },
+];
+
+const managedFits = [
+  'Une seule application et peu de services à faire communiquer.',
+  'Aucune obligation d’exécuter le logiciel chez le client.',
+  'Une montée en charge que le fournisseur absorbe.',
+  'Une exploitation assurée par une équipe réduite, sans cluster à maintenir.',
+];
+
+const kubernetesFits = [
+  'Déployer chez un client, sur son infrastructure ou dans un environnement isolé.',
+  'Séparer plusieurs charges (interface, API, traitements asynchrones) avec des flux réseau explicites.',
+  'Un conditionnement unique, portable d’un cloud à un site.',
+  'Un client dont les équipes exploitent déjà Kubernetes.',
+];
+
+const spec: { domain: string; items: { name: string; measure: string; why: string }[] }[] = [
+  {
+    domain: 'Charges de travail',
+    items: [
+      { name: 'Sans état', measure: 'Interface, API et traitements asynchrones dans des déploiements séparés. L’état vit dans PostgreSQL et le stockage objet.', why: 'Remplacer ou déplacer une instance sans perte.' },
+      { name: 'Sondes', measure: 'Sondes de démarrage, de disponibilité et de vivacité distinctes.', why: 'Ne recevoir du trafic qu’une fois prêt ; redémarrer ce qui est bloqué.' },
+      { name: 'Ressources', measure: 'Requests et limits sur chaque conteneur.', why: 'Placement prévisible, aucun voisin bruyant.' },
+    ],
+  },
+  {
+    domain: 'Disponibilité et charge',
+    items: [
+      { name: 'Trois zones', measure: 'Répartition par topology spread constraints et règles d’anti-affinité.', why: 'Survivre à la perte d’une zone.' },
+      { name: 'PodDisruptionBudget', measure: 'Un nombre minimal de répliques disponibles pendant les maintenances.', why: 'Les mises à jour du cluster ne coupent pas le service.' },
+      { name: 'Mise à l’échelle', measure: 'Horizontal Pod Autoscaler sur l’API et les traitements ; autoscaling du cluster.', why: 'Absorber la charge sans surdimensionner.' },
+    ],
+  },
+  {
+    domain: 'Exposition',
+    items: [
+      { name: 'Entrée', measure: 'Ingress ou passerelle d’API ; TLS terminé à l’entrée, certificats renouvelés automatiquement.', why: 'Un seul point d’entrée, contrôlé.' },
+      { name: 'Limitation de débit', measure: 'Par client et par route sensible : connexion, récupération, inscription.', why: 'Freiner l’énumération et la force brute.' },
+      { name: 'WAF et DDoS', measure: 'Protection du fournisseur en cloud ; celle du client sur site.', why: 'Filtrer avant l’application.' },
+    ],
+  },
+  {
+    domain: 'Réseau, identité et secrets',
+    items: [
+      { name: 'NetworkPolicy', measure: 'Tout flux refusé par défaut ; chaque flux autorisé explicitement.', why: 'Une instance compromise ne joint pas le reste.' },
+      { name: 'Identité de charge de travail', measure: 'Les instances s’authentifient auprès du cloud et du coffre sans secret stocké.', why: 'Aucun secret de longue durée à voler.' },
+      { name: 'Secrets', measure: 'Vault, KMS ou équivalent, avec rotation ; jamais dans les images ni dans les dépôts.', why: 'Un secret se révoque sans reconstruire.' },
+      { name: 'Chiffrement', measure: 'TLS en transit, y compris entre services lorsque l’environnement l’exige ; volumes et sauvegardes chiffrés au repos.', why: 'Les données d’identité restent illisibles hors de la plateforme.' },
+    ],
+  },
+  {
+    domain: 'Données',
+    items: [
+      { name: 'PostgreSQL haute disponibilité', measure: 'Primaire et répliques réparties sur les zones, bascule automatique.', why: 'Les données d’identité sont relationnelles et isolées par ligne.' },
+      { name: 'Redis', measure: 'Non retenu par défaut. Seulement pour un besoin mesuré, comme une limitation de débit partagée entre répliques.', why: 'Chaque composant ajouté se sécurise et s’exploite.' },
+      { name: 'File d’événements', measure: 'Non retenue par défaut. Seulement si des traitements asynchrones, comme les notifications ou les exports, la justifient.', why: 'Même raison.' },
+      { name: 'Stockage objet', measure: 'Archives du journal, exports et sauvegardes.', why: 'Conservation longue hors de la base.' },
+      { name: 'Isolation des clients', measure: 'Isolation par ligne dans une instance partagée ; instance dédiée par client sur site et en souverain.', why: 'Le niveau d’isolation suit le modèle de déploiement.' },
+    ],
+  },
+  {
+    domain: 'Chaîne d’approvisionnement',
+    items: [
+      { name: 'Registre privé', measure: 'Images servies depuis un registre du périmètre.', why: 'Indispensable en environnement isolé.' },
+      { name: 'Images signées', measure: 'Signature à la construction, vérification à l’admission dans le cluster.', why: 'Seul ce qui a été construit et revu s’exécute.' },
+      { name: 'SBOM', measure: 'Nomenclature logicielle publiée avec chaque version.', why: 'Savoir ce qu’une version contient.' },
+      { name: 'Analyse', measure: 'Images et dépendances analysées à chaque construction ; publication bloquée sur une vulnérabilité critique.', why: 'Ne pas livrer une faille connue.' },
+    ],
+  },
+  {
+    domain: 'Livraison',
+    items: [
+      { name: 'Helm ou Kustomize', measure: 'Un conditionnement versionné, paramétré par environnement.', why: 'Le même artefact partout.' },
+      { name: 'GitOps', measure: 'Argo CD ou Flux : l’état du cluster suit un dépôt revu.', why: 'Chaque changement a un auteur, une revue et un retour arrière.' },
+      { name: 'Déploiements', measure: 'Progressifs par défaut ; canary ou blue/green pour les changements à risque.', why: 'Limiter l’effet d’une erreur.' },
+    ],
+  },
+  {
+    domain: 'Observabilité',
+    items: [
+      { name: 'OpenTelemetry', measure: 'Traces, métriques et journaux instrumentés d’une seule façon.', why: 'Un même langage pour tous les signaux.' },
+      { name: 'Prometheus et Grafana', measure: 'Métriques et tableaux de bord.', why: 'Voir l’état du service.' },
+      { name: 'Journaux centralisés', measure: 'Sans donnée sensible ni secret.', why: 'Enquêter sans exposer.' },
+      { name: 'Traces distribuées', measure: 'Une connexion suivie de bout en bout.', why: 'Localiser une lenteur ou une erreur.' },
+      { name: 'Alertes sur objectifs de service', measure: 'Alerter sur la consommation du budget d’erreur, pas sur chaque symptôme.', why: 'Réveiller pour ce qui compte.' },
+    ],
+  },
+  {
+    domain: 'Continuité',
+    items: [
+      { name: 'Sauvegardes vérifiées', measure: 'Restaurées régulièrement dans un environnement vide, comme sur la plateforme actuelle.', why: 'Une sauvegarde non restaurée n’est pas une preuve.' },
+      { name: 'Actif-passif ou multi-région', measure: 'Seulement lorsque l’objectif de reprise le justifie.', why: 'Chaque région ajoutée a un coût d’exploitation.' },
+      { name: 'RTO et RPO', measure: 'Fixés avec chaque client, puis vérifiés par exercice.', why: 'Un objectif non mesuré n’engage personne.' },
+      { name: 'Exercices de reprise', measure: 'Planifiés, chronométrés et consignés.', why: 'La procédure doit fonctionner le jour où elle sert.' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Plateforme d’exécution"
+  description="Comment LUXIA Identity s’exécute aujourd’hui (plateforme managée), quand Kubernetes se justifie, et l’architecture Kubernetes visée pour les déploiements sur site et souverains, non disponible à ce jour."
+  crumbs={[{ label: 'Architectures', href: href('architectures') }, { label: 'Plateforme d’exécution' }]}
+>
+  <PageHead
+    crumbs={[{ label: 'Architectures', href: href('architectures') }, { label: 'Plateforme d’exécution' }]}
+    kicker="Plateforme d’exécution"
+    title="Kubernetes quand il se justifie, une plateforme managée quand elle suffit"
+    lead="LUXIA Identity s’exécute aujourd’hui sur une plateforme managée. Cette page décrit cette exécution réelle, les critères qui justifieraient Kubernetes, et l’architecture visée pour les déploiements sur site et souverains."
+  >
+    <p class="notice">
+      <LevelTag level="target" />
+      <span>Aucune plateforme Luxia-IT ne fonctionne aujourd’hui sur Kubernetes. L’architecture de la section 03 est une cible.</span>
+    </p>
+  </PageHead>
+
+  <section class="section" aria-labelledby="today-title">
+    <div class="wrap">
+      <SectionHead
+        id="today-title"
+        index="01"
+        kicker="Aujourd’hui"
+        title="Une plateforme managée, par choix"
+        lead="Pour une plateforme et ce volume, une plateforme managée apporte l’isolation, les correctifs, le chiffrement en transit et la montée en charge des fonctions, sans cluster à exploiter."
+      />
+      <DataTable
+        caption="Exécution actuelle de LUXIA Identity"
+        columns={[
+          { key: 'load', label: 'Charge' },
+          { key: 'where', label: 'Où elle s’exécute' },
+        ]}
+        rows={today}
+      />
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="choice-title">
+    <div class="wrap">
+      <SectionHead
+        id="choice-title"
+        index="02"
+        kicker="Décider"
+        title="Kubernetes n’est pas un gage de sérieux"
+        lead="Il ajoute une surface à sécuriser et à exploiter. Nous ne le retenons que si l’un des critères de droite s’applique."
+      />
+      <div class="choice">
+        <div>
+          <h3 class="t-h4 choice__title">Une plateforme managée suffit quand…</h3>
+          <ul class="choice__list">{managedFits.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div>
+          <h3 class="t-h4 choice__title">Kubernetes devient pertinent pour…</h3>
+          <ul class="choice__list">{kubernetesFits.map((i) => <li>{i}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="target-title">
+    <div class="wrap">
+      <SectionHead
+        id="target-title"
+        index="03"
+        kicker="Architecture cible"
+        title="Architecture de référence Kubernetes"
+        lead="Visée pour les déploiements sur site et souverains. Chaque mesure ci-dessous est une cible : aucune n’est en service."
+      />
+      <TopologyDiagram />
+      <div class="spec">
+        {
+          spec.map((group, gi) => (
+            <section class="spec__group" aria-labelledby={`spec-${gi}`}>
+              <h3 class="t-h3 spec__domain" id={`spec-${gi}`}>
+                {group.domain}
+              </h3>
+              <dl class="spec__list">
+                {group.items.map((item) => (
+                  <div class="spec__row">
+                    <dt class="spec__name">{item.name}</dt>
+                    <dd class="spec__measure">{item.measure}</dd>
+                    <dd class="spec__why">{item.why}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="slo-title">
+    <div class="wrap">
+      <SectionHead
+        id="slo-title"
+        index="04"
+        kicker="Objectifs"
+        title="Aucun objectif de service n’est publié à ce jour"
+        lead="Disponibilité, RTO et RPO se fixent avec chaque client, puis se vérifient par des exercices consignés. Les seules mesures publiées ici sont celles d’exercices datés, sur la plateforme actuelle."
+      >
+        <p><a class="more" href={`${href('architectures')}#continuite`}>Voir les exercices de restauration</a></p>
+      </SectionHead>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Un déploiement sur votre infrastructure ?"
+    text="Parlons de vos contraintes d’exécution : nous dirons ce qui existe, ce qui reste à construire et ce que cela suppose de votre côté."
+    href={`${href('contact')}?sujet=architecture`}
+    label="Nous écrire"
+  />
+</BaseLayout>
+
+<style>
+  .notice {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px;
+    background-color: var(--white);
+    border-left: 3px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .choice {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+  }
+
+  .choice__title {
+    margin-bottom: 12px;
+  }
+
+  .choice__list {
+    border-top: 2px solid var(--ink);
+  }
+
+  .choice__list li {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .spec {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 5vw, 56px);
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .spec__domain {
+    margin-bottom: 14px;
+  }
+
+  .spec__list {
+    border-top: 2px solid var(--ink);
+  }
+
+  .spec__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px var(--gap);
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .spec__name {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .spec__measure {
+    color: var(--ink-2);
+  }
+
+  .spec__why {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+
+  @media (min-width: 720px) {
+    .choice {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .spec__row {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr);
+    }
+  }
+</style>

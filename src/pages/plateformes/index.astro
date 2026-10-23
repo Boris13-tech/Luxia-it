@@ -1,47 +1,72 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageBanner from '../../components/PageBanner.astro';
-import SectionTitle from '../../components/SectionTitle.astro';
-import FeatureCard from '../../components/FeatureCard.astro';
-import Status from '../../components/Status.astro';
-import CtaBand from '../../components/CtaBand.astro';
-import Button from '../../components/Button.astro';
-import { platforms, platformHref } from '../../data/site';
-import type { IconName } from '../../data/icons';
+import PageHead from '../../components/PageHead.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import EvidenceScale from '../../components/EvidenceScale.astro';
+import StageTag from '../../components/StageTag.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import Icon from '../../components/Icon.astro';
+import { facts, formatDate } from '../../data/facts';
+import { platformHref, platforms } from '../../data/platforms';
+import { href } from '../../i18n/routes';
 
-const models: { icon: IconName; title: string; text: string }[] = [
-  { icon: 'cloud', title: 'Cloud', text: 'Opéré par Luxia-IT sur une infrastructure dédiée. Vous administrez, nous exploitons.' },
-  { icon: 'server', title: 'On-premise', text: 'Installé dans vos centres de données et exploité par vos équipes, avec notre support.' },
-  { icon: 'lock', title: 'Souverain', text: 'Déployé dans un environnement isolé, sans dépendance à un service extérieur.' },
+const relations = [
+  {
+    name: 'LUXIA Key prouve',
+    text: 'Un authentificateur établit la possession, la présence et l’intention d’une personne. Il ne crée ni ne rattache jamais de compte.',
+  },
+  {
+    name: 'LUXIA Identity gouverne',
+    text: 'Le registre fait autorité : identités, droits, sessions et journal. Il vérifie lui-même chaque preuve qu’il reçoit.',
+  },
+  {
+    name: 'ALMA étudie les agents',
+    text: 'Un agent IA qui agit est une identité qui agit. ALMA explore les règles qui permettent de lui confier une action, et de le prouver.',
+  },
 ];
 ---
 
 <BaseLayout
   title="Plateformes"
-  description="Les plateformes de Luxia-IT : LUXIA Identity, LUXIA Key et ALMA. Des logiciels déployés et contrôlés par les organisations qui les utilisent."
+  description="LUXIA Identity, LUXIA Key et ALMA : rôle de chaque plateforme, étape réelle et niveau de preuve de leurs capacités."
+  crumbs={[{ label: 'Plateformes' }]}
 >
-  <PageBanner
+  <PageHead
     crumbs={[{ label: 'Plateformes' }]}
-    kicker="Nos plateformes"
-    title="Des logiciels que vous "
-    hl="contrôlez"
-    lead="Chaque plateforme Luxia-IT peut être exploitée par nos équipes ou par les vôtres, dans le périmètre que vous définissez."
-  >
-    <Fragment slot="actions">
-      <Button href="/contact/?sujet=demo">Demander une démo</Button>
-    </Fragment>
-  </PageBanner>
+    kicker="Plateformes"
+    title="Trois plateformes, une étape réelle pour chacune"
+    lead="Luxia-IT développe une plateforme d’identités et d’accès, un authentificateur et un projet de recherche sur les agents IA. Aucune n’est proposée commercialement à ce jour ; leur étape est indiquée telle qu’elle est."
+  />
 
-  <section class="section" aria-labelledby="liste-title">
-    <div class="container">
-      <SectionTitle id="liste-title" before="Trois plateformes, " hl="une même exigence" />
-      <ul class="grid grid--3">
+  <section class="section" aria-labelledby="etat-title">
+    <div class="wrap">
+      <SectionHead id="etat-title" index="01" kicker="État" title="Où en est chaque plateforme">
+        <p class="t-meta">Preuves lues le <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
+      </SectionHead>
+      <ul class="plist">
         {
-          platforms.map((p, i) => (
-            <li class:list={[i > 0 && `d${i}`]}>
-              <FeatureCard icon={p.icon} title={p.name} text={p.summary} tbd={p.summaryTbd} href={platformHref(p.slug)}>
-                <Status status={p.status} />
-              </FeatureCard>
+          platforms.map((p) => (
+            <li class="plist__item">
+              <div class="plist__id">
+                <h3 class="t-h3">
+                  <a class="plist__link" href={platformHref(p.slug)}>
+                    {p.name}
+                  </a>
+                </h3>
+                <p class="kicker">{p.role}</p>
+              </div>
+              <div class="plist__body">
+                <p>{p.summary}</p>
+                <p class="plist__stage">
+                  <StageTag stage={p.stage} />
+                  <span class="t-small">{p.stageNote}</span>
+                </p>
+                <a class="more" href={platformHref(p.slug)}>
+                  Capacités, architecture et limites
+                  <span class="visually-hidden">de {p.name}</span>
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </div>
             </li>
           ))
         }
@@ -49,14 +74,21 @@ const models: { icon: IconName; title: string; text: string }[] = [
     </div>
   </section>
 
-  <section class="section bg-gray" aria-labelledby="deploiement-title">
-    <div class="container">
-      <SectionTitle id="deploiement-title" before="Trois modèles de " hl="déploiement" />
-      <ul class="grid grid--3">
+  <section class="section section--alt" aria-labelledby="relations-title">
+    <div class="wrap">
+      <SectionHead
+        id="relations-title"
+        index="02"
+        kicker="Articulation"
+        title="Prouver, gouverner, étudier"
+        lead="Les plateformes partagent une règle : celui qui prouve une identité n’est pas celui qui décide de ses droits."
+      />
+      <ul class="ruled ruled--3">
         {
-          models.map((m, i) => (
-            <li class:list={[i > 0 && `d${i}`]}>
-              <FeatureCard icon={m.icon} title={m.title} text={m.text} />
+          relations.map((r) => (
+            <li>
+              <h3 class="ruled__title">{r.name}</h3>
+              <p class="ruled__text">{r.text}</p>
             </li>
           ))
         }
@@ -64,10 +96,69 @@ const models: { icon: IconName; title: string; text: string }[] = [
     </div>
   </section>
 
-  <CtaBand
-    before="Quelle plateforme pour "
-    hl="votre contexte"
-    after=" ?"
-    text="Décrivez votre environnement : nous vous indiquons ce que nos plateformes couvrent, et ce qu’elles ne couvrent pas."
+  <section class="section" id="echelle" aria-labelledby="echelle-title">
+    <div class="wrap">
+      <SectionHead
+        id="echelle-title"
+        index="03"
+        kicker="Lecture"
+        title="Comment lire les étapes et les niveaux de preuve"
+        lead="Ces échelles reprennent celles de nos dépôts de code. Une capacité n’y monte qu’avec une preuve : un changement fusionné ne suffit pas."
+      />
+      <EvidenceScale />
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Une question sur une plateforme ?"
+    text="Nous présentons l’état réel de chaque plateforme, y compris ce qui n’est pas encore disponible."
+    href={`${href('contact')}?sujet=plateformes`}
+    label="Nous écrire"
   />
 </BaseLayout>
+
+<style>
+  .plist {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .plist__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px var(--gap);
+    padding-block: 32px;
+    border-top: 1px solid var(--line);
+  }
+
+  .plist__id {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .plist__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .plist__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 46rem;
+  }
+
+  .plist__stage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+
+  @media (min-width: 1024px) {
+    .plist__item {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    }
+  }
+</style>
