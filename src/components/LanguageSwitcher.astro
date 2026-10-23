@@ -1,0 +1,62 @@
+---
+/**
+ * Sélecteur de langue. Il n'apparaît que si la page existe dans au moins une
+ * autre langue publiée : jamais de lien vers une traduction absente.
+ */
+import { localeFromPath, localeMeta } from '../i18n/config';
+import { alternatesOf } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+
+const path = Astro.url.pathname;
+const current = localeFromPath(path);
+const alternates = alternatesOf(path);
+---
+
+{
+  alternates.length > 1 && (
+    <nav class="lang" aria-label={ui[current].language}>
+      <ul>
+        {alternates.map((a) => (
+          <li>
+            <a
+              href={a.path}
+              hreflang={localeMeta[a.locale].lang}
+              lang={localeMeta[a.locale].lang}
+              aria-current={a.locale === current ? 'true' : undefined}
+            >
+              <span aria-hidden="true">{a.locale.toUpperCase()}</span>
+              <span class="visually-hidden">{localeMeta[a.locale].name}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .lang ul {
+    display: flex;
+    gap: 2px;
+  }
+
+  .lang a {
+    display: grid;
+    place-items: center;
+    min-width: 40px;
+    min-height: 40px;
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+  }
+
+  .lang a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .lang a[aria-current] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>

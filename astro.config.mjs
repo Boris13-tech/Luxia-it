@@ -44,6 +44,13 @@ export default defineConfig({
     locales: ['fr', 'en'],
     routing: { prefixDefaultLocale: false },
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // Pages de résultat du formulaire : hors index (elles portent aussi noindex).
+      filter: (page) => !/\/contact\/(envoye|erreur)\/$/.test(page),
+      // Sitemap multilingue : les équivalents /en/… sont annoncés dès qu'ils existent.
+      i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR', en: 'en-GB' } },
+    }),
+  ],
   devToolbar: { enabled: false },
 });
