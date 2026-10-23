@@ -70,6 +70,10 @@ export const facts = {
   contactForm: {
     /** Prestataire qui achemine les messages du formulaire : à choisir (RESEND_API_KEY). */
     deliveryProcessor: null as Processor | null,
+    /** Fournisseur de la boîte Contact@Luxia-it.com : aucune réception configurée (pas d'enregistrement MX). */
+    mailboxProcessor: null as Processor | null,
+    /** Durée de conservation des messages reçus, proposée ; à valider par la revue juridique. */
+    retention: 'trois ans après le dernier échange',
   },
 
   /**
@@ -96,6 +100,7 @@ export const requiredFacts: readonly { path: string; label: string; value: unkno
   { path: 'publisher.address', label: 'Adresse du siège', value: facts.publisher.address },
   { path: 'publisher.publicationDirector', label: 'Directeur de la publication', value: facts.publisher.publicationDirector },
   { path: 'contactForm.deliveryProcessor', label: 'Prestataire d’acheminement du formulaire', value: facts.contactForm.deliveryProcessor },
+  { path: 'contactForm.mailboxProcessor', label: 'Fournisseur de la boîte de réception', value: facts.contactForm.mailboxProcessor },
   { path: 'reviews.platformStatus', label: 'Revue des statuts des plateformes', value: facts.reviews.platformStatus },
   { path: 'reviews.servicesOffer', label: 'Revue de l’offre de services', value: facts.reviews.servicesOffer },
   { path: 'reviews.architectureClaims', label: 'Revue des pages d’architecture', value: facts.reviews.architectureClaims },

@@ -1,0 +1,18 @@
+---
+/** Résultat d'un envoi réussi, sans JavaScript (redirection 303 de api/contact). */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import { href } from '../../i18n/routes';
+---
+
+<BaseLayout title="Message transmis" description="Votre message a été transmis à Luxia-IT." noindex>
+  <PageHead
+    kicker="Contact"
+    title="Votre message a été transmis"
+    lead="Nous vous répondrons à l’adresse indiquée. Le message n’est pas conservé par le site."
+  >
+    <Fragment slot="actions">
+      <a class="btn btn--secondary" href={href('home')}>Retour à l’accueil</a>
+    </Fragment>
+  </PageHead>
+</BaseLayout>

@@ -5,6 +5,15 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": true,
+  "regions": [
+    "fra1"
+  ],
+  "functions": {
+    "api/contact.ts": {
+      "maxDuration": 10,
+      "memory": 256
+    }
+  },
   "redirects": [
     {
       "source": "/:locale(fr|en|zh)",
