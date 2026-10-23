@@ -1,0 +1,54 @@
+---
+/**
+ * Conteneur d'onglets (voir src/scripts/tabs.ts). Les panneaux sont passés en
+ * slot : chacun est un élément `.tabs__panel` dont l'id correspond à un onglet,
+ * avec un titre `.tabs__panel-title` lisible sans JavaScript.
+ */
+interface Props {
+  label: string;
+  /** Le premier onglet est actif par défaut (ou celui que vise l'ancre). */
+  items: readonly { id: string; label: string }[];
+  /** Mode « étapes » : chaîne numérotée et boutons Précédent / Suivant. */
+  stepper?: boolean | undefined;
+  class?: string | undefined;
+}
+
+const { label, items, stepper = false, class: className } = Astro.props;
+---
+
+<div class:list={['tabs', stepper && 'tabs--steps', className]} data-tabs data-tabs-stepper={stepper ? '' : undefined}>
+  <div class="tabs__list" role="tablist" data-tablist aria-label={label}>
+    {
+      items.map((item, i) => (
+        <button
+          class="tabs__tab"
+          type="button"
+          role="tab"
+          id={`${item.id}-tab`}
+          aria-controls={item.id}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={item.id}
+        >
+          {item.label}
+        </button>
+      ))
+    }
+  </div>
+  <div class="tabs__panels" data-panels>
+    <slot />
+  </div>
+  {
+    stepper && (
+      <div class="stepper" data-stepper-controls>
+        <button class="btn btn--secondary btn--sm" type="button" data-step-prev>
+          Étape précédente
+        </button>
+        <button class="btn btn--primary btn--sm" type="button" data-step-next>
+          Étape suivante
+        </button>
+        <p class="stepper__status" role="status" data-step-status />
+      </div>
+    )
+  }
+</div>

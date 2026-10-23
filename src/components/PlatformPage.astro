@@ -24,6 +24,8 @@ interface Props {
 
 const p = getPlatform(Astro.props.slug);
 const contact = `${href('contact')}?sujet=${p.slug}`;
+// Au-delà, les éléments d'une liste sont repliés (divulgation progressive).
+const VISIBLE = 4;
 
 const sections = [
   { id: 'probleme', show: true },
@@ -105,7 +107,19 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
             title="Ce qui fonctionne aujourd’hui"
             lead="Chaque capacité indique son niveau de preuve. Aucune n’est présentée au-delà de ce qui a été démontré."
           />
-          <ClaimList claims={p.capabilities} columns={2} />
+          <ClaimList claims={p.capabilities.slice(0, VISIBLE)} columns={2} />
+          {
+            p.capabilities.length > VISIBLE && (
+              <details class="disclosure more-claims">
+                <summary>
+                  Voir {p.capabilities.length - VISIBLE === 1 ? 'l’autre' : `les ${p.capabilities.length - VISIBLE} autres`} capacités
+                </summary>
+                <div class="disclosure__body">
+                  <ClaimList claims={p.capabilities.slice(VISIBLE)} columns={2} />
+                </div>
+              </details>
+            )
+          }
         </div>
       </section>
     )
@@ -122,7 +136,19 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
             title="Ce qui n’est pas encore disponible"
             lead="Conçu ou visé, mais pas en service. Le niveau indique jusqu’où chaque élément est allé."
           />
-          <ClaimList claims={p.next} columns={2} />
+          <ClaimList claims={p.next.slice(0, VISIBLE)} columns={2} />
+          {
+            p.next.length > VISIBLE && (
+              <details class="disclosure more-claims">
+                <summary>
+                  Voir {p.next.length - VISIBLE === 1 ? 'l’autre' : `les ${p.next.length - VISIBLE} autres`} éléments
+                </summary>
+                <div class="disclosure__body">
+                  <ClaimList claims={p.next.slice(VISIBLE)} columns={2} />
+                </div>
+              </details>
+            )
+          }
         </div>
       </section>
     )
@@ -207,7 +233,12 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
   <section class="section section--alt" id="echelle" aria-labelledby="echelle-title">
     <div class="wrap">
       <SectionHead id="echelle-title" kicker="Lecture" title="Comment lire les niveaux de preuve" />
-      <EvidenceScale />
+      <details class="disclosure">
+        <summary>Les cinq niveaux de preuve et les cinq étapes</summary>
+        <div class="disclosure__body">
+          <EvidenceScale />
+        </div>
+      </details>
     </div>
   </section>
 
@@ -265,6 +296,10 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
 
   .principle__text {
     max-width: 50rem;
+  }
+
+  .more-claims {
+    margin-top: 8px;
   }
 
   .limits {

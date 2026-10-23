@@ -10,6 +10,7 @@ import PageHead from '../../components/PageHead.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import DataTable from '../../components/DataTable.astro';
 import TopologyDiagram from '../../components/TopologyDiagram.astro';
+import RequestFlow from '../../components/RequestFlow.astro';
 import LevelTag from '../../components/LevelTag.astro';
 import CtaBlock from '../../components/CtaBlock.astro';
 import { href } from '../../i18n/routes';
@@ -155,11 +156,24 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="choice-title">
+  <section class="section section--alt" aria-labelledby="flow-title">
+    <div class="wrap">
+      <SectionHead
+        id="flow-title"
+        index="02"
+        kicker="Parcours"
+        title="Ce qui arrive à une requête, étape par étape"
+        lead="Le chemin réel d’une requête dans LUXIA Identity aujourd’hui, de son arrivée à la reprise après incident. Chaque étape indique le composant qui agit et son niveau de preuve."
+      />
+      <RequestFlow />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="choice-title">
     <div class="wrap">
       <SectionHead
         id="choice-title"
-        index="02"
+        index="03"
         kicker="Décider"
         title="Kubernetes n’est pas un gage de sérieux"
         lead="Il ajoute une surface à sécuriser et à exploiter. Nous ne le retenons que si l’un des critères de droite s’applique."
@@ -177,11 +191,11 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
     </div>
   </section>
 
-  <section class="section" aria-labelledby="target-title">
+  <section class="section section--alt" aria-labelledby="target-title">
     <div class="wrap">
       <SectionHead
         id="target-title"
-        index="03"
+        index="04"
         kicker="Architecture cible"
         title="Architecture de référence Kubernetes"
         lead="Visée pour les déploiements sur site et souverains. Chaque mesure ci-dessous est une cible : aucune n’est en service."
@@ -190,11 +204,12 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
       <div class="spec">
         {
           spec.map((group, gi) => (
-            <section class="spec__group" aria-labelledby={`spec-${gi}`}>
-              <h3 class="t-h3 spec__domain" id={`spec-${gi}`}>
-                {group.domain}
-              </h3>
-              <dl class="spec__list">
+            <details class="disclosure spec__group" open={gi === 0}>
+              <summary>
+                <h3 class="t-h4 spec__domain">{group.domain}</h3>
+                <span class="spec__count">{group.items.length} mesures</span>
+              </summary>
+              <dl class="spec__list disclosure__body">
                 {group.items.map((item) => (
                   <div class="spec__row">
                     <dt class="spec__name">{item.name}</dt>
@@ -203,18 +218,18 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
                   </div>
                 ))}
               </dl>
-            </section>
+            </details>
           ))
         }
       </div>
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="slo-title">
+  <section class="section" aria-labelledby="slo-title">
     <div class="wrap">
       <SectionHead
         id="slo-title"
-        index="04"
+        index="05"
         kicker="Objectifs"
         title="Aucun objectif de service n’est publié à ce jour"
         lead="Disponibilité, RTO et RPO se fixent avec chaque client, puis se vérifient par des exercices consignés. Les seules mesures publiées ici sont celles d’exercices datés, sur la plateforme actuelle."
@@ -264,14 +279,23 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
   }
 
   .spec {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(36px, 5vw, 56px);
     margin-top: clamp(40px, 6vw, 72px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .spec__group > summary {
+    justify-content: flex-start;
   }
 
   .spec__domain {
-    margin-bottom: 14px;
+    flex: 1;
+  }
+
+  .spec__count {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    font-weight: 400;
+    color: var(--ink-3);
   }
 
   .spec__list {

@@ -1,0 +1,108 @@
+---
+/**
+ * Parcours d'une requête dans LUXIA Identity aujourd'hui, étape par étape.
+ * Chaque étape décrit une action réelle de la plateforme actuelle, avec son
+ * niveau de preuve (sources : iam-azure-pme, docs/legal/SECURITY-OVERVIEW.md
+ * et docs/architecture/ADR-SOVEREIGN-IDENTITY-CONTROL-PLANE.md, lus le
+ * 23 octobre 2026). Sans JavaScript : liste ordonnée complète.
+ */
+import Tabs from './Tabs.astro';
+import LevelTag from './LevelTag.astro';
+import type { Level } from '../data/evidence';
+
+const steps: readonly { id: string; label: string; where: string; text: string; level: Level }[] = [
+  {
+    id: 'flux-arrivee',
+    label: 'Arrivée',
+    where: 'Plateforme managée',
+    text: 'Le navigateur joint l’application en HTTPS. La plateforme termine le chiffrement TLS et achemine la requête vers une fonction applicative sans état.',
+    level: 'production',
+  },
+  {
+    id: 'flux-identite',
+    label: 'Identité',
+    where: 'Fonction applicative et base de données',
+    text: 'La session est retrouvée par l’empreinte de son jeton, au moyen d’une fonction dédiée de la base de données. Une session expirée, révoquée ou rattachée à une organisation suspendue est refusée.',
+    level: 'production',
+  },
+  {
+    id: 'flux-politiques',
+    label: 'Politiques',
+    where: 'Fonction applicative',
+    text: 'L’autorisation évalue les droits explicites attribués à la personne dans son organisation. Les règles de séparation des tâches s’appliquent aux habilitations.',
+    level: 'production',
+  },
+  {
+    id: 'flux-charge',
+    label: 'Charge',
+    where: 'Plateforme managée',
+    text: 'La plateforme crée autant d’instances de la fonction que nécessaire. Aucune instance ne conserve d’état entre deux requêtes : toutes sont interchangeables.',
+    level: 'production',
+  },
+  {
+    id: 'flux-persistance',
+    label: 'Persistance',
+    where: 'PostgreSQL managé',
+    text: 'La requête s’exécute dans le contexte de son organisation. PostgreSQL applique la sécurité au niveau des lignes, que le rôle de l’application ne peut pas contourner.',
+    level: 'production',
+  },
+  {
+    id: 'flux-audit',
+    label: 'Audit',
+    where: 'Journal en ajout seul',
+    text: 'Une action d’administration ou une connexion est ajoutée au journal. L’application ne peut ni modifier ni supprimer ces enregistrements.',
+    level: 'production',
+  },
+  {
+    id: 'flux-supervision',
+    label: 'Supervision',
+    where: 'Alerte externe',
+    text: 'Une alerte émise hors de la chaîne de sauvegarde prévient l’opérateur si une sauvegarde manque. La supervision de l’application elle-même (disponibilité, erreurs, latence) est conçue, pas encore en service.',
+    level: 'designed',
+  },
+  {
+    id: 'flux-reprise',
+    label: 'Reprise',
+    where: 'Sauvegardes indépendantes',
+    text: 'Des sauvegardes chiffrées sont conservées hors du fournisseur de base de données. Le 13 octobre 2026, la base a été reconstruite à partir de l’une d’elles et vérifiée en 81 secondes.',
+    level: 'production',
+  },
+];
+---
+
+<Tabs label="Étapes du parcours d’une requête" items={steps.map((s) => ({ id: s.id, label: s.label }))} stepper>
+  {
+    steps.map((s, i) => (
+      <section class="tabs__panel flow__panel" id={s.id}>
+        <h3 class="tabs__panel-title flow__title">
+          {String(i + 1).padStart(2, '0')}. {s.label}
+        </h3>
+        <p class="kicker">Composant : {s.where}</p>
+        <p class="t-lead flow__text">{s.text}</p>
+        <LevelTag level={s.level} />
+      </section>
+    ))
+  }
+</Tabs>
+
+<style>
+  .flow__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    min-height: 12.5rem;
+    padding: clamp(20px, 3vw, 32px);
+    background-color: var(--white);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+  }
+
+  .flow__title {
+    font-size: var(--fs-h4);
+  }
+
+  .flow__text {
+    max-width: 48rem;
+  }
+</style>

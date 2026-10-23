@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { parsePublished, routes, sitemapLang } from './src/i18n/route-map.mjs';
+import frenchTypography from './integrations/french-spacing.mjs';
 
 // Domaine de production historique de Luxia-IT (URL canonique par défaut).
 const PRODUCTION_ORIGIN = 'https://luxia-it.com';
@@ -82,6 +83,7 @@ export default defineConfig({
       filter: (page) => !/\/contact\/(envoye|erreur)\/$/.test(page),
       serialize: withAlternates,
     }),
+    frenchTypography(),
   ],
   devToolbar: { enabled: false },
 });

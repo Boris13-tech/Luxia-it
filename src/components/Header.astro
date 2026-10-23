@@ -76,6 +76,8 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
   .hdr {
     position: sticky;
     top: 0;
+    /* L'en-tête reste en place pendant les transitions de page */
+    view-transition-name: site-header;
     z-index: 100;
     background-color: var(--paper);
     border-bottom: 1px solid var(--line);

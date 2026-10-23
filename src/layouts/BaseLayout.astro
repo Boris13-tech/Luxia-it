@@ -151,5 +151,9 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       <slot />
     </main>
     <Footer />
+    <script>
+      import { initTabs } from '../scripts/tabs';
+      initTabs();
+    </script>
   </body>
 </html>

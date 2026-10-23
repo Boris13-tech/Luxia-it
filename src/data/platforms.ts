@@ -35,6 +35,8 @@ export interface Platform {
   summary: string;
   stage: Stage;
   stageNote: string;
+  /** Résumé de l'explorateur de l'accueil : problème couvert et déploiement réel. */
+  brief: { problem: string; deployment: Claim };
   description: string;
   lead: string;
   problem: { intro: string; points: readonly { title: string; text: string }[] };
@@ -59,6 +61,15 @@ const identity: Platform = {
     'Le registre des identités et des accès d’une organisation : qui existe, comment chacun se connecte, à quoi chacun a droit, et la trace de chaque décision.',
   stage: 'development',
   stageNote: 'Bêta privée en préparation, sur invitation. Aucune offre commerciale à ce jour.',
+  brief: {
+    problem:
+      'Des identités dispersées entre annuaires, fournisseurs et comptes locaux, sans registre qui fasse autorité ni trace que l’on ne puisse réécrire.',
+    deployment: {
+      title: 'Opéré par Luxia-IT',
+      text: 'Plateforme managée, hébergée aux États-Unis, sauvegardes dans l’Union européenne. Sur site et souverain : visés, sans déploiement à ce jour.',
+      level: 'production',
+    },
+  },
   description:
     'LUXIA Identity, identités et accès : organisations isolées, passkeys, Microsoft Entra ID, habilitations et journal en ajout seul. Le niveau de preuve de chaque capacité.',
   lead: 'La plateforme d’identités et d’accès de Luxia-IT. Les fournisseurs d’identité s’y branchent ; l’identité, les droits et l’historique restent dans son cœur.',
@@ -285,6 +296,15 @@ const key: Platform = {
     'Un authentificateur : passkeys, approbation des connexions et des actions sensibles, protection sur plusieurs appareils. LUXIA Key prouve ; LUXIA Identity gouverne.',
   stage: 'prototype',
   stageNote: 'Serveur WebAuthn vérifié en intégration continue, non déployé. Interface mobile à l’état de maquette.',
+  brief: {
+    problem:
+      'Prouver qu’une personne est présente et approuve une action précise, sans serveur capable de fabriquer une preuve à sa place.',
+    deployment: {
+      title: 'Aucun déploiement',
+      text: 'Le serveur WebAuthn est vérifié par les tests automatisés ; aucun environnement n’est déployé.',
+      level: 'ci',
+    },
+  },
   description:
     'LUXIA Key : authentificateur à base de passkeys pour LUXIA Identity. État réel : serveur WebAuthn vérifié en intégration continue, interface au stade de prototype.',
   lead: 'Un authentificateur prouve la possession, la présence et l’intention d’une personne. Il ne crée ni ne rattache jamais de compte : c’est le rôle de LUXIA Identity.',
@@ -401,6 +421,15 @@ const alma: Platform = {
     'Un projet des Labs : un assistant à base d’agents IA qui agit par des outils déclarés, sous des règles d’autorisation explicites. Périmètre et disponibilité non annoncés.',
   stage: 'prototype',
   stageNote: 'Projet de recherche des Labs. Prototype fonctionnel ; aucune offre, ni périmètre ni disponibilité annoncés.',
+  brief: {
+    problem:
+      'Confier une action à un agent IA sans lui donner toute l’autorité de la personne qui l’a lancé, et prouver ce qu’il a fait.',
+    deployment: {
+      title: 'Aucun déploiement pour des tiers',
+      text: 'Prototype de recherche : outils déclarés, accord explicite avant toute action irréversible, journal des actions.',
+      level: 'implemented',
+    },
+  },
   description:
     'ALMA : projet des Labs de Luxia-IT sur les agents IA gouvernés. Outils déclarés, accord explicite avant toute action irréversible, journal des actions. Prototype.',
   lead: 'Un agent IA qui agit est une identité qui agit. ALMA étudie ce qu’un agent peut faire, avec quels droits, et comment le prouver.',

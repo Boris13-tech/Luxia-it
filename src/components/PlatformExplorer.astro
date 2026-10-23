@@ -1,0 +1,150 @@
+---
+/**
+ * Explorateur de l'accueil : une plateforme à la fois, avec le problème
+ * couvert, l'étape vérifiée, le déploiement réel et le lien détaillé.
+ * Sans JavaScript, les trois fiches s'affichent à la suite.
+ */
+import Tabs from './Tabs.astro';
+import StageTag from './StageTag.astro';
+import LevelTag from './LevelTag.astro';
+import Icon from './Icon.astro';
+import { facts, formatDate } from '../data/facts';
+import { platformHref, platforms } from '../data/platforms';
+import { href } from '../i18n/routes';
+
+const items = platforms.map((p) => ({ id: `plateforme-${p.slug}`, label: p.name }));
+---
+
+<section class="explorer" aria-labelledby="explorer-title">
+  <div class="explorer__head">
+    <h2 class="explorer__title" id="explorer-title">État des plateformes</h2>
+    <p class="t-meta">au <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
+  </div>
+  <Tabs label="Choisir une plateforme" items={items}>
+    {
+      platforms.map((p) => (
+        <article class="tabs__panel explorer__panel" id={`plateforme-${p.slug}`}>
+          <h3 class="tabs__panel-title explorer__name">{p.name}</h3>
+          <p class="kicker">{p.role}</p>
+          <dl class="explorer__facts">
+            <div>
+              <dt>Problème couvert</dt>
+              <dd>{p.brief.problem}</dd>
+            </div>
+            <div>
+              <dt>Étape vérifiée</dt>
+              <dd>
+                <StageTag stage={p.stage} />
+                <span class="explorer__note">{p.stageNote}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Déploiement</dt>
+              <dd>
+                <LevelTag level={p.brief.deployment.level} />
+                <span class="explorer__note">
+                  <strong>{p.brief.deployment.title}.</strong> {p.brief.deployment.text}
+                </span>
+              </dd>
+            </div>
+          </dl>
+          <a class="more" href={platformHref(p.slug)}>
+            Capacités, architecture et limites
+            <span class="visually-hidden">de {p.name}</span>
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </article>
+      ))
+    }
+  </Tabs>
+  <p class="explorer__foot">
+    Aucune plateforme n’est proposée commercialement à ce jour.{' '}
+    <a class="link" href={`${href('platforms')}#echelle`}>Comment lire ces étapes</a>
+  </p>
+</section>
+
+<style>
+  .explorer {
+    background-color: var(--white);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--ink);
+  }
+
+  .explorer__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+    padding: 18px 20px 0;
+  }
+
+  .explorer__title {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .explorer :global(.tabs__list) {
+    margin-top: 12px;
+    padding-inline: 8px;
+  }
+
+  .explorer :global(.tabs__panels) {
+    padding-inline: 20px;
+  }
+
+  .explorer__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 20px;
+  }
+
+  .explorer__name {
+    font-size: 1.25rem;
+  }
+
+  .explorer__facts {
+    align-self: stretch;
+    border-top: 1px solid var(--line);
+  }
+
+  .explorer__facts > div {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .explorer__facts dt {
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .explorer__facts dd {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  .explorer__note {
+    color: var(--ink-2);
+  }
+
+  .explorer__foot {
+    padding: 14px 20px 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+</style>

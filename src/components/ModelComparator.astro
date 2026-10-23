@@ -1,0 +1,124 @@
+---
+/**
+ * Comparateur des modèles de déploiement : un même schéma et les mêmes six
+ * aspects, actualisés quand on change de modèle. Sous les onglets, un tableau
+ * comparatif complet reste disponible (et suffit sans JavaScript).
+ */
+import Tabs from './Tabs.astro';
+import ArchDiagram from './ArchDiagram.astro';
+import LevelTag from './LevelTag.astro';
+import { aspects, deploymentModels } from '../data/deployments';
+---
+
+<div class="cmp">
+  <Tabs label="Choisir un modèle de déploiement" items={deploymentModels.map((m) => ({ id: m.id, label: m.name }))}>
+    {
+      deploymentModels.map((m) => (
+        <section class="tabs__panel cmp__panel" id={m.id}>
+          <h3 class="tabs__panel-title t-h3">{m.name}</h3>
+          <div class="cmp__intro">
+            <LevelTag level={m.level} />
+            <p class="t-lead">{m.summary}</p>
+          </div>
+          <ArchDiagram title={`Schéma du modèle : ${m.name}`} {...m.diagram} />
+          <dl class="cmp__aspects">
+            {aspects.map((a) => (
+              <div>
+                <dt>{a.label}</dt>
+                <dd>{m.aspects[a.key]}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))
+    }
+  </Tabs>
+
+  <details class="disclosure cmp__table">
+    <summary>Tableau comparatif des trois modèles</summary>
+    <div class="disclosure__body">
+      <table class="table">
+        <caption class="visually-hidden">Comparaison des modèles de déploiement par aspect</caption>
+        <thead>
+          <tr>
+            <th scope="col">Aspect</th>
+            {deploymentModels.map((m) => <th scope="col">{m.name}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Niveau</th>
+            {deploymentModels.map((m) => (
+              <td data-label={m.name}>
+                <LevelTag level={m.level} />
+              </td>
+            ))}
+          </tr>
+          {
+            aspects.map((a) => (
+              <tr>
+                <th scope="row">{a.label}</th>
+                {deploymentModels.map((m) => <td data-label={m.name}>{m.aspects[a.key]}</td>)}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</div>
+
+<style>
+  .cmp__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .cmp__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cmp__aspects {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 var(--gap);
+  }
+
+  .cmp__aspects > div {
+    padding-block: 14px 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .cmp__aspects dt {
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .cmp__aspects dd {
+    color: var(--ink);
+  }
+
+  .cmp__table {
+    margin-top: 40px;
+  }
+
+  @media (min-width: 720px) {
+    .cmp__aspects {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cmp__aspects {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
