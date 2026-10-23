@@ -1,0 +1,77 @@
+---
+/** Légende des deux échelles utilisées sur le site. */
+import LevelTag from './LevelTag.astro';
+import StageTag from './StageTag.astro';
+import { levelOrder, levels, stageOrder, stages } from '../data/evidence';
+
+interface Props {
+  /** Afficher aussi l'échelle des étapes de plateforme. */
+  withStages?: boolean | undefined;
+}
+
+const { withStages = true } = Astro.props;
+---
+
+<div class:list={['scale', withStages && 'scale--two']}>
+  <div>
+    <p class="kicker scale__title">Niveau de preuve d’une capacité</p>
+    <dl class="scale__list">
+      {
+        levelOrder.map((l) => (
+          <div>
+            <dt>
+              <LevelTag level={l} />
+            </dt>
+            <dd>{levels[l].text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+  {
+    withStages && (
+      <div>
+        <p class="kicker scale__title">Étape d’une plateforme</p>
+        <dl class="scale__list">
+          {stageOrder.map((s) => (
+            <div>
+              <dt>
+                <StageTag stage={s} />
+              </dt>
+              <dd>{stages[s].text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .scale {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+  }
+
+  .scale__title {
+    margin-bottom: 16px;
+  }
+
+  .scale__list > div {
+    padding-block: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .scale__list dd {
+    margin-top: 6px;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 1024px) {
+    .scale--two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

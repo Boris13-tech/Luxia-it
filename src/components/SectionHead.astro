@@ -1,0 +1,51 @@
+---
+/**
+ * En-tête de section : repère numéroté et libellé à gauche (4/12), titre et
+ * chapeau à droite (8/12). Le contenu en slot se place sous le chapeau.
+ */
+interface Props {
+  title: string;
+  id: string;
+  index?: string | undefined;
+  kicker?: string | undefined;
+  lead?: string | undefined;
+}
+
+const { title, id, index, kicker, lead } = Astro.props;
+---
+
+<div class="shead split">
+  <p class="shead__label kicker">
+    {index && <span class="shead__index">{index}</span>}
+    {kicker}
+  </p>
+  <div class="shead__main">
+    <h2 class="t-h2" id={id}>{title}</h2>
+    {lead && <p class="t-lead shead__lead">{lead}</p>}
+    <slot />
+  </div>
+</div>
+
+<style>
+  .shead {
+    margin-bottom: clamp(36px, 5vw, 64px);
+  }
+
+  .shead__label {
+    display: flex;
+    gap: 16px;
+    padding-top: 0.6em;
+  }
+
+  .shead__index {
+    color: var(--blue);
+  }
+
+  .shead__lead {
+    margin-top: 20px;
+  }
+
+  .shead__main > :global(* + *) {
+    margin-top: 20px;
+  }
+</style>

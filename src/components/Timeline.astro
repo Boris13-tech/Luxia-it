@@ -1,0 +1,65 @@
+---
+/** Chronologie datée de jalons vérifiables. */
+import LevelTag from './LevelTag.astro';
+import { formatDate } from '../data/facts';
+import type { Level } from '../data/evidence';
+
+interface Props {
+  items: readonly { date: string; title: string; text: string; level?: Level | undefined }[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="tl">
+  {
+    items.map((item) => (
+      <li class="tl__item">
+        <time class="tl__date" datetime={item.date}>
+          {formatDate(item.date)}
+        </time>
+        <div class="tl__body">
+          <h3 class="tl__title">{item.title}</h3>
+          <p>{item.text}</p>
+          {item.level && <LevelTag level={item.level} />}
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .tl__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px var(--gap);
+    padding-block: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  .tl__date {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.02em;
+    color: var(--ink-3);
+    padding-top: 3px;
+  }
+
+  .tl__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .tl__title {
+    font-size: var(--fs-h4);
+    letter-spacing: 0;
+  }
+
+  @media (min-width: 720px) {
+    .tl__item {
+      grid-template-columns: 12rem minmax(0, 1fr);
+    }
+  }
+</style>

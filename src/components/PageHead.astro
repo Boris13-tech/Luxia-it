@@ -1,0 +1,101 @@
+---
+/** Ouverture des pages intérieures : fil d'Ariane, libellé, titre, chapeau, actions. */
+import type { Crumb } from '../layouts/BaseLayout.astro';
+import { localeFromPath } from '../i18n/config';
+import { href } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  kicker?: string | undefined;
+  lead?: string | undefined;
+  crumbs?: readonly Crumb[] | undefined;
+}
+
+const { title, kicker, lead, crumbs = [] } = Astro.props;
+const locale = localeFromPath(Astro.url.pathname);
+const t = ui[locale];
+---
+
+<section class="phead" aria-labelledby="page-title">
+  <div class="wrap">
+    {
+      crumbs.length > 0 && (
+        <nav class="crumbs" aria-label={t.breadcrumbs}>
+          <ol>
+            <li>
+              <a href={href('home', locale)}>{t.home}</a>
+            </li>
+            {crumbs.map((c) => (
+              <li>{c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    {kicker && <p class="kicker phead__kicker">{kicker}</p>}
+    <h1 class="t-h1 phead__title" id="page-title">{title}</h1>
+    <div class="phead__body">
+      {lead && <p class="t-lead">{lead}</p>}
+      <slot />
+      {Astro.slots.has('actions') && <div class="actions phead__actions"><slot name="actions" /></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .phead {
+    padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    margin-bottom: clamp(32px, 5vw, 56px);
+    font-size: var(--fs-meta);
+    font-family: var(--mono);
+    color: var(--ink-3);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-inline: 10px;
+    color: var(--line-strong);
+  }
+
+  .crumbs a {
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .crumbs a:hover {
+    color: var(--ink);
+  }
+
+  .crumbs [aria-current] {
+    color: var(--ink);
+  }
+
+  .phead__kicker {
+    margin-bottom: 20px;
+  }
+
+  .phead__title {
+    max-width: 22ch;
+  }
+
+  .phead__body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 46rem;
+    margin-top: clamp(24px, 3vw, 36px);
+  }
+
+  .phead__actions {
+    margin-top: 8px;
+  }
+</style>

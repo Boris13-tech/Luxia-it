@@ -1,112 +1,84 @@
 ---
 /**
- * En-tête : transparent sur le bandeau d'ouverture, blanc dès que l'on
- * fait défiler. Menus déroulants au survol et au clavier (sans JS) ;
- * menu plein écran sur mobile.
+ * En-tête fixe, fond blanc cassé. Navigation plate (aucun menu au survol :
+ * rien n'apparaît sans action explicite, critère 1.4.13). Sur mobile, un
+ * bouton ouvre la navigation ; Échap la ferme et rend le focus au bouton.
  */
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import Button from './Button.astro';
-import { mainNav } from '../data/site';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { localeFromPath } from '../i18n/config';
+import { href } from '../i18n/routes';
+import { ui } from '../i18n/ui';
 
 const path = Astro.url.pathname;
-const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const locale = localeFromPath(path);
+const t = ui[locale];
+const home = href('home', locale);
+const items = t.navItems.map((item) => ({ ...item, href: href(item.id, locale) }));
+const isCurrent = (target: string) => target !== home && path.startsWith(target);
 ---
 
 <header class="hdr" data-header>
-  <div class="container hdr__bar">
-    <a class="hdr__brand" href="/" aria-label="Luxia-IT — accueil">
+  <div class="wrap hdr__bar">
+    <a class="hdr__brand" href={home}>
       <Logo />
+      <span class="visually-hidden">{t.homeSuffix}</span>
     </a>
 
-    <nav class="hdr__nav" aria-label="Navigation principale">
+    <nav class="hdr__nav" aria-label={t.nav}>
       <ul class="hdr__menu">
         {
-          mainNav.map((item) => (
-            <li class:list={['hdr__item', item.children && 'has-sub']}>
+          items.map((item) => (
+            <li>
               <a class="hdr__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
                 {item.label}
-                {item.children && <Icon name="chevron-down" size={14} stroke={2} class="hdr__caret" />}
               </a>
-              {item.children && (
-                <ul class="hdr__sub">
-                  {item.children.map((child) => (
-                    <li>
-                      <a class="hdr__sublink" href={child.href}>
-                        {child.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
           ))
         }
       </ul>
     </nav>
 
-    <Button href="/contact/" size="sm" class="hdr__cta">Demander une démo</Button>
-
-    <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-trigger>
-      <span class="visually-hidden" data-menu-label>Ouvrir le menu</span>
-      <span class="hdr__burger-icon hdr__burger-icon--open"><Icon name="menu" size={26} /></span>
-      <span class="hdr__burger-icon hdr__burger-icon--close"><Icon name="x" size={26} /></span>
-    </button>
+    <div class="hdr__end">
+      <LanguageSwitcher />
+      <a class="btn btn--primary btn--sm hdr__cta" href={`${href('contact', locale)}?sujet=cadrage`}>{t.cta}</a>
+      <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-trigger>
+        <span class="visually-hidden" data-menu-label data-open-label={t.menuOpen} data-close-label={t.menuClose}>
+          {t.menuOpen}
+        </span>
+        <span class="hdr__icon hdr__icon--open"><Icon name="menu" size={24} /></span>
+        <span class="hdr__icon hdr__icon--close"><Icon name="x" size={24} /></span>
+      </button>
+    </div>
   </div>
 
   <div class="mnav" id="menu-mobile" data-menu>
-    <nav class="container mnav__inner" aria-label="Navigation mobile">
+    <nav class="wrap mnav__inner" aria-label={t.nav}>
       <ul>
         {
-          mainNav.map((item) =>
-            item.children ? (
-              <li class="mnav__item">
-                <details class="mnav__group">
-                  <summary class="mnav__link">
-                    {item.label}
-                    <Icon name="chevron-down" size={18} stroke={2} class="mnav__caret" />
-                  </summary>
-                  <ul class="mnav__sub">
-                    {item.children.map((child) => (
-                      <li>
-                        <a href={child.href}>{child.label}</a>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </li>
-            ) : (
-              <li class="mnav__item">
-                <a class="mnav__link" href={item.href}>
-                  {item.label}
-                </a>
-              </li>
-            ),
-          )
+          items.map((item) => (
+            <li>
+              <a class="mnav__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </li>
+          ))
         }
       </ul>
-      <Button href="/contact/" class="mnav__cta">Demander une démo</Button>
+      <a class="btn btn--primary mnav__cta" href={`${href('contact', locale)}?sujet=cadrage`}>{t.cta}</a>
     </nav>
   </div>
 </header>
 
 <style>
   .hdr {
-    position: fixed;
-    inset: 0 0 auto 0;
+    position: sticky;
+    top: 0;
     z-index: 100;
-    color: var(--white);
-    transition:
-      background-color 300ms var(--ease),
-      color 300ms var(--ease),
-      box-shadow 300ms var(--ease);
-  }
-
-  /* Après défilement (ou menu ouvert) : fond blanc, texte ardoise */
-  .hdr:global(.is-solid) {
-    background-color: var(--white);
-    color: var(--slate);
-    box-shadow: 0 2px 16px rgb(44 52 58 / 0.1);
+    background-color: rgb(246 246 243 / 0.97);
+    border-bottom: 1px solid var(--line);
   }
 
   .hdr__bar {
@@ -114,35 +86,12 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     align-items: center;
     gap: 24px;
     height: var(--header-h);
-    transition: height 300ms var(--ease);
-  }
-
-  .hdr:global(.is-solid) .hdr__bar {
-    height: 68px;
   }
 
   .hdr__brand {
     flex: none;
     display: inline-flex;
     margin-right: auto;
-  }
-
-  /* Sur le bandeau d'ouverture (fond marine) : logo en version inversée,
-     survol et soulignement en bleu clair */
-  :global(.hdr:not(.is-solid) .hdr__brand .logo) {
-    --logo-dark: #ffffff;
-    --logo-light: #a9c8f2;
-    --logo-name: #ffffff;
-    --logo-tagline: #c6dbf7;
-  }
-
-  :global(.hdr:not(.is-solid)) .hdr__link:hover,
-  :global(.hdr:not(.is-solid)) .hdr__item:focus-within > .hdr__link {
-    color: var(--brand-pale);
-  }
-
-  :global(.hdr:not(.is-solid)) .hdr__link[aria-current]::after {
-    background-color: var(--brand-light);
   }
 
   .hdr__nav {
@@ -152,191 +101,118 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
   .hdr__menu {
     display: flex;
     align-items: center;
-  }
-
-  .hdr__item {
-    position: relative;
+    gap: 4px;
   }
 
   .hdr__link {
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 19px 14px;
+    min-height: 44px;
+    padding: 0 12px;
     font-size: 0.9375rem;
-    font-weight: 400;
+    font-weight: 500;
+    color: var(--ink-2);
     transition: color var(--dur) var(--ease);
   }
 
-  .hdr__link:hover,
-  .hdr__item:focus-within > .hdr__link {
-    color: var(--brand);
+  .hdr__link:hover {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 6px;
   }
 
-  .hdr__link[aria-current]::after {
+  .hdr__link[aria-current='page'] {
+    color: var(--ink);
+  }
+
+  .hdr__link[aria-current='page']::after {
     content: '';
     position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 4px;
     height: 2px;
-    border-radius: 2px;
-    background-color: var(--brand);
+    background-color: var(--blue);
   }
 
-  .hdr__link :global(.hdr__caret) {
-    transition: transform var(--dur) var(--ease);
+  .hdr__end {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
-  .has-sub:hover :global(.hdr__caret),
-  .has-sub:focus-within :global(.hdr__caret) {
-    transform: rotate(180deg);
-  }
-
-  /* Menu déroulant */
-  .hdr__sub {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    min-width: 240px;
-    padding: 10px 0;
-    background-color: var(--white);
-    color: var(--slate);
-    border-top: 3px solid var(--brand);
-    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-    box-shadow: var(--shadow-hover);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(8px);
-    transition:
-      opacity 220ms var(--ease),
-      transform 220ms var(--ease),
-      visibility 0s linear 220ms;
-  }
-
-  .has-sub:hover > .hdr__sub,
-  .has-sub:focus-within > .hdr__sub {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition:
-      opacity 220ms var(--ease),
-      transform 220ms var(--ease);
-  }
-
-  .hdr__sublink {
-    display: block;
-    padding: 9px 22px;
-    font-size: 0.9375rem;
-    transition:
-      color var(--dur) var(--ease),
-      background-color var(--dur) var(--ease),
-      padding-left var(--dur) var(--ease);
-  }
-
-  .hdr__sublink:hover {
-    color: var(--brand-text);
-    background-color: var(--gray-50);
-    padding-left: 28px;
-  }
-
-  .hdr :global(.hdr__cta) {
+  .hdr__cta {
     display: none;
   }
 
-  /* Bouton menu mobile */
   .hdr__burger {
     display: grid;
     place-items: center;
     width: 44px;
     height: 44px;
-    margin-right: -8px;
+    margin-right: -10px;
+    color: var(--ink);
   }
 
-  .hdr__burger-icon--close,
-  .hdr__burger[aria-expanded='true'] .hdr__burger-icon--open {
+  .hdr__icon--close,
+  .hdr__burger[aria-expanded='true'] .hdr__icon--open {
     display: none;
   }
 
-  .hdr__burger[aria-expanded='true'] .hdr__burger-icon--close {
+  .hdr__burger[aria-expanded='true'] .hdr__icon--close {
     display: block;
   }
 
-  /* Menu mobile */
+  /* Navigation mobile */
   .mnav {
     position: fixed;
-    inset: 68px 0 0 0;
-    background-color: var(--white);
-    color: var(--slate);
+    inset: var(--header-h) 0 0 0;
+    background-color: var(--paper);
     overflow-y: auto;
     overscroll-behavior: contain;
-    opacity: 0;
     visibility: hidden;
-    transform: translateY(-8px);
+    opacity: 0;
     transition:
-      opacity 280ms var(--ease),
-      transform 280ms var(--ease),
-      visibility 0s linear 280ms;
+      opacity 160ms var(--ease),
+      visibility 0s linear 160ms;
   }
 
   .mnav:global([data-open]) {
-    opacity: 1;
     visibility: visible;
-    transform: none;
-    transition:
-      opacity 280ms var(--ease),
-      transform 280ms var(--ease);
+    opacity: 1;
+    transition: opacity 160ms var(--ease);
   }
 
   .mnav__inner {
-    padding-block: 16px 40px;
-  }
-
-  .mnav__item {
-    border-bottom: 1px solid var(--gray-200);
+    padding-block: 8px 40px;
   }
 
   .mnav__link {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 0;
-    font-size: 1.125rem;
-    font-weight: 500;
-    cursor: pointer;
-    list-style: none;
+    min-height: 56px;
+    border-bottom: 1px solid var(--line);
+    font-size: 1.25rem;
+    color: var(--ink);
   }
 
-  .mnav__link::-webkit-details-marker {
-    display: none;
+  .mnav__link[aria-current='page'] {
+    color: var(--link);
   }
 
-  .mnav__group[open] :global(.mnav__caret) {
-    transform: rotate(180deg);
-  }
-
-  .mnav__sub {
-    padding: 0 0 14px 14px;
-    border-left: 2px solid var(--brand);
-  }
-
-  .mnav__sub a {
-    display: block;
-    padding: 8px 0;
-    color: var(--fg-muted);
-  }
-
-  .mnav :global(.mnav__cta) {
+  .mnav__cta {
+    width: 100%;
     margin-top: 28px;
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1120px) {
     .hdr__nav {
       display: block;
     }
 
-    .hdr :global(.hdr__cta) {
+    .hdr__cta {
       display: inline-flex;
     }
 

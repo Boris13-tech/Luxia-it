@@ -1,298 +1,281 @@
 ---
 /**
- * Gabarit des pages plateformes : problème résolu, captures, fonctionnement,
- * architecture, capacités, déploiement, sécurité, statut, démo.
+ * Gabarit des pages plateformes. Les sections se construisent à partir de
+ * src/data/platforms.ts ; une section sans contenu ne s'affiche pas.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageBanner from './PageBanner.astro';
-import SectionTitle from './SectionTitle.astro';
-import IconFeature from './IconFeature.astro';
-import FeatureCard from './FeatureCard.astro';
-import Steps from './Steps.astro';
-import Media from './Media.astro';
+import PageHead from './PageHead.astro';
+import SectionHead from './SectionHead.astro';
+import ClaimList from './ClaimList.astro';
 import ArchDiagram from './ArchDiagram.astro';
-import InfoTable from './InfoTable.astro';
-import CtaBand from './CtaBand.astro';
-import Button from './Button.astro';
-import Status from './Status.astro';
-import Tbd from './Tbd.astro';
-import type { ComponentProps } from 'astro/types';
-import type { IconName } from '../data/icons';
-import type { Platform } from '../data/site';
-
-interface Item {
-  icon: IconName;
-  title: string;
-  text: string;
-  tbd?: string | undefined;
-}
-
-interface Row {
-  key: string;
-  value?: string | undefined;
-  tbd?: string | undefined;
-  live?: boolean | undefined;
-}
+import DataTable from './DataTable.astro';
+import EvidenceScale from './EvidenceScale.astro';
+import LevelTag from './LevelTag.astro';
+import StageTag from './StageTag.astro';
+import CtaBlock from './CtaBlock.astro';
+import Icon from './Icon.astro';
+import { facts, formatDate } from '../data/facts';
+import { getPlatform, type Platform } from '../data/platforms';
+import { href } from '../i18n/routes';
 
 interface Props {
-  platform: Platform;
-  description: string;
-  titleBefore: string;
-  titleHl: string;
-  lead: string;
-  leadTbd?: string | undefined;
-  problemIntro: string;
-  problemIntroTbd?: string | undefined;
-  problems: readonly Item[];
-  screens: readonly {
-    need: string;
-    caption: string;
-    kind?: 'capture' | 'video' | undefined;
-    src?: string | undefined;
-    poster?: string | undefined;
-    alt?: string | undefined;
-  }[];
-  steps: readonly { title: string; text: string }[];
-  diagram?: Omit<ComponentProps<typeof ArchDiagram>, 'title'> | undefined;
-  capabilities: readonly Item[];
-  deploymentTbd?: string | undefined;
-  security: readonly Item[];
-  referentials: readonly Row[];
-  statusRows: readonly Row[];
+  slug: Platform['slug'];
 }
 
-const p = Astro.props;
-const demo = `/contact/?plateforme=${p.platform.slug}`;
-const [mainScreen, ...otherScreens] = p.screens;
+const p = getPlatform(Astro.props.slug);
+const contact = `${href('contact')}?sujet=${p.slug}`;
 
-const deployments: { icon: IconName; title: string; text: string; rows: Row[] }[] = [
-  {
-    icon: 'cloud',
-    title: 'Cloud',
-    text: 'Opéré par Luxia-IT sur une infrastructure dédiée. Vous administrez, nous exploitons.',
-    rows: [
-      { key: 'Exploitation', value: 'Luxia-IT' },
-      { key: 'Données', tbd: 'À CONFIRMER : hébergeur et pays' },
-      { key: 'Mises à jour', value: 'Appliquées par Luxia-IT' },
-    ],
-  },
-  {
-    icon: 'server',
-    title: 'On-premise',
-    text: 'Installé dans vos centres de données et exploité par vos équipes, avec notre support.',
-    rows: [
-      { key: 'Exploitation', value: 'Vos équipes' },
-      { key: 'Données', value: 'Vos centres de données' },
-      { key: 'Mises à jour', value: 'Planifiées avec vous' },
-    ],
-  },
-  {
-    icon: 'lock',
-    title: 'Souverain',
-    text: 'Déployé dans un environnement isolé, sans dépendance à un service extérieur à votre périmètre.',
-    rows: [
-      { key: 'Exploitation', value: 'Dans votre périmètre' },
-      { key: 'Données', value: 'Environnement isolé' },
-      { key: 'Mises à jour', tbd: 'À CONFIRMER : livraison hors ligne' },
-    ],
-  },
-];
+const sections = [
+  { id: 'probleme', show: true },
+  { id: 'architecture', show: true },
+  { id: 'capacites', show: p.capabilities.length > 0 },
+  { id: 'ensuite', show: p.next.length > 0 },
+  { id: 'integrations', show: p.integrations.length > 0 },
+  { id: 'securite', show: p.security.length > 0 },
+  { id: 'exploitation', show: p.operations.length > 0 },
+  { id: 'deploiement', show: p.deployment.length > 0 },
+  { id: 'limites', show: p.limits.length > 0 },
+].filter((s) => s.show);
+const n = (id: string) => String(sections.findIndex((s) => s.id === id) + 1).padStart(2, '0');
+const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
 ---
 
-<BaseLayout title={p.platform.name} description={p.description}>
-  <PageBanner
-    crumbs={[{ label: 'Plateformes', href: '/plateformes/' }, { label: p.platform.name }]}
-    kicker="Plateforme"
-    title={p.titleBefore}
-    hl={p.titleHl}
-    lead={p.lead}
-  >
-    <Status slot="meta" status={p.platform.status} />
+<BaseLayout title={p.name} description={p.description} crumbs={[{ label: 'Plateformes', href: href('platforms') }, { label: p.name }]}>
+  <PageHead kicker={p.role} title={p.name} lead={p.lead} crumbs={[{ label: 'Plateformes', href: href('platforms') }, { label: p.name }]}>
+    <dl class="pstate">
+      <div>
+        <dt class="kicker">Étape</dt>
+        <dd><StageTag stage={p.stage} /></dd>
+      </div>
+      <div>
+        <dt class="kicker">État</dt>
+        <dd>{p.stageNote}</dd>
+      </div>
+      <div>
+        <dt class="kicker">Preuves lues le</dt>
+        <dd><time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></dd>
+      </div>
+    </dl>
     <Fragment slot="actions">
-      <Button href={demo}>Demander une démo</Button>
-      <Button href="/contact/" variant="light">Nous contacter</Button>
+      <a class="btn btn--primary" href={contact}>Demander une présentation</a>
+      <a class="more" href="#echelle">Lire les niveaux de preuve <Icon name="arrow-down" size={16} /></a>
     </Fragment>
-  </PageBanner>
-  {p.leadTbd && <p class="container lead-tbd t-small"><Tbd text={p.leadTbd} /></p>}
+  </PageHead>
 
-  <!-- Ce que la plateforme résout -->
-  <section class="section" id="resout" aria-labelledby="resout-title">
-    <div class="container">
-      <SectionTitle id="resout-title" before="Ce que la plateforme " hl="résout" />
-      <div class="split">
-        <div class="split__aside" data-reveal>
-          <p class="t-lead">
-            {p.problemIntro} {p.problemIntroTbd && <Tbd text={p.problemIntroTbd} />}
-          </p>
-          <Button href={demo} variant="outline">Demander une démo</Button>
-        </div>
-        <div class="split__main">
-          {p.problems.map((item) => <IconFeature icon={item.icon} title={item.title} text={item.text} tbd={item.tbd} />)}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Captures du logiciel -->
-  <section class="section bg-gray" aria-labelledby="images-title">
-    <div class="container">
-      <SectionTitle id="images-title" before="La plateforme en " hl="images" />
-      {mainScreen && <Media ratio="wide" {...mainScreen} />}
+  <section class:list={['section', alt('probleme') && 'section--alt']} id="probleme" aria-labelledby="probleme-title">
+    <div class="wrap">
+      <SectionHead id="probleme-title" index={n('probleme')} kicker="Le problème" title="Ce que la plateforme résout" lead={p.problem.intro} />
+      <ul class="ruled ruled--3">
+        {
+          p.problem.points.map((pt) => (
+            <li>
+              <h3 class="ruled__title">{pt.title}</h3>
+              <p class="ruled__text">{pt.text}</p>
+            </li>
+          ))
+        }
+      </ul>
       {
-        otherScreens.length > 0 && (
-          <ul class="grid grid--3 screens">
-            {otherScreens.map((s) => (
-              <li>
-                <Media {...s} />
-              </li>
-            ))}
-          </ul>
+        p.principle && (
+          <figure class="principle">
+            <LevelTag level={p.principle.level} />
+            <p class="principle__title">{p.principle.title}</p>
+            <p class="principle__text">{p.principle.text}</p>
+          </figure>
         )
       }
     </div>
   </section>
 
-  <!-- Fonctionnement -->
-  <section class="section on-brand bg-brand" id="fonctionnement" aria-labelledby="fonctionnement-title">
-    <div class="container">
-      <SectionTitle id="fonctionnement-title" before="Comment ça " hl="fonctionne" />
-      <Steps steps={p.steps} onBrand />
+  <section class:list={['section', alt('architecture') && 'section--alt']} id="architecture" aria-labelledby="architecture-title">
+    <div class="wrap">
+      <SectionHead id="architecture-title" index={n('architecture')} kicker="Architecture" title="Comment elle est construite" />
+      <ArchDiagram title={`Architecture de ${p.name}`} {...p.diagram} />
     </div>
   </section>
 
-  <!-- Architecture -->
-  <section class="section" aria-labelledby="architecture-title">
-    <div class="container">
-      <SectionTitle id="architecture-title" before="Schéma d’" hl="architecture" />
-      {
-        p.diagram ? (
-          <ArchDiagram title={`Architecture de ${p.platform.name}`} {...p.diagram} />
-        ) : (
-          <Media ratio="wide" need={`schéma d'architecture ${p.platform.name}`} caption="Schéma d’architecture" />
-        )
-      }
-    </div>
-  </section>
-
-  <!-- Capacités -->
-  <section class="section bg-gray" id="capacites" aria-labelledby="capacites-title">
-    <div class="container">
-      <SectionTitle id="capacites-title" before="Capacités " hl="clés" />
-      <ul class="grid grid--3">
-        {
-          p.capabilities.map((c, i) => (
-            <li class:list={[i % 3 > 0 && `d${i % 3}`]}>
-              <FeatureCard icon={c.icon} title={c.title} text={c.text} tbd={c.tbd} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- Déploiement -->
-  <section class="section" id="deploiement" aria-labelledby="deploiement-title">
-    <div class="container">
-      <SectionTitle id="deploiement-title" before="Le même logiciel, " hl="là où vous le décidez">
-        {p.deploymentTbd && <p class="t-small"><Tbd text={p.deploymentTbd} /></p>}
-      </SectionTitle>
-      <ul class="grid grid--3">
-        {
-          deployments.map((d, i) => (
-            <li class:list={[i > 0 && `d${i}`]}>
-              <FeatureCard icon={d.icon} title={d.title} text={d.text}>
-                <dl class="deploy-rows">
-                  {d.rows.map((r) => (
-                    <div>
-                      <dt>{r.key}</dt>
-                      <dd>
-                        {r.value} {r.tbd && <Tbd text={r.tbd} />}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </FeatureCard>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- Sécurité -->
-  <section class="section bg-gray" id="securite" aria-labelledby="securite-title">
-    <div class="container">
-      <SectionTitle id="securite-title" before="Sécurité et " hl="conformité" />
-      <div class="split">
-        <div class="split__aside" data-reveal>
-          <p class="t-lead">
-            Nous documentons les mécanismes de sécurité de la plateforme et fournissons les éléments nécessaires à vos
-            audits.
-          </p>
-          <Button href="/securite/" variant="outline">Signaler une vulnérabilité</Button>
+  {
+    p.capabilities.length > 0 && (
+      <section class:list={['section', alt('capacites') && 'section--alt']} id="capacites" aria-labelledby="capacites-title">
+        <div class="wrap">
+          <SectionHead
+            id="capacites-title"
+            index={n('capacites')}
+            kicker="Capacités"
+            title="Ce qui fonctionne aujourd’hui"
+            lead="Chaque capacité indique son niveau de preuve. Aucune n’est présentée au-delà de ce qui a été démontré."
+          />
+          <ClaimList claims={p.capabilities} columns={2} />
         </div>
-        <div class="split__main">
-          {p.security.map((item) => <IconFeature icon={item.icon} title={item.title} text={item.text} tbd={item.tbd} />)}
-          <InfoTable label="Référentiels" rows={p.referentials} />
+      </section>
+    )
+  }
+
+  {
+    p.next.length > 0 && (
+      <section class:list={['section', alt('ensuite') && 'section--alt']} id="ensuite" aria-labelledby="ensuite-title">
+        <div class="wrap">
+          <SectionHead
+            id="ensuite-title"
+            index={n('ensuite')}
+            kicker="Feuille de route"
+            title="Ce qui n’est pas encore disponible"
+            lead="Conçu ou visé, mais pas en service. Le niveau indique jusqu’où chaque élément est allé."
+          />
+          <ClaimList claims={p.next} columns={2} />
         </div>
-      </div>
+      </section>
+    )
+  }
+
+  {
+    p.integrations.length > 0 && (
+      <section class:list={['section', alt('integrations') && 'section--alt']} id="integrations" aria-labelledby="integrations-title">
+        <div class="wrap">
+          <SectionHead id="integrations-title" index={n('integrations')} kicker="Intégrations" title="Avec quoi elle se connecte" />
+          <DataTable
+            caption={`Intégrations de ${p.name} et niveau de preuve`}
+            columns={[
+              { key: 'name', label: 'Intégration' },
+              { key: 'level', label: 'Niveau' },
+              { key: 'note', label: 'Précision' },
+            ]}
+            rows={p.integrations.map((i) => ({ name: i.name, level: { text: '', level: i.level }, note: i.note }))}
+          />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    p.security.length > 0 && (
+      <section class:list={['section', alt('securite') && 'section--alt']} id="securite" aria-labelledby="securite-title">
+        <div class="wrap">
+          <SectionHead id="securite-title" index={n('securite')} kicker="Sécurité" title="Mesures de sécurité" />
+          <ClaimList claims={p.security} columns={2} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    p.operations.length > 0 && (
+      <section class:list={['section', alt('exploitation') && 'section--alt']} id="exploitation" aria-labelledby="exploitation-title">
+        <div class="wrap">
+          <SectionHead id="exploitation-title" index={n('exploitation')} kicker="Exploitation" title="Comment elle est exploitée" />
+          <ClaimList claims={p.operations} columns={2} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    p.deployment.length > 0 && (
+      <section class:list={['section', alt('deploiement') && 'section--alt']} id="deploiement" aria-labelledby="deploiement-title">
+        <div class="wrap">
+          <SectionHead
+            id="deploiement-title"
+            index={n('deploiement')}
+            kicker="Déploiement"
+            title="Où elle peut fonctionner"
+            lead="Un seul modèle est en service aujourd’hui. Les autres sont des principes d’architecture, sans déploiement à ce jour."
+          >
+            <p><a class="more" href={href('architectures')}>Voir les architectures de référence <Icon name="arrow-right" size={16} /></a></p>
+          </SectionHead>
+          <ClaimList claims={p.deployment} columns={3} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    p.limits.length > 0 && (
+      <section class:list={['section', alt('limites') && 'section--alt']} id="limites" aria-labelledby="limites-title">
+        <div class="wrap">
+          <SectionHead id="limites-title" index={n('limites')} kicker="Limites" title="Ce que la plateforme ne fait pas aujourd’hui">
+            <ul class="limits">
+              {p.limits.map((l) => (
+                <li>{l}</li>
+              ))}
+            </ul>
+          </SectionHead>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--alt" id="echelle" aria-labelledby="echelle-title">
+    <div class="wrap">
+      <SectionHead id="echelle-title" kicker="Lecture" title="Comment lire les niveaux de preuve" />
+      <EvidenceScale />
     </div>
   </section>
 
-  <!-- Statut -->
-  <section class="section" id="statut" aria-labelledby="statut-title">
-    <div class="container narrow">
-      <SectionTitle id="statut-title" before="Statut de la " hl="plateforme" />
-      <InfoTable label={`Statut de ${p.platform.name}`} rows={p.statusRows} />
-    </div>
-  </section>
-
-  <CtaBand
-    before="Demander une démo de "
-    hl={p.platform.name}
-    text="Nous présentons la plateforme à partir de vos fournisseurs d’identité, de vos applications et de vos contraintes de déploiement."
-    href={demo}
-    label="Demander une démo"
+  <CtaBlock
+    title={`Voir ${p.name} sur votre cas`}
+    text="Nous présentons l’état réel de la plateforme, ses limites et ce qu’un premier échange de cadrage permettrait d’établir."
+    href={contact}
+    label="Demander une présentation"
+    secondary={{ href: href('platforms'), label: 'Toutes les plateformes' }}
   />
 </BaseLayout>
 
 <style>
-  .lead-tbd {
-    padding-top: 16px;
-    text-align: center;
+  .pstate {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-top: 1px solid var(--line);
   }
 
-  .screens {
-    margin-top: var(--gap);
+  .pstate > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px 24px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
   }
 
-  .narrow {
-    max-width: 900px;
+  .pstate dd {
+    color: var(--ink);
   }
 
-  .deploy-rows {
-    width: 100%;
-    margin-top: 8px;
-    text-align: left;
-    border-top: 1px solid var(--gray-200);
+  @media (min-width: 720px) {
+    .pstate > div {
+      grid-template-columns: 11rem minmax(0, 1fr);
+      align-items: baseline;
+    }
   }
 
-  .deploy-rows div {
+  .principle {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     gap: 12px;
-    padding-block: 10px;
-    border-bottom: 1px solid var(--gray-200);
-    font-size: 0.875rem;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding: clamp(24px, 3vw, 40px);
+    background-color: var(--white);
+    border-left: 3px solid var(--blue);
   }
 
-  .deploy-rows dt {
+  .principle__title {
+    font-size: var(--fs-h3);
     font-weight: 500;
-    color: var(--slate-darker);
+    line-height: 1.25;
+    color: var(--ink);
   }
 
-  .deploy-rows dd {
-    text-align: right;
-    color: var(--fg-muted);
+  .principle__text {
+    max-width: 50rem;
+  }
+
+  .limits {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+  }
+
+  .limits li {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
   }
 </style>

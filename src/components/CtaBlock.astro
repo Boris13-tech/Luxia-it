@@ -1,0 +1,73 @@
+---
+/** Appel à l'action de fin de page. */
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  text?: string | undefined;
+  href: string;
+  label: string;
+  secondary?: { href: string; label: string } | undefined;
+}
+
+const { title, text, href, label, secondary } = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="wrap cta__inner">
+    <h2 class="t-h2 cta__title" id="cta-title">{title}</h2>
+    <div class="cta__side">
+      {text && <p class="cta__text">{text}</p>}
+      <div class="actions">
+        <a class="btn btn--primary" href={href}>
+          {label}
+          <Icon name="arrow-right" size={18} />
+        </a>
+        {
+          secondary && (
+            <a class="more" href={secondary.href}>
+              {secondary.label}
+              <Icon name="arrow-right" size={16} />
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(64px, 8vw, 112px);
+    background-color: var(--white);
+    border-top: 1px solid var(--line);
+  }
+
+  .cta__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px var(--gap);
+    align-items: end;
+  }
+
+  .cta__title {
+    max-width: 20ch;
+  }
+
+  .cta__side {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .cta__text {
+    max-width: 34rem;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 1024px) {
+    .cta__inner {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+</style>

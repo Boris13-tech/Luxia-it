@@ -1,0 +1,32 @@
+---
+/** Liste d'affirmations, chacune avec son niveau de preuve. */
+import LevelTag from './LevelTag.astro';
+import type { Claim } from '../data/platforms';
+
+interface Props {
+  claims: readonly Claim[];
+  columns?: 2 | 3 | undefined;
+  /** Niveau des titres de la liste. */
+  as?: 'h3' | 'h4' | undefined;
+}
+
+const { claims, columns = 2, as: Heading = 'h3' } = Astro.props;
+---
+
+<ul class:list={['ruled', `ruled--${columns}`, 'claims']}>
+  {
+    claims.map((c) => (
+      <li>
+        <LevelTag level={c.level} />
+        <Heading class="ruled__title claims__title">{c.title}</Heading>
+        <p class="ruled__text">{c.text}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .claims__title {
+    margin-top: 14px;
+  }
+</style>
