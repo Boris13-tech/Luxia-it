@@ -260,7 +260,11 @@
       height: 12px;
       background-image: linear-gradient(rgb(17 20 24 / 0.07), rgb(17 20 24 / 0));
       pointer-events: none;
-      animation: fade linear both;
+      /* Propriétés séparées : la minification ne doit pas les fusionner dans
+         le raccourci « animation », qui n'accepte pas animation-timeline. */
+      animation-name: fade;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll();
       animation-range: 0 120px;
     }
@@ -286,7 +290,9 @@
     .cta__inner,
     .principle,
     .legal__contact {
-      animation: reveal linear both;
+      animation-name: reveal;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 0% entry 55%;
     }
@@ -305,7 +311,9 @@
 
     /* Liaisons des schémas : tracées quand le schéma entre dans l'écran */
     .arch__link::before {
-      animation: draw linear both;
+      animation-name: draw;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 20% cover 35%;
     }

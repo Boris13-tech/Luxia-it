@@ -134,6 +134,18 @@ describe('site construit, dans Chrome', { skip }, () => {
     assert.equal(normal.titleAnimation, 'rise');
   });
 
+  test('défilement : les sections sont liées à une timeline de défilement', async () => {
+    await browser.goto(`${ready.origin}/services/`);
+    const r = await browser.evaluate(`({ supported: CSS.supports('animation-timeline: view()'),
+      name: getComputedStyle(document.querySelector('.shead')).animationName,
+      timeline: getComputedStyle(document.querySelector('.shead')).animationTimeline,
+      header: getComputedStyle(document.querySelector('.hdr'), '::after').animationName })`);
+    if (!r.supported) return;
+    assert.equal(r.name, 'reveal', 'révélation appliquée (règle conservée par la minification)');
+    assert.equal(r.timeline, 'view()');
+    assert.equal(r.header, 'fade');
+  });
+
   test('parcours : la lecture avance seule puis se met en pause à la demande', async () => {
     await browser.goto(`${ready.origin}/architectures/plateforme-execution/`);
     const state = () => browser.evaluate(`({ status: document.querySelector('[data-step-status]').textContent,
