@@ -1,5 +1,379 @@
 ---
-import PlatformPage from '../../components/PlatformPage.astro';
+/**
+ * Page produit de LUXIA Identity. Fonctions et faits : src/data/product.ts ;
+ * capacités, intégrations, déploiement et limites : src/data/platforms.ts,
+ * avec leur niveau de preuve. LUXIA Key et ALMA gardent PlatformPage.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductScreen from '../../components/ProductScreen.astro';
+import ProductTour from '../../components/ProductTour.astro';
+import KeyFacts from '../../components/KeyFacts.astro';
+import IdentityFlow from '../../components/IdentityFlow.astro';
+import LevelTag from '../../components/LevelTag.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import Icon from '../../components/Icon.astro';
+import { getPlatform } from '../../data/platforms';
+import { href } from '../../i18n/routes';
+
+const p = getPlatform('luxia-identity');
+const demo = `${href('contact')}?sujet=demo`;
+const crumbs = [{ label: 'Produit', href: href('platforms') }, { label: p.name }];
+const inProduction = p.capabilities.filter((c) => c.level === 'production');
+
+const faq = [
+  {
+    q: 'LUXIA Identity fait-il de l’authentification unique (SSO) vers mes applications ?',
+    a: 'Pas aujourd’hui. La plateforme gouverne les identités, les accès et leur trace. Une application est protégée quand son service interroge LUXIA Identity avant d’autoriser une action.',
+  },
+  {
+    q: 'Quels fournisseurs d’identité sont pris en charge ?',
+    a: 'Microsoft Entra ID, par locataire et après consentement de son administrateur, et les clés d’accès (passkeys) pour les comptes locaux. Un moteur OIDC générique est en conception ; Google, LDAP, Active Directory, SAML et SCIM sont prévus.',
+  },
+  {
+    q: 'Où sont hébergées les données ?',
+    a: 'Aujourd’hui aux États-Unis (côte est), avec des sauvegardes chiffrées dans l’Union européenne (Paris). Le passage à Francfort a été répété ; il est prévu avant toute bêta commerciale.',
+  },
+  {
+    q: 'La plateforme est-elle certifiée ?',
+    a: 'Non. Aucune certification de sécurité, aucun audit externe ni test d’intrusion à ce jour. Le code source est public sur GitHub, et chaque mesure de sécurité indique son état dans le centre de confiance.',
+  },
+  {
+    q: 'Peut-on l’installer sur site ou dans un environnement souverain ?',
+    a: 'C’est un principe d’architecture retenu : un seul code pour le cloud, l’hybride et le souverain. Aucun déploiement de ce type n’existe à ce jour.',
+  },
+  {
+    q: 'Comment y accéder ?',
+    a: 'Une bêta privée est en préparation, sur invitation. Il n’y a pas d’offre commerciale à ce jour. Demandez une démonstration : nous vous montrons la plateforme et vous disons si elle convient à votre cas.',
+  },
+];
 ---
 
-<PlatformPage slug="luxia-identity" />
+<BaseLayout title={p.name} description={p.description} crumbs={crumbs}>
+  <section class="phero" aria-labelledby="page-title">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Fil d’Ariane">
+        <ol>
+          <li><a href={href('home')}>Accueil</a></li>
+          <li><a href={href('platforms')}>Produit</a></li>
+          <li><span aria-current="page">{p.name}</span></li>
+        </ol>
+      </nav>
+      <div class="phero__grid">
+        <div class="phero__text">
+          <p class="kicker">Gouvernance des identités et des accès</p>
+          <h1 class="t-h1" id="page-title">{p.name}</h1>
+          <p class="t-lead">
+            Le registre des identités et des accès de votre organisation : qui existe, comment chacun se connecte, à quoi chacun a
+            droit, et la trace de chaque décision.
+          </p>
+          <p class="phero__stage">{p.stageNote}</p>
+          <div class="actions">
+            <a class="btn btn--primary" href={demo}>
+              Demander une démonstration
+              <Icon name="arrow-right" size={18} />
+            </a>
+            <a class="btn btn--secondary" href="#fonctions">Voir les fonctions</a>
+          </div>
+        </div>
+        <ProductScreen
+          screen="review"
+          hero
+          caption="Une revue d’accès en cours : l’accès à examiner, sa justification, puis Conserver ou Retirer."
+        />
+      </div>
+    </div>
+  </section>
+
+  <KeyFacts />
+
+  <section class="section" id="fonctions" aria-labelledby="fonctions-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker">Visite du produit</p>
+        <h2 class="t-h2" id="fonctions-title">Une console pour tout le cycle de vie des accès</h2>
+      </div>
+      <ProductTour />
+    </div>
+  </section>
+
+  <section class="section section--blue" aria-labelledby="principe-title">
+    <div class="wrap how">
+      <div class="how__text">
+        <p class="kicker">Comment ça marche</p>
+        <h2 class="t-h2" id="principe-title">{p.principle?.title}</h2>
+        <p class="t-lead">{p.principle?.text}</p>
+        <p>
+          Changer de fournisseur, en ajouter un ou le couper en urgence ne remet en cause ni les comptes, ni les droits, ni
+          l’historique : ils restent dans votre registre.
+        </p>
+      </div>
+      <IdentityFlow />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="capacites-title">
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker">Fonctions</p>
+        <h2 class="t-h2" id="capacites-title">Ce que la plateforme fait aujourd’hui</h2>
+        <p class="t-lead">Chacune de ces fonctions a été vérifiée dans l’environnement de production.</p>
+      </div>
+      <ul class="features">
+        {
+          inProduction.map((c) => (
+            <li class="feature">
+              <span class="feature__check" aria-hidden="true">
+                <Icon name="check" size={16} stroke={2.4} />
+              </span>
+              <h3 class="feature__title">{c.title}</h3>
+              <p class="feature__text">{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="integrations-title">
+    <div class="wrap integ">
+      <div class="head">
+        <p class="kicker">Intégrations</p>
+        <h2 class="t-h2" id="integrations-title">Fournisseurs et protocoles</h2>
+        <p class="t-lead">Chaque fournisseur se branche sur le même cœur. Voici où en est chacun.</p>
+      </div>
+      <ul class="integ__list">
+        {
+          p.integrations.map((i) => (
+            <li class="integ__item">
+              <div>
+                <h3 class="integ__name">{i.name}</h3>
+                <p class="integ__note">{i.note}</p>
+              </div>
+              <LevelTag level={i.level} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="securite-title">
+    <div class="wrap secu">
+      <div class="head">
+        <p class="kicker">Sécurité et hébergement</p>
+        <h2 class="t-h2" id="securite-title">Isolée, sauvegardée, restaurée pour de vrai</h2>
+        <p class="t-lead">
+          Isolation des organisations par la base de données, opérateur sans droit, sauvegardes indépendantes et restauration
+          vérifiée. Le détail, et les limites, sont dans le centre de confiance.
+        </p>
+        <a class="more" href={href('trust')}>
+          Ouvrir le centre de confiance
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+      <ul class="ruled ruled--3">
+        {
+          p.security.slice(0, 3).map((c) => (
+            <li>
+              <h3 class="ruled__title">{c.title}</h3>
+              <p class="ruled__text">{c.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="faq-title">
+    <div class="wrap faq">
+      <div class="head">
+        <p class="kicker">Questions fréquentes</p>
+        <h2 class="t-h2" id="faq-title">Avant de nous écrire</h2>
+      </div>
+      <div class="faq__list">
+        {
+          faq.map((f) => (
+            <details class="disclosure">
+              <summary>{f.q}</summary>
+              <div class="disclosure__body">
+                <p>{f.a}</p>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Voyez LUXIA Identity sur vos propres cas"
+    text="Une démonstration sur vos situations réelles : arrivées et départs, revues d’accès, séparation des tâches. Nous vous disons aussi ce que la plateforme ne fait pas encore."
+    href={demo}
+    label="Demander une démonstration"
+    secondary={{ href: href('solutions'), label: 'Voir les solutions' }}
+  />
+</BaseLayout>
+
+<style>
+  .phero {
+    padding-block: clamp(32px, 5vw, 64px) clamp(48px, 6vw, 88px);
+    background:
+      radial-gradient(60rem 28rem at 90% -10%, var(--tint-blue), transparent 70%),
+      var(--paper);
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    margin-bottom: clamp(28px, 4vw, 48px);
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-inline: 8px;
+    color: var(--line-strong);
+  }
+
+  .crumbs a:hover {
+    color: var(--link);
+    text-decoration: underline;
+  }
+
+  .phero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+    align-items: center;
+  }
+
+  .phero__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .phero__stage {
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 48rem;
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .how {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+    align-items: center;
+  }
+
+  .how__text {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px var(--gap);
+  }
+
+  .feature {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-content: start;
+    gap: 6px 14px;
+  }
+
+  .feature__check {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--sage-tint);
+    color: var(--sage-text);
+  }
+
+  .feature__title {
+    font-size: var(--fs-h4);
+    line-height: 1.3;
+  }
+
+  .feature__text {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .integ__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .integ__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 18px 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .integ__name {
+    font-size: var(--fs-h4);
+    line-height: 1.3;
+  }
+
+  .integ__note {
+    font-size: var(--fs-small);
+    color: var(--ink-3);
+  }
+
+  .faq__list {
+    max-width: 52rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (min-width: 720px) {
+    .features {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .phero__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .how {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .features {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .integ__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

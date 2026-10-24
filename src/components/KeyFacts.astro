@@ -1,0 +1,60 @@
+---
+/** Bandeau de faits vérifiés en production (src/data/product.ts). */
+import { keyFacts } from '../data/product';
+---
+
+<section class="facts" aria-labelledby="faits-title">
+  <div class="wrap">
+    <h2 class="visually-hidden" id="faits-title">Faits vérifiés en production</h2>
+    <ul class="facts__list">
+      {
+        keyFacts.map((f) => (
+          <li>
+            <strong class="facts__value">{f.value}</strong>
+            <span class="facts__label">{f.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .facts {
+    padding-block: clamp(28px, 4vw, 44px);
+    background: var(--white);
+    border-block: 1px solid var(--line);
+  }
+
+  .facts__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px var(--gap);
+  }
+
+  .facts__list li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .facts__value {
+    font-family: var(--serif);
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+    font-weight: 480;
+    line-height: 1;
+    color: var(--blue);
+  }
+
+  .facts__label {
+    font-size: var(--fs-meta);
+    line-height: 1.45;
+    color: var(--ink-3);
+  }
+
+  @media (min-width: 720px) {
+    .facts__list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

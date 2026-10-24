@@ -53,7 +53,9 @@ Divulgation responsable, à valider avant publication : adresse de sécurité d�
 
 ## 1 quater. Démonstrations guidées des plateformes
 
-Elles exigent des captures ou vidéos réelles des logiciels (consoles, parcours de connexion, journaux). Aucune n'est fournie : aucune démonstration n'est publiée, et aucune interface n'est simulée. À déposer dans `public/media/`, puis à intégrer aux pages plateformes avec annotations et étapes.
+Depuis le 24 octobre 2026, le site montre la console de LUXIA Identity sous forme de **reconstitutions HTML** (`src/components/ProductScreen.astro`) : navigation, libellés, colonnes et actions sont repris du code de la console (dépôt `iam-azure-pme`, dossiers `app/dashboard` et `app/login`). Les données affichées sont fictives, et chaque écran porte la mention « Reconstitution de l'interface, données fictives ». Aucune capacité absente du produit n'y figure (ni SSO vers des applications tierces, ni SAML, ni SCIM).
+
+À décider par le propriétaire : conserver ces reconstitutions, ou les remplacer par des captures réelles. Les captures ou vidéos réelles (consoles, parcours de connexion, journaux) sont à déposer dans `public/media/`. Si la console change, mettre les reconstitutions à jour.
 
 ## 2. Informations non fournies (blocs masqués)
 
@@ -87,6 +89,10 @@ Ils engagent Luxia-IT et doivent être relus avant publication.
 | Offre de services | Services | Livrables et répartition des responsabilités : propositions. Aucun engagement de délai ni d'astreinte n'est publié. |
 | Architecture d'exécution cible | Plateforme d'exécution | L'architecture Kubernetes est présentée comme cible, non disponible. Confirmer l'intention avant publication, ou retirer la page. |
 | Vision et méthode | Accueil, Entreprise | Reprises des décisions d'architecture (fournisseurs remplaçables) et de l'échelle de maturité des dépôts. |
+| Démonstration proposée | En-tête, Accueil, LUXIA Identity, Solutions, Guides | Le bouton « Demander une démo » engage à montrer la plateforme à un prospect. Confirmer que c'est possible, sinon revenir à « Échange de cadrage ». |
+| Écrans du produit | Accueil, LUXIA Identity, Solutions | Reconstitutions à données fictives (section 1 quater). Vérifier qu'elles reflètent la console actuelle. |
+| Solutions et visite guidée | Accueil, Solutions, LUXIA Identity | `src/data/product.ts` : fonctions tirées du code de la console ; limites signalées (séparation des tâches préventive seulement, export et journal vérifiable prévus). |
+| Guides pratiques | Ressources | `src/data/guides.ts` : méthodes générales, signées Luxia-IT. Relire le fond, en particulier la référence à ISO/IEC 27001:2022 (mesure 5.18). |
 | Pages légales | Mentions légales, Confidentialité, Divulgation responsable | Base légale, durée de conservation (proposée : 3 ans après le dernier échange) et destinataires : à faire relire par un juriste. |
 
 ## 4. Internationalisation

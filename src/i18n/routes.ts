@@ -39,7 +39,8 @@ export function href(id: RouteId, locale: Locale = defaultLocale): string {
 /** Équivalents publiés d'un chemin donné (lui compris), pour hreflang et le sélecteur. */
 export function alternatesOf(pathname: string): { locale: Locale; path: string }[] {
   const entry = Object.entries(routes).find(([, paths]) => Object.values(paths).includes(pathname as never));
-  if (!entry) return [];
+  // Page sans équivalent déclaré (un guide, par exemple) : elle n'existe qu'en français.
+  if (!entry) return pathname.startsWith('/en/') ? [] : [{ locale: defaultLocale, path: pathname }];
   const id = entry[0] as RouteId;
   return publishedLocales()
     .map((locale) => ({ locale, path: localizedPath(id, locale) }))

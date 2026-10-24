@@ -1,0 +1,196 @@
+---
+/** Un guide pratique (src/data/guides.ts). */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
+import Icon from '../../components/Icon.astro';
+import { guideHref, guides, readingMinutes, type Guide } from '../../data/guides';
+import { formatDate } from '../../data/facts';
+import { href } from '../../i18n/routes';
+
+export function getStaticPaths() {
+  return guides.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+}
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+const others = guides.filter((g) => g.slug !== guide.slug);
+const crumbs = [{ label: 'Ressources', href: href('resources') }, { label: guide.title }];
+const anchor = (title: string) =>
+  title
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+---
+
+<BaseLayout title={guide.shortTitle} description={guide.description} crumbs={crumbs}>
+  <PageHead crumbs={crumbs} kicker={`Guide · ${guide.topic}`} title={guide.title} lead={guide.description}>
+    <p class="t-meta">
+      Luxia-IT · <time datetime={guide.published}>{formatDate(guide.published)}</time> · {readingMinutes(guide)} min de lecture
+    </p>
+  </PageHead>
+
+  <article class="section" aria-labelledby="page-title">
+    <div class="wrap article">
+      <nav class="toc" aria-label="Sommaire du guide">
+        <p class="toc__title">Sommaire</p>
+        <ol>
+          {
+            guide.sections.map((s) => (
+              <li>
+                <a href={`#${anchor(s.title)}`}>{s.title}</a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="prose article__body">
+        {
+          guide.sections.map((s) => (
+            <>
+              <h2 id={anchor(s.title)}>{s.title}</h2>
+              {s.paragraphs.map((p) => (
+                <p>{p}</p>
+              ))}
+              {s.list && (
+                <ul>
+                  {s.list.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ))
+        }
+
+        <aside class="inproduct" aria-labelledby="inproduct-title">
+          <h2 class="inproduct__title" id="inproduct-title">Dans LUXIA Identity</h2>
+          <p>{guide.inProduct}</p>
+          <a class="more" href={href('identity')}>
+            Découvrir le produit
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  <section class="section section--alt" aria-labelledby="autres-title">
+    <div class="wrap">
+      <h2 class="t-h3 others-title" id="autres-title">Autres guides</h2>
+      <ul class="ruled ruled--2">
+        {
+          others.map((g) => (
+            <li>
+              <h3 class="ruled__title">
+                <a class="ref-link" href={guideHref(g.slug)}>
+                  {g.title}
+                </a>
+              </h3>
+              <p class="ruled__text">{g.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBlock
+    title="Voyez LUXIA Identity sur vos propres cas"
+    text="Une démonstration sur vos situations réelles, avec ce que la plateforme fait aujourd’hui et ce qu’elle ne fait pas encore."
+    href={`${href('contact')}?sujet=demo`}
+    label="Demander une démonstration"
+  />
+</BaseLayout>
+
+<style>
+  .article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+    align-items: start;
+  }
+
+  .toc {
+    padding: 20px 22px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .toc__title {
+    margin-bottom: 10px;
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    color: var(--terra-text);
+  }
+
+  .toc ol {
+    display: grid;
+    gap: 8px;
+    font-size: var(--fs-small);
+  }
+
+  .toc a {
+    color: var(--ink-2);
+  }
+
+  .toc a:hover {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .article__body h2 {
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+
+  .inproduct {
+    margin-top: 3em;
+    padding: 24px 26px;
+    background: var(--tint-blue);
+    border-radius: var(--radius);
+  }
+
+  .prose .inproduct > * + * {
+    margin-top: 0.8em;
+  }
+
+  .prose h2.inproduct__title {
+    margin-top: 0;
+    font-size: var(--fs-h4);
+  }
+
+  .others-title {
+    margin-bottom: 24px;
+  }
+
+  .ref-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 4px;
+  }
+
+  .ref-link:hover {
+    color: var(--link);
+    text-decoration-color: currentColor;
+  }
+
+  @media (min-width: 1024px) {
+    .article {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 8fr);
+    }
+
+    .toc {
+      position: sticky;
+      top: calc(var(--header-h) + 32px);
+    }
+  }
+</style>

@@ -138,7 +138,8 @@
     animation: rise var(--t-slow) var(--ease-out) 160ms both;
   }
 
-  .hero .explorer {
+  .hero .pshot,
+  .phero .pshot {
     animation: reveal var(--t-slow) var(--ease-out) 200ms both;
   }
 
