@@ -1,0 +1,332 @@
+/* ==========================================================================
+   Luxia-IT — mouvement
+   Chaque mouvement explique quelque chose : l'arrivée d'une section, un
+   changement d'état, le sens d'un flux, la progression d'une requête.
+   Règles :
+   - transform et opacity uniquement (animations composées, aucun décalage) ;
+   - le texte ne change jamais d'opacité au chargement ni au défilement : il
+     glisse en place, ou un masque le découvre. Sa couleur, donc son contraste,
+     reste celle prévue à tout instant (et le LCP n'est pas retardé) ;
+   - animations liées au défilement en CSS natif (animation-timeline), sans
+     JavaScript ; ignorées par les navigateurs qui ne les gèrent pas ;
+   - tout est désactivé sous prefers-reduced-motion et à l'impression.
+   ========================================================================== */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-fast: 180ms;
+  --t-mid: 360ms;
+  --t-slow: 720ms;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(18px);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Masque qui découvre l'élément de haut en bas pendant qu'il monte ; il
+   s'arrête au-delà des bords pour ne pas couper le contour de focus. */
+@keyframes reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(28px);
+  }
+  to {
+    clip-path: inset(-16px);
+    transform: none;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes draw {
+  from {
+    clip-path: var(--draw-from, inset(0 100% 0 0));
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes settle {
+  0% {
+    box-shadow: 0 0 0 0 rgb(31 95 191 / 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgb(31 95 191 / 0);
+  }
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Ouverture : titre et chapeau glissent en place (déjà visibles), le reste
+     entre ensuite, en cascade. ---------------------------------------- */
+  .hero__title,
+  .phead__title,
+  .hero__text .t-lead,
+  .phead__body > .t-lead {
+    animation: rise var(--t-slow) var(--ease-out) both;
+  }
+
+  .hero__text .kicker,
+  .phead__kicker,
+  .crumbs {
+    animation: rise var(--t-mid) var(--ease-out) both;
+  }
+
+  .hero__text .t-lead,
+  .phead__body > .t-lead {
+    animation-delay: 80ms;
+  }
+
+  .hero__text .actions,
+  .phead__body > :not(.t-lead) {
+    animation: rise var(--t-slow) var(--ease-out) 160ms both;
+  }
+
+  .hero .explorer {
+    animation: reveal var(--t-slow) var(--ease-out) 200ms both;
+  }
+
+  /* Étape d'une plateforme : la jauge se remplit, segment par segment */
+  .stage__tick.is-on {
+    transform-origin: left;
+    animation: grow-x 420ms var(--ease-out) both;
+  }
+
+  .stage__tick:nth-child(2) {
+    animation-delay: 90ms;
+  }
+
+  .stage__tick:nth-child(3) {
+    animation-delay: 180ms;
+  }
+
+  .stage__tick:nth-child(4) {
+    animation-delay: 270ms;
+  }
+
+  .stage__tick:nth-child(5) {
+    animation-delay: 360ms;
+  }
+
+  /* Liens d'action : le soulignement se trace de gauche à droite */
+  .more {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    transition: background-size var(--t-mid) var(--ease-out);
+  }
+
+  .more:hover,
+  .more:focus-visible {
+    text-decoration: none;
+    background-size: 100% 1px;
+  }
+
+  .btn {
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      transform var(--t-fast) var(--ease-out);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn svg {
+    transition: transform var(--t-mid) var(--ease-out);
+  }
+
+  .btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* Onglets : le panneau qui arrive monte et apparaît */
+  .tabs [role='tabpanel'][data-entering] {
+    animation: panel-in var(--t-mid) var(--ease-out) both;
+  }
+
+  /* Onglets : l'indicateur glisse jusqu'à l'onglet actif */
+  .tabs[data-motion] .tabs__list {
+    position: relative;
+  }
+
+  .tabs[data-motion]:not(.tabs--steps) .tabs__list::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 2px;
+    background-color: var(--blue);
+    transform-origin: left;
+    transform: translateX(var(--ind-x, 0)) scaleX(var(--ind-w, 0));
+    transition: transform var(--t-mid) var(--ease-out);
+  }
+
+  .tabs[data-motion]:not(.tabs--steps) .tabs__tab[aria-selected='true'] {
+    border-bottom-color: transparent;
+  }
+
+  /* Étapes : le nœud actif émet une onde, une seule fois */
+  .tabs--steps .tabs__tab[data-entering] {
+    animation: settle 700ms var(--ease-out);
+  }
+
+  /* Schémas : quand un modèle s'affiche, les liaisons se tracent dans le sens
+     du flux, puis les modules apparaissent */
+  .tabs [role='tabpanel'][data-entering] .arch__link::before {
+    animation: draw 640ms var(--ease-in-out) 120ms both;
+  }
+
+  .tabs [role='tabpanel'][data-entering] .arch__link::after,
+  .tabs [role='tabpanel'][data-entering] .arch__link-label {
+    animation: fade var(--t-mid) var(--ease-out) 620ms both;
+  }
+
+  .tabs [role='tabpanel'][data-entering] .arch__modules li {
+    animation: enter var(--t-mid) var(--ease-out) both;
+  }
+
+  .tabs [role='tabpanel'][data-entering] .arch__modules li:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .tabs [role='tabpanel'][data-entering] .arch__modules li:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .tabs [role='tabpanel'][data-entering] .arch__modules li:nth-child(n + 4) {
+    animation-delay: 180ms;
+  }
+
+  /* Parcours d'une requête : le rail de progression avance avec la requête */
+  .stepper-rail__fill {
+    transition: transform 560ms var(--ease-out);
+  }
+
+  /* Ombre de l'en-tête : apparaît dès que l'on quitte le haut de la page */
+  @supports (animation-timeline: scroll()) {
+    .hdr::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 -12px 0;
+      height: 12px;
+      background-image: linear-gradient(rgb(17 20 24 / 0.07), rgb(17 20 24 / 0));
+      pointer-events: none;
+      animation: fade linear both;
+      animation-timeline: scroll();
+      animation-range: 0 120px;
+    }
+  }
+
+  /* Défilement : sections et éléments apparaissent en entrant dans l'écran */
+  @supports (animation-timeline: view()) {
+    .shead,
+    .ruled > li,
+    .ruled > div,
+    .method__step,
+    .tl__item,
+    .plist__item,
+    .svc__item,
+    .axes__item,
+    .arch-wrap,
+    .topo,
+    .scale__list > div,
+    .choice > div,
+    .spec,
+    .cmp__table,
+    .limits li,
+    .cta__inner,
+    .principle,
+    .legal__contact {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+
+    /* Grilles : un léger décalage entre colonnes */
+    .ruled > li:nth-child(2n),
+    .method__step:nth-child(2n) {
+      animation-range: entry 6% entry 61%;
+    }
+
+    .ruled--3 > li:nth-child(3n),
+    .ruled--4 > li:nth-child(4n),
+    .method__step:nth-child(3n) {
+      animation-range: entry 12% entry 67%;
+    }
+
+    /* Liaisons des schémas : tracées quand le schéma entre dans l'écran */
+    .arch__link::before {
+      animation: draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 35%;
+    }
+  }
+
+  /* Transitions de page : l'ancienne s'efface, la nouvelle monte.
+     L'en-tête reste en place (view-transition-name: site-header). */
+  ::view-transition-old(root) {
+    animation: page-out 200ms var(--ease-out) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-in 420ms var(--ease-out) 60ms both;
+  }
+}
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

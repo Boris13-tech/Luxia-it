@@ -35,6 +35,11 @@ const { label, items, stepper = false, class: className } = Astro.props;
       ))
     }
   </div>
+  {stepper && (
+    <div class="stepper-rail" aria-hidden="true">
+      <span class="stepper-rail__fill" />
+    </div>
+  )}
   <div class="tabs__panels" data-panels>
     <slot />
   </div>
@@ -46,6 +51,9 @@ const { label, items, stepper = false, class: className } = Astro.props;
         </button>
         <button class="btn btn--primary btn--sm" type="button" data-step-next>
           Étape suivante
+        </button>
+        <button class="btn btn--secondary btn--sm" type="button" data-step-play aria-pressed="false">
+          Lancer le parcours
         </button>
         <p class="stepper__status" role="status" data-step-status />
       </div>
