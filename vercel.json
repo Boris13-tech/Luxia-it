@@ -66,13 +66,23 @@
       "permanent": true
     },
     {
-      "source": "/:locale(fr|en|zh)?/solutions/:rest*",
-      "destination": "/plateformes/",
+      "source": "/:locale(fr|en|zh)/solutions/:rest*",
+      "destination": "/solutions/",
       "permanent": true
     },
     {
-      "source": "/:locale(fr|en|zh)?/solutions/:rest*/",
-      "destination": "/plateformes/",
+      "source": "/:locale(fr|en|zh)/solutions/:rest*/",
+      "destination": "/solutions/",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/:rest+",
+      "destination": "/solutions/",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/:rest+/",
+      "destination": "/solutions/",
       "permanent": true
     },
     {
