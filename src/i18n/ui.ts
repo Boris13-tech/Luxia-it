@@ -13,7 +13,6 @@ interface Ui {
   home: string;
   homeSuffix: string;
   nav: string;
-  menuOpen: string;
   menuClose: string;
   cta: string;
   language: string;
@@ -33,7 +32,6 @@ export const ui: Record<Locale, Ui> = {
     home: 'Accueil',
     homeSuffix: ', accueil',
     nav: 'Navigation principale',
-    menuOpen: 'Ouvrir le menu',
     menuClose: 'Fermer le menu',
     cta: 'Demander une démo',
     language: 'Langue',
@@ -93,7 +91,6 @@ export const ui: Record<Locale, Ui> = {
     home: 'Home',
     homeSuffix: ', home',
     nav: 'Main navigation',
-    menuOpen: 'Open menu',
     menuClose: 'Close menu',
     cta: 'Request a demo',
     language: 'Language',

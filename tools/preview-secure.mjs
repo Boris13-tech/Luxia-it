@@ -34,6 +34,7 @@ const types = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.mp4': 'video/mp4',
+  '.json': 'application/json',
 };
 
 /** Lit le bloc « /* » de public/_headers. */
@@ -98,7 +99,9 @@ createServer(async (req, res) => {
   }
   const file = await resolveFile(url.pathname);
   const target = file ?? join(root, '404.html');
-  const type = types[extname(target)] ?? 'application/octet-stream';
+  const type = target.endsWith('speculation-rules.json')
+    ? 'application/speculationrules+json'
+    : (types[extname(target)] ?? 'application/octet-stream');
   let body = await readFile(target);
   const headers = { 'Content-Type': type };
   // Compression Brotli des textes, comme en production : les mesures locales

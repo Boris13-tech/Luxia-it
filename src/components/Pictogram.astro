@@ -69,25 +69,30 @@ const blob = blobs[name.length % blobs.length];
 
   .picto__ink path {
     fill: none;
-    stroke: var(--ink);
+    stroke: var(--picto-ink);
     stroke-width: 1.35;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
+  /* Fond sombre teinté, trait lumineux de la même famille */
   .picto--blue {
-    --picto-tint: #c6d8f3;
+    --picto-tint: #13234a;
+    --picto-ink: #8cb8ff;
   }
 
   .picto--terra {
-    --picto-tint: #f2c9bb;
+    --picto-tint: #2c1612;
+    --picto-ink: #ff9c88;
   }
 
   .picto--ochre {
-    --picto-tint: #f2d699;
+    --picto-tint: #2a2110;
+    --picto-ink: #f0c070;
   }
 
   .picto--sage {
-    --picto-tint: #c9dfcd;
+    --picto-tint: #0f2a1f;
+    --picto-ink: #7fd3a8;
   }
 </style>

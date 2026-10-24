@@ -1,0 +1,593 @@
+---
+/**
+ * Navigateur d'univers : menu plein écran dans un <dialog> modal natif (le
+ * navigateur retient le focus, ferme avec Échap et rend le focus au bouton).
+ * À gauche, les destinations ; à droite, la constellation des domaines de
+ * l'écosystème, chacun avec son niveau de preuve (src/data/universe.ts).
+ * Ouverture sans JavaScript dans les navigateurs récents (commandfor), avec
+ * un relais en script pour les autres (src/scripts/universe.ts).
+ */
+import Icon from './Icon.astro';
+import LevelTag from './LevelTag.astro';
+import { destinations, domains } from '../data/universe';
+import { localeFromPath } from '../i18n/config';
+import { href } from '../i18n/routes';
+import { ui } from '../i18n/ui';
+
+const path = Astro.url.pathname;
+const t = ui[localeFromPath(path)];
+const home = href('home');
+const items = destinations.map((d) => ({ ...d, href: href(d.route) }));
+// Destination courante : la plus précise (/plateformes/luxia-identity/ l'emporte sur /plateformes/)
+const current = items
+  .filter((d) => d.href !== home && path.startsWith(d.href))
+  .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+const isCurrent = (target: string) => target === current;
+
+// Liaisons de la constellation : chaque domaine au registre, plus le lien
+// entre ALMA et les identités d'agents (les agents d'ALMA sont des identités).
+const edges: readonly [string, string][] = [
+  ['identity', 'policy'],
+  ['identity', 'ledger'],
+  ['identity', 'adapters'],
+  ['identity', 'agents'],
+  ['identity', 'key'],
+  ['identity', 'runtime'],
+  ['agents', 'alma'],
+];
+const pos: Record<string, [number, number]> = {
+  identity: [300, 205],
+  policy: [138, 98],
+  ledger: [462, 92],
+  adapters: [92, 262],
+  agents: [508, 252],
+  key: [212, 344],
+  alma: [430, 348],
+  runtime: [300, 48],
+};
+---
+
+<dialog class="univ" id="univers" aria-labelledby="univ-title" data-universe>
+  <div class="univ__glow" aria-hidden="true"></div>
+  <div class="wrap univ__inner">
+    <div class="univ__top">
+      <p class="kicker" id="univ-title">L’écosystème LUXIA</p>
+      <button class="univ__close" type="button" commandfor="univers" command="close" data-universe-close>
+        <span class="visually-hidden">{t.menuClose}</span>
+        <Icon name="x" size={22} />
+      </button>
+    </div>
+
+    <div class="univ__grid">
+      <nav class="univ__nav" aria-label="Destinations">
+        <ul>
+          <li class="univ__item">
+            <a class="univ__link" href={home} data-domain="identity" aria-current={path === home ? 'page' : undefined}>
+              <span class="univ__label">Accueil</span>
+              <span class="univ__hint">Vue d’ensemble</span>
+            </a>
+          </li>
+          {
+            items.map((d) => (
+              <li class="univ__item">
+                <a class="univ__link" href={d.href} data-domain={d.domain} aria-current={isCurrent(d.href) ? 'page' : undefined}>
+                  <span class="univ__label">{d.label}</span>
+                  <span class="univ__hint">{d.hint}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="btn btn--primary univ__cta" href={`${href('contact')}?sujet=demo`}>
+          Demander une démonstration
+          <Icon name="arrow-right" size={18} />
+        </a>
+      </nav>
+
+      <section class="univ__map" aria-labelledby="univ-map-title">
+        <h2 class="univ__map-title" id="univ-map-title">Domaines de l’écosystème</h2>
+        <div class="univ__sky">
+          <svg class="univ__lines" viewBox="0 0 600 400" aria-hidden="true" focusable="false">
+            {
+              edges.map(([a, b]) => (
+                <line
+                  class="univ__edge"
+                  data-edge={`${a} ${b}`}
+                  x1={pos[a]?.[0]}
+                  y1={pos[a]?.[1]}
+                  x2={pos[b]?.[0]}
+                  y2={pos[b]?.[1]}
+                  pathLength="1"
+                />
+              ))
+            }
+          </svg>
+          <ul class="univ__nodes">
+            {
+              domains.map((d) => (
+                <li class:list={['univ__node', `univ__node--${d.id}`, `tone--${d.tone}`]}>
+                  <a href={d.href} data-domain={d.id}>
+                    <span class="univ__dot" aria-hidden="true" />
+                    <span class="univ__node-name">{d.name}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="univ__previews">
+          {
+            domains.map((d, i) => (
+              <div class="univ__preview" data-preview={d.id} hidden={i !== 0}>
+                <p class="univ__preview-name">{d.name}</p>
+                <p class="univ__preview-text">{d.text}</p>
+                <LevelTag level={d.level} />
+                {d.note && <p class="univ__preview-note">{d.note}</p>}
+              </div>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .univ {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background:
+      radial-gradient(60rem 36rem at 75% 40%, rgb(47 111 224 / 0.14), transparent 70%),
+      rgb(7 9 13 / 0.97);
+    color: var(--ink-2);
+  }
+
+  .univ::backdrop {
+    background: rgb(7 9 13 / 0.6);
+    backdrop-filter: blur(6px);
+  }
+
+  .univ__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 4vw, 48px);
+    min-height: 100%;
+    padding-block: 22px 40px;
+  }
+
+  .univ__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+  }
+
+  .univ__close {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--ink);
+    transition:
+      border-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .univ__close:hover {
+    border-color: var(--ink);
+    transform: rotate(90deg);
+  }
+
+  .univ__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+    align-items: start;
+  }
+
+  .univ__nav ul {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+
+  .univ__link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 16px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .univ__label {
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.5rem);
+    font-weight: 560;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    transition:
+      color var(--dur) var(--ease),
+      transform 320ms var(--ease);
+  }
+
+  .univ__hint {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--ink-3);
+  }
+
+  .univ__link:hover .univ__label,
+  .univ__link:focus-visible .univ__label {
+    color: var(--electric);
+    transform: translateX(6px);
+  }
+
+  .univ__link[aria-current='page'] .univ__label {
+    color: var(--electric);
+  }
+
+  .univ__link[aria-current='page'] .univ__hint::before {
+    content: 'Vous êtes ici · ';
+    color: var(--electric);
+  }
+
+  .univ__cta {
+    margin-top: 28px;
+  }
+
+  .univ__map-title {
+    margin-bottom: 16px;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* Petit écran : les domaines forment une liste, sans carte du ciel */
+  .univ__sky {
+    position: relative;
+  }
+
+  .univ__lines {
+    display: none;
+  }
+
+  .univ__nodes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .univ__node a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: rgb(17 24 39 / 0.6);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .univ__dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--node);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--node) 22%, transparent);
+  }
+
+  .tone--electric {
+    --node: #5b9bff;
+  }
+
+  .tone--glacier {
+    --node: #9cc7ff;
+  }
+
+  .tone--warm {
+    --node: #f3e3c3;
+  }
+
+  .tone--cyan {
+    --node: #5fd4e0;
+  }
+
+  .tone--violet {
+    --node: #a78bfa;
+  }
+
+  .tone--sky {
+    --node: #8db3e8;
+  }
+
+  .tone--steel {
+    --node: #8d99ae;
+  }
+
+  .univ__node--runtime .univ__dot {
+    background: transparent;
+    border: 1.5px dashed var(--node);
+  }
+
+  .univ__previews {
+    margin-top: 20px;
+  }
+
+  .univ__preview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgb(17 24 39 / 0.7);
+  }
+
+  .univ__preview-name {
+    font-family: var(--display);
+    font-size: var(--fs-h4);
+    font-weight: 580;
+    color: var(--ink);
+  }
+
+  .univ__preview-text {
+    font-size: var(--fs-small);
+  }
+
+  .univ__preview-note {
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+  }
+
+  /* Le défilement de la page reste figé pendant que le menu est ouvert */
+  :global(html:has(.univ[open])) {
+    overflow: hidden;
+  }
+
+  @media (min-width: 960px) {
+    .univ__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .univ__lines {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .univ__edge {
+      stroke: var(--line-strong);
+      stroke-width: 1;
+      stroke-dasharray: 1;
+      transition:
+        stroke var(--dur) var(--ease),
+        stroke-width var(--dur) var(--ease);
+    }
+
+    .univ__edge.is-lit {
+      stroke: var(--electric);
+      stroke-width: 1.6;
+    }
+
+    .univ__nodes {
+      position: absolute;
+      inset: 0;
+      display: block;
+    }
+
+    .univ__node {
+      position: absolute;
+      translate: -50% -50%;
+    }
+
+    .univ__node a {
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+      padding: 6px 8px;
+      border: 0;
+      background: none;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .univ__dot {
+      width: 14px;
+      height: 14px;
+      transition:
+        box-shadow 320ms var(--ease),
+        scale 320ms var(--ease);
+    }
+
+    .univ__node a:hover .univ__dot,
+    .univ__node a:focus-visible .univ__dot,
+    .univ__node.is-lit .univ__dot {
+      scale: 1.35;
+      box-shadow:
+        0 0 0 6px color-mix(in srgb, var(--node) 22%, transparent),
+        0 0 28px 6px color-mix(in srgb, var(--node) 55%, transparent);
+    }
+
+    .univ__node--identity .univ__dot {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Positions en pourcentage de la carte (viewBox 600 × 400) */
+    .univ__node--identity {
+      left: 50%;
+      top: 51.25%;
+    }
+
+    .univ__node--policy {
+      left: 23%;
+      top: 24.5%;
+    }
+
+    .univ__node--ledger {
+      left: 77%;
+      top: 23%;
+    }
+
+    .univ__node--adapters {
+      left: 15.33%;
+      top: 65.5%;
+    }
+
+    .univ__node--agents {
+      left: 84.67%;
+      top: 63%;
+    }
+
+    .univ__node--key {
+      left: 35.33%;
+      top: 86%;
+    }
+
+    .univ__node--alma {
+      left: 71.67%;
+      top: 87%;
+    }
+
+    .univ__node--runtime {
+      left: 50%;
+      top: 12%;
+    }
+
+    /* Le nom suit le point : sous le point, sauf pour le registre */
+    .univ__node a {
+      translate: 0 calc(50% - 7px);
+    }
+
+    .univ__node--identity a {
+      translate: 0 calc(50% - 11px);
+    }
+
+    .univ__previews {
+      max-width: 30rem;
+      margin-top: 28px;
+    }
+  }
+
+  /* Ouverture et fermeture : le fond se dévoile, les destinations montent */
+  @media (prefers-reduced-motion: no-preference) {
+    .univ {
+      opacity: 0;
+      transition:
+        opacity 360ms var(--ease-precise),
+        overlay 360ms allow-discrete,
+        display 360ms allow-discrete;
+    }
+
+    .univ[open] {
+      opacity: 1;
+    }
+
+    @starting-style {
+      .univ[open] {
+        opacity: 0;
+      }
+    }
+
+    .univ[open] .univ__item {
+      animation: univ-rise 560ms var(--ease) both;
+    }
+
+    .univ[open] .univ__item:nth-child(2) {
+      animation-delay: 40ms;
+    }
+
+    .univ[open] .univ__item:nth-child(3) {
+      animation-delay: 80ms;
+    }
+
+    .univ[open] .univ__item:nth-child(4) {
+      animation-delay: 120ms;
+    }
+
+    .univ[open] .univ__item:nth-child(5) {
+      animation-delay: 160ms;
+    }
+
+    .univ[open] .univ__item:nth-child(6) {
+      animation-delay: 200ms;
+    }
+
+    .univ[open] .univ__item:nth-child(7) {
+      animation-delay: 240ms;
+    }
+
+    .univ[open] .univ__item:nth-child(8) {
+      animation-delay: 280ms;
+    }
+
+    .univ[open] .univ__item:nth-child(9) {
+      animation-delay: 320ms;
+    }
+
+    .univ[open] .univ__edge {
+      animation: univ-draw 900ms var(--ease) 200ms both;
+    }
+
+    .univ[open] .univ__node {
+      animation: univ-pop 640ms var(--ease) 260ms both;
+    }
+
+    .univ[open] .univ__node--identity {
+      animation-delay: 120ms;
+    }
+  }
+
+  @keyframes univ-rise {
+    from {
+      transform: translateY(18px);
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      transform: none;
+      clip-path: inset(0 0 -20% 0);
+    }
+  }
+
+  @keyframes univ-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes univ-pop {
+    from {
+      opacity: 0;
+      scale: 0.6;
+    }
+  }
+</style>

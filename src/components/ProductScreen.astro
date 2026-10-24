@@ -343,7 +343,9 @@ const active = nav.some((n) => n.id === screen) ? screen : 'overview';
     text-align: left;
   }
 
+  /* Écran principal d'une page : il passe d'une page à l'autre (src/styles/transitions.css) */
   .pshot--hero .pshot__window {
+    view-transition-name: product-screen;
     box-shadow:
       0 1px 2px rgb(23 33 49 / 0.06),
       0 40px 80px -32px rgb(23 33 49 / 0.38);

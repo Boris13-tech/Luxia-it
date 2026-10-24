@@ -1,6 +1,8 @@
 ---
 /** Ouverture des pages intérieures : fil d'Ariane, libellé, titre, chapeau, actions. */
 import type { Crumb } from '../layouts/BaseLayout.astro';
+import ConstellationScene from './ConstellationScene.astro';
+import type { Variant } from '../scripts/constellation-model';
 import { localeFromPath } from '../i18n/config';
 import { href } from '../i18n/routes';
 import { ui } from '../i18n/ui';
@@ -10,15 +12,18 @@ interface Props {
   kicker?: string | undefined;
   lead?: string | undefined;
   crumbs?: readonly Crumb[] | undefined;
+  /** Constellation en décor, dans l'univers du produit. */
+  scene?: Variant | undefined;
 }
 
-const { title, kicker, lead, crumbs = [] } = Astro.props;
+const { title, kicker, lead, crumbs = [], scene } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
 const t = ui[locale];
 ---
 
-<section class="phead" aria-labelledby="page-title">
-  <div class="wrap">
+<section class:list={['phead', scene && 'phead--scene']} aria-labelledby="page-title">
+  {scene && <ConstellationScene variant={scene} />}
+  <div class="wrap phead__inner">
     {
       crumbs.length > 0 && (
         <nav class="crumbs" aria-label={t.breadcrumbs}>
@@ -45,8 +50,20 @@ const t = ui[locale];
 
 <style>
   .phead {
+    position: relative;
     padding-block: clamp(40px, 6vw, 80px) clamp(48px, 7vw, 96px);
     border-bottom: 1px solid var(--line);
+  }
+
+  /* Avec décor : la constellation passe sous l'en-tête flottant */
+  .phead--scene {
+    margin-top: calc(var(--header-h) * -1);
+    padding-top: calc(var(--header-h) + clamp(40px, 6vw, 80px));
+    min-height: clamp(560px, 80svh, 760px);
+  }
+
+  .phead__inner {
+    position: relative;
   }
 
   .crumbs ol {

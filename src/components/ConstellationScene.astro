@@ -1,0 +1,208 @@
+---
+/**
+ * Constellation d'identité : décor de tête de page, en trois niveaux de rendu
+ * (docs/DESIGN_SYSTEM.md, section 7).
+ * - Essentiel : l'image fixe ci-dessous, calculée au build à partir du même
+ *   modèle que la scène (aucun WebGL). Toujours présente, sous le canevas.
+ * - Équilibré et haut : la scène WebGL 2 (src/scripts/constellation.ts),
+ *   chargée après le premier rendu et jamais pendant un préchargement.
+ * Décorative (aria-hidden) : le texte de la page porte tout le sens.
+ */
+import { buildModel, palette, type Variant } from '../scripts/constellation-model';
+
+interface Props {
+  variant?: Variant | undefined;
+  class?: string | undefined;
+}
+
+const { variant = 'identity', class: className } = Astro.props;
+
+// Image fixe : un sous-ensemble du modèle, projeté avec la caméra de départ
+const W = 1600;
+const H = 900;
+const model = buildModel(170, variant, 11);
+const colors = palette(variant);
+const yaw = 0;
+const pitch = 0.32;
+const project = (i: number): [number, number, number] => {
+  const x = model.positions[i * 3] ?? 0;
+  const y = model.positions[i * 3 + 1] ?? 0;
+  const z = model.positions[i * 3 + 2] ?? 0;
+  const cy = Math.cos(yaw);
+  const sy = Math.sin(yaw);
+  const cp = Math.cos(pitch);
+  const sp = Math.sin(pitch);
+  const x1 = cy * x + sy * z;
+  const z1 = -sy * x + cy * z;
+  const y2 = cp * y - sp * z1;
+  const z2 = sp * y + cp * z1;
+  const d = 2.25 - z2;
+  const f = 1 / Math.tan(0.75 / 2);
+  return [W / 2 + ((x1 + 0.55) * f) / d * (H / 2), H / 2 - ((y2 + 0.05) * f) / d * (H / 2), d];
+};
+const pts = Array.from({ length: 170 }, (_, i) => project(i));
+const toHex = (c: readonly [number, number, number]) =>
+  `#${c.map((v) => Math.round(Math.min(1, v) * 255).toString(16).padStart(2, '0')).join('')}`;
+const nodes = pts.map(([x, y, d], i) => ({
+  x: x.toFixed(1),
+  y: y.toFixed(1),
+  r: (((model.sizes[i] ?? 0.3) * (i === 0 ? 3.2 : 1) * 9) / d).toFixed(1),
+  fill: toHex(colors[model.kinds[i] ?? 0] ?? [1, 1, 1]),
+  o: Math.max(0.25, Math.min(1, 1 - (d - 1.25) / 2.4)).toFixed(2),
+}));
+const lines: string[] = [];
+for (let e = 0; e < model.edges.length; e += 2) {
+  const a = pts[model.edges[e] ?? 0];
+  const b = pts[model.edges[e + 1] ?? 0];
+  if (a && b) lines.push(`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`);
+}
+---
+
+<div class:list={['scene', `scene--${variant}`, className]} data-scene data-variant={variant} aria-hidden="true">
+  <svg class="scene__poster" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" focusable="false">
+    <path class="scene__edges" d={lines.join('')}></path>
+    {nodes.map((n) => <circle cx={n.x} cy={n.y} r={n.r} fill={n.fill} opacity={n.o} />)}
+  </svg>
+  <canvas class="scene__canvas"></canvas>
+</div>
+
+<style>
+  .scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Le décor s'efface vers le bas (et vers la gauche sur grand écran, derrière
+     le titre) par un voile peint au-dessus : bien moins coûteux qu'un masque,
+     qui imposerait un rendu hors écran à chaque image de la scène. */
+  .scene::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 55%, var(--paper) 98%);
+  }
+
+  @media (min-width: 960px) {
+    .scene::after {
+      background:
+        linear-gradient(to bottom, transparent 55%, var(--paper) 98%),
+        linear-gradient(to right, rgb(7 9 13 / 0.8) 12%, transparent 55%);
+    }
+  }
+
+  .scene__poster,
+  .scene__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .scene__edges {
+    fill: none;
+    stroke: #5b9bff;
+    stroke-opacity: 0.16;
+    stroke-width: 1;
+  }
+
+  .scene--alma .scene__edges {
+    stroke: #a78bfa;
+  }
+
+  /* La scène animée apparaît en fondu au-dessus de l'image fixe */
+  .scene__canvas {
+    opacity: 0;
+    transition: opacity 1200ms var(--ease);
+  }
+
+  .scene__canvas:global(.is-ready) {
+    opacity: 1;
+  }
+
+  .scene:has(.scene__canvas:global(.is-ready)) .scene__poster {
+    opacity: 0;
+    transition: opacity 1200ms var(--ease);
+  }
+
+  /* Petit écran : décor plus discret, le texte passe devant */
+  @media (max-width: 719.98px) {
+    .scene {
+      opacity: 0.55;
+    }
+  }
+</style>
+
+<script>
+  import type { Tier } from '../scripts/constellation';
+  import type { Variant } from '../scripts/constellation-model';
+
+  type Level = Tier | 'essential';
+
+  /** Niveau de rendu de cet appareil (docs/DESIGN_SYSTEM.md, section 7). */
+  function chooseTier(): Level {
+    const forced = new URLSearchParams(location.search).get('rendu');
+    if (forced === 'essentiel') return 'essential';
+    if (forced === 'equilibre') return 'balanced';
+    if (forced === 'haut') return 'high';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return 'essential';
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean }; deviceMemory?: number };
+    if (nav.connection?.saveData) return 'essential';
+    const memory = nav.deviceMemory ?? 4;
+    const cores = navigator.hardwareConcurrency || 4;
+    if (memory <= 2 || cores <= 2) return 'essential';
+    // Téléphone : l'image fixe, pour la batterie et la réactivité
+    if (window.innerWidth < 768) return 'essential';
+    // Pas de WebGL 2 du tout : l'image fixe. Sans processeur graphique (rendu
+    // logiciel), c'est la création du contexte, au démarrage de la scène, qui
+    // échoue (failIfMajorPerformanceCaveat) : l'image fixe reste aussi.
+    if (!('WebGL2RenderingContext' in window)) return 'essential';
+    if (matchMedia('(pointer: fine)').matches && memory >= 8 && cores >= 8 && window.innerWidth >= 1024) return 'high';
+    return 'balanced';
+  }
+
+  /**
+   * Après le chargement et la fin des animations d'ouverture (environ 1,4 s),
+   * au repos, et jamais pendant un préchargement : la scène ne dispute jamais
+   * le fil principal au premier rendu ni aux premières interactions.
+   */
+  function whenCalm(run: () => void): void {
+    const go = () =>
+      setTimeout(() => {
+        const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
+          .requestIdleCallback;
+        if (idle) idle(run, { timeout: 2000 });
+        else run();
+      }, 1400);
+    const afterLoad = () => (document.readyState === 'complete' ? go() : window.addEventListener('load', go, { once: true }));
+    const doc = document as Document & { prerendering?: boolean };
+    if (doc.prerendering) document.addEventListener('prerenderingchange', afterLoad, { once: true });
+    else afterLoad();
+  }
+
+  for (const el of document.querySelectorAll<HTMLElement>('[data-scene]')) {
+    const tier = chooseTier();
+    el.dataset['tier'] = tier;
+    if (tier === 'essential') continue;
+    const canvas = el.querySelector('canvas');
+    if (!canvas) continue;
+    whenCalm(() => {
+      import('../scripts/constellation')
+        .then(({ start }) => start(canvas, { tier, variant: (el.dataset['variant'] as Variant) ?? 'identity' }))
+        .then((stop) => {
+          // Mouvement réduit activé en cours de route : la scène s'arrête
+          matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+            if (e.matches) {
+              stop();
+              el.dataset['tier'] = 'essential';
+            }
+          });
+        })
+        .catch(() => {
+          // WebGL indisponible ou échec de compilation : l'image fixe reste
+          el.dataset['tier'] = 'essential';
+        });
+    });
+  }
+</script>
