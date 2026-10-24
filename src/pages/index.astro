@@ -2,19 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHead from '../components/SectionHead.astro';
 import ClaimList from '../components/ClaimList.astro';
-import DataTable from '../components/DataTable.astro';
 import Method from '../components/Method.astro';
-import StageTag from '../components/StageTag.astro';
+import PlatformExplorer from '../components/PlatformExplorer.astro';
 import CtaBlock from '../components/CtaBlock.astro';
 import Icon from '../components/Icon.astro';
-import { facts, formatDate } from '../data/facts';
-import { getPlatform, platformHref, platforms } from '../data/platforms';
+import { facts } from '../data/facts';
 import { href } from '../i18n/routes';
-
-const identity = getPlatform('luxia-identity');
-const highlights = identity.capabilities.filter((c) =>
-  ['Organisations isolées', 'Connexion sans mot de passe', 'Microsoft Entra ID', 'Ressources et habilitations', 'Administration protégée', 'Journal de sécurité en ajout seul'].includes(c.title),
-);
 
 const audiences = [
   {
@@ -93,29 +86,7 @@ const services = [
         </div>
       </div>
 
-      <aside class="ledger" aria-labelledby="ledger-title">
-        <div class="ledger__head">
-          <h2 class="ledger__title" id="ledger-title">État des plateformes</h2>
-          <p class="t-meta">au <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
-        </div>
-        <ul class="ledger__list">
-          {
-            platforms.map((p) => (
-              <li>
-                <a class="ledger__row" href={platformHref(p.slug)}>
-                  <span class="ledger__name">{p.name}</span>
-                  <span class="ledger__role">{p.role}</span>
-                  <StageTag stage={p.stage} />
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="ledger__foot">
-          Aucune plateforme n’est proposée commercialement à ce jour.{' '}
-          <a class="link" href={`${href('platforms')}#echelle`}>Comment lire ces étapes</a>
-        </p>
-      </aside>
+      <PlatformExplorer />
     </div>
   </section>
 
@@ -148,53 +119,11 @@ const services = [
     </div>
   </section>
 
-  <section class="section" aria-labelledby="identity-title">
-    <div class="wrap">
-      <SectionHead id="identity-title" index="03" kicker="Plateforme" title={identity.name} lead={identity.summary}>
-        <p class="stage-line"><StageTag stage={identity.stage} /> <span class="t-small">{identity.stageNote}</span></p>
-      </SectionHead>
-      <ClaimList claims={highlights} columns={3} />
-      <p class="after">
-        <a class="more" href={platformHref(identity.slug)}>
-          Toutes les capacités, leur niveau de preuve et les limites actuelles
-          <Icon name="arrow-right" size={16} />
-        </a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section section--alt" aria-labelledby="deploiement-title">
-    <div class="wrap">
-      <SectionHead
-        id="deploiement-title"
-        index="04"
-        kicker="Déploiement"
-        title="Un modèle en service, deux modèles visés"
-        lead="LUXIA Identity fonctionne aujourd’hui comme une plateforme opérée par Luxia-IT. Le même code doit pouvoir fonctionner sur site et en environnement souverain : c’est un principe d’architecture, sans déploiement de ce type à ce jour."
-      />
-      <DataTable
-        caption="Modèles de déploiement de LUXIA Identity et niveau de preuve"
-        columns={[
-          { key: 'model', label: 'Modèle' },
-          { key: 'level', label: 'Niveau' },
-          { key: 'detail', label: 'Ce qu’il en est' },
-        ]}
-        rows={identity.deployment.map((d) => ({ model: d.title, level: { text: '', level: d.level }, detail: d.text }))}
-      />
-      <p class="after">
-        <a class="more" href={href('architectures')}>
-          Architectures de référence et plateforme d’exécution
-          <Icon name="arrow-right" size={16} />
-        </a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="methode-title">
+  <section class="section section--alt" aria-labelledby="methode-title">
     <div class="wrap">
       <SectionHead
         id="methode-title"
-        index="05"
+        index="03"
         kicker="Méthode"
         title="La méthode que nous appliquons à nos propres plateformes"
         lead="Un changement fusionné ne vaut pas preuve. Une capacité n’est annoncée qu’une fois démontrée là où elle doit fonctionner."
@@ -203,11 +132,11 @@ const services = [
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="services-title">
+  <section class="section" aria-labelledby="services-title">
     <div class="wrap">
       <SectionHead
         id="services-title"
-        index="06"
+        index="04"
         kicker="Services"
         title="Déployer et exploiter l’identité"
         lead="L’identité reste le point d’entrée. Le cloud Microsoft Azure et Entra, l’automatisation DevSecOps et l’IA appliquée s’y rattachent : là où vivent les identités, la manière de livrer, et les agents qui agissent."
@@ -248,7 +177,7 @@ const services = [
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 48px var(--gap);
-    align-items: end;
+    align-items: start;
   }
 
   .hero__text {
@@ -265,77 +194,6 @@ const services = [
     margin-top: 4px;
   }
 
-  .ledger {
-    background-color: var(--white);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--ink);
-  }
-
-  .ledger__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 4px 16px;
-    padding: 18px 20px 14px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .ledger__title {
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink);
-  }
-
-  .ledger__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4px 16px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--line);
-    transition: background-color var(--dur) var(--ease);
-  }
-
-  .ledger__row:hover {
-    background-color: var(--paper);
-  }
-
-  .ledger__row:hover .ledger__name {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .ledger__name {
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--ink);
-  }
-
-  .ledger__role {
-    font-size: var(--fs-small);
-    color: var(--ink-3);
-  }
-
-  .ledger__foot {
-    padding: 14px 20px 18px;
-    font-size: var(--fs-small);
-    color: var(--ink-2);
-  }
-
-  .stage-line {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 16px;
-  }
-
-  .after {
-    margin-top: 32px;
-  }
-
   .svc-link {
     color: var(--ink);
     text-decoration: underline;
@@ -348,25 +206,9 @@ const services = [
     text-decoration-color: currentColor;
   }
 
-  @media (min-width: 560px) {
-    .ledger__row {
-      grid-template-columns: minmax(0, 1fr) auto;
-    }
-
-    .ledger__row .ledger__role {
-      grid-column: 1;
-    }
-
-    .ledger__row :global(.stage) {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      align-self: center;
-    }
-  }
-
   @media (min-width: 1024px) {
     .hero__grid {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
     }
   }
 </style>

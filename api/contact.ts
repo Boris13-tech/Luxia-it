@@ -244,12 +244,41 @@ async function sendWithResend(m: ContactMessage, env: ContactEnv, deps: ContactD
   return response.status;
 }
 
+/** Champs attendus ; tout autre champ (pièce jointe, champ ajouté) fait refuser l'envoi. */
+const ALLOWED_FIELDS = new Set(['nom', 'organisation', 'fonction', 'email', 'sujet', 'deploiement', 'message', 'site_web']);
+
+/**
+ * Motifs de secrets à ne jamais recevoir : le message est refusé avant tout
+ * envoi, sans que son contenu soit journalisé.
+ */
+const SECRET_PATTERNS: readonly RegExp[] = [
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  /\bAKIA[0-9A-Z]{16}\b/,
+  /\bgh[pousr]_[A-Za-z0-9]{36,}\b/,
+  /\bgithub_pat_[A-Za-z0-9_]{40,}\b/,
+  /\bxox[abprs]-[A-Za-z0-9-]{10,}\b/,
+  /\bAIza[0-9A-Za-z_-]{35}\b/,
+  /\b(?:sk|rk)_live_[0-9A-Za-z]{20,}\b/,
+  /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/,
+  /AccountKey=[A-Za-z0-9+/=]{20,}/,
+  /\b(?:password|passwd|mot de passe|mdp|secret|token|api[_-]?key|client[_-]?secret)\s*[:=]\s*\S{8,}/i,
+];
+
+export function containsSecret(m: ContactMessage): boolean {
+  const text = [m.nom, m.organisation, m.fonction, m.email, m.message].join('\n');
+  return SECRET_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+/**
+ * Codes publics. Les refus techniques partagent un même code et un même
+ * message (« refused ») : la réponse ne dit pas quel contrôle a échoué ; le
+ * motif précis n'apparaît que dans les journaux.
+ */
 type Outcome =
   | { status: 200; code: 'sent' }
   | { status: 400; code: 'invalid'; fields: Field[] }
-  | { status: 403; code: 'forbidden_origin' }
-  | { status: 413; code: 'too_large' }
-  | { status: 415; code: 'unsupported_type' }
+  | { status: 400; code: 'secret' }
+  | { status: 400 | 403 | 413 | 415; code: 'refused' }
   | { status: 429; code: 'rate_limited' }
   | { status: 502; code: 'delivery_failed' }
   | { status: 503; code: 'not_configured' };
@@ -257,9 +286,8 @@ type Outcome =
 const MESSAGES: Record<Outcome['code'], string> = {
   sent: 'Votre message a été transmis. Nous vous répondrons à l’adresse indiquée.',
   invalid: 'Certains champs sont incomplets ou invalides.',
-  forbidden_origin: 'Cet envoi ne provient pas du site.',
-  too_large: 'Le message est trop long.',
-  unsupported_type: 'Format d’envoi non pris en charge.',
+  secret: 'Votre message semble contenir un secret (clé, jeton ou mot de passe). Retirez-le, puis envoyez de nouveau.',
+  refused: 'Cet envoi n’a pas pu être accepté. Écrivez-nous directement par e-mail ou par téléphone.',
   rate_limited: 'Trop d’envois en peu de temps. Réessayez dans quelques minutes, ou écrivez-nous directement.',
   delivery_failed: 'Le message n’a pas pu être transmis. Écrivez-nous directement par e-mail ou par téléphone.',
   not_configured: 'Le formulaire est momentanément indisponible. Écrivez-nous directement par e-mail ou par téléphone.',
@@ -299,10 +327,12 @@ export async function handleContact(
   deps: ContactDeps = defaultDeps,
   rate: RateLimiter = limiter,
 ): Promise<Response> {
+  // Disponibilité : toujours 200, l'état est dans le corps. La page vérifie
+  // ainsi le formulaire sans provoquer d'erreur réseau dans la console.
   if (request.method === 'GET' || request.method === 'HEAD') {
     const ready = delivery(env) !== null;
     return new Response(request.method === 'HEAD' ? null : JSON.stringify({ ready }), {
-      status: ready ? 200 : 503,
+      status: 200,
       headers: { ...BASE_HEADERS, 'Content-Type': 'application/json; charset=utf-8' },
     });
   }
@@ -316,25 +346,33 @@ export async function handleContact(
     return respond(request, outcome);
   };
 
-  if (!sameOrigin(request, env)) return finish({ status: 403, code: 'forbidden_origin' });
+  if (!sameOrigin(request, env)) return finish({ status: 403, code: 'refused' }, 'forbidden_origin');
 
+  // Formulaire encodé uniquement : pas de multipart, donc aucune pièce jointe.
   const type = (request.headers.get('content-type') ?? '').split(';')[0]?.trim().toLowerCase();
-  if (type !== 'application/x-www-form-urlencoded') return finish({ status: 415, code: 'unsupported_type' });
+  if (type !== 'application/x-www-form-urlencoded') return finish({ status: 415, code: 'refused' }, 'unsupported_type');
 
   const declared = Number(request.headers.get('content-length') ?? '0');
-  if (declared > LIMITS.body) return finish({ status: 413, code: 'too_large' });
+  if (declared > LIMITS.body) return finish({ status: 413, code: 'refused' }, 'too_large');
 
   if (!rate.take(await clientKey(request), deps.now())) return finish({ status: 429, code: 'rate_limited' });
 
   const raw = await request.text();
-  if (raw.length > LIMITS.body) return finish({ status: 413, code: 'too_large' });
+  if (raw.length > LIMITS.body) return finish({ status: 413, code: 'refused' }, 'too_large');
   const form = new URLSearchParams(raw);
+
+  const keys = [...form.keys()];
+  if (keys.some((k) => !ALLOWED_FIELDS.has(k)) || new Set(keys).size !== keys.length) {
+    return finish({ status: 400, code: 'refused' }, 'unexpected_field');
+  }
 
   // Champ piège rempli : réponse identique à un succès, rien n'est transmis.
   if (clean(form.get('site_web')) !== '') return finish({ status: 200, code: 'sent' }, 'honeypot');
 
   const result = validate(form);
   if (!result.ok) return finish({ status: 400, code: 'invalid', fields: result.fields });
+
+  if (containsSecret(result.value)) return finish({ status: 400, code: 'secret' }, 'secret_detected');
 
   const mode = delivery(env);
   if (mode === null) return finish({ status: 503, code: 'not_configured' });

@@ -1,26 +1,56 @@
 ---
 /**
- * Mentions légales. Le bloc « Éditeur » ne s'affiche qu'avec les faits du
- * registre ; tant qu'ils manquent, npm run release:check bloque la publication.
+ * Mentions légales. Les blocs « Éditeur », « Direction » et « Droit
+ * applicable » ne s'affichent qu'avec les faits du registre, issus des
+ * documents officiels d'immatriculation ; tant qu'ils manquent, npm run
+ * release:check bloque la mise en production. Aucun pays n'est présumé.
  */
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { facts } from '../data/facts';
 
 const p = facts.publisher;
 const publisher = [
-  { key: 'Raison sociale', value: p.legalName },
+  { key: 'Dénomination sociale', value: p.legalName },
+  { key: 'Nom commercial', value: p.tradeName },
   { key: 'Forme juridique', value: p.legalForm },
-  { key: 'Immatriculation', value: p.registration },
-  { key: 'TVA intracommunautaire', value: p.vatId },
-  { key: 'Siège', value: p.address },
+  { key: 'Pays d’immatriculation', value: p.country },
+  { key: 'Registre', value: p.register },
+  { key: 'Numéro d’immatriculation', value: p.registration },
+  { key: 'Numéro fiscal ou TVA', value: p.taxId },
+  { key: 'Capital social', value: p.shareCapital },
+  { key: 'Siège social', value: p.address },
 ].filter((row): row is { key: string; value: string } => row.value !== null);
+const people = [
+  { key: 'Représentant légal', value: p.legalRepresentative },
+  { key: 'Directeur de la publication', value: p.publicationDirector },
+].filter((row): row is { key: string; value: string } => row.value !== null);
+
+const toc = [
+  ...(publisher.length > 0 ? [{ id: 'editeur', label: 'Éditeur du site' }] : []),
+  ...(people.length > 0 ? [{ id: 'direction', label: 'Direction' }] : []),
+  { id: 'contact', label: 'Contact' },
+  { id: 'hebergement', label: 'Hébergement' },
+  { id: 'propriete', label: 'Propriété intellectuelle' },
+  ...(p.governingLaw ? [{ id: 'droit', label: 'Droit applicable' }] : []),
+  { id: 'credits', label: 'Crédits' },
+  { id: 'historique', label: 'Historique des versions' },
+];
 ---
 
-<LegalLayout title="Mentions légales" description="Mentions légales du site luxia-it.com : éditeur, contact, hébergement, propriété intellectuelle et crédits." updated="2026-10-23">
+<LegalLayout
+  title="Mentions légales"
+  description="Mentions légales du site luxia-it.com : éditeur, contact, hébergement, propriété intellectuelle et crédits."
+  updated="2026-10-24"
+  toc={toc}
+  history={[
+    { date: '2026-10-24', text: 'Structure complète des informations de l’éditeur, publiées à mesure de leur validation ; sommaire et historique.' },
+    { date: '2026-10-23', text: 'Première version : contact, hébergement, propriété intellectuelle et crédits.' },
+  ]}
+>
   {
     publisher.length > 0 && (
       <>
-        <h2>Éditeur du site</h2>
+        <h2 id="editeur">Éditeur du site</h2>
         <dl>
           {publisher.map((row) => (
             <div>
@@ -34,15 +64,22 @@ const publisher = [
   }
 
   {
-    p.publicationDirector && (
+    people.length > 0 && (
       <>
-        <h2>Directeur de la publication</h2>
-        <p>{p.publicationDirector}</p>
+        <h2 id="direction">Direction</h2>
+        <dl>
+          {people.map((row) => (
+            <div>
+              <dt>{row.key}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))}
+        </dl>
       </>
     )
   }
 
-  <h2>Contact</h2>
+  <h2 id="contact">Contact</h2>
   <dl>
     <div>
       <dt>E-mail</dt>
@@ -54,18 +91,27 @@ const publisher = [
     </div>
   </dl>
 
-  <h2>Hébergement</h2>
+  <h2 id="hebergement">Hébergement</h2>
   <p>
     Le site est hébergé par {facts.siteHost.name}, {facts.siteHost.address} (<a href={facts.siteHost.url} rel="noopener">{facts.siteHost.url.replace('https://', '')}</a>).
   </p>
 
-  <h2>Propriété intellectuelle</h2>
+  <h2 id="propriete">Propriété intellectuelle</h2>
   <p>
     Les textes, schémas, marques et logos de ce site appartiennent à Luxia-IT, sauf mention contraire. Leur reproduction
     sans autorisation écrite préalable est interdite.
   </p>
 
-  <h2>Crédits</h2>
+  {
+    p.governingLaw && (
+      <>
+        <h2 id="droit">Droit applicable</h2>
+        <p>{p.governingLaw}</p>
+      </>
+    )
+  }
+
+  <h2 id="credits">Crédits</h2>
   <ul>
     <li>Police de caractères Roboto, par Christian Robertson pour Google, sous licence Apache 2.0, hébergée sur ce site.</li>
     <li>Icônes Lucide, sous licence ISC.</li>

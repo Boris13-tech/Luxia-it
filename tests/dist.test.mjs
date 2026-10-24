@@ -188,7 +188,8 @@ test('les en-têtes de sécurité sont identiques sur Vercel, Cloudflare/Netlify
 
 test('aucun mot n’est collé à un lien', () => {
   for (const p of pages) {
-    const glued = p.html.match(/[\p{L}\p{N}:,.’)]<a\s/u);
+    // L’apostrophe d’élision (« l’<a> ») est collée au mot suivant : c’est normal.
+    const glued = p.html.match(/[\p{L}\p{N}:,.)]<a\s/u);
     assert.equal(glued, null, `${p.path} : texte collé à un lien (« ${glued?.[0]} »)`);
   }
 });

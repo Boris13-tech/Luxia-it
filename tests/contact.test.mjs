@@ -160,8 +160,9 @@ test('sans configuration, le formulaire se déclare indisponible', async () => {
   const d = deps();
   const res = await handleContact(post(), {}, d.deps, new RateLimiter());
   assert.equal(res.status, 503);
+  // La vérification de disponibilité répond 200 : aucune erreur dans la console.
   const health = await handleContact(new Request('https://luxia-it.com/api/contact'), {}, d.deps);
-  assert.equal(health.status, 503);
+  assert.equal(health.status, 200);
   assert.deepEqual(await health.json(), { ready: false });
   const ok = await handleContact(new Request('https://luxia-it.com/api/contact'), ready, d.deps);
   assert.deepEqual(await ok.json(), { ready: true });
@@ -196,4 +197,50 @@ test('les autres méthodes sont refusées', async () => {
   const res = await handleContact(new Request('https://luxia-it.com/api/contact', { method: 'PUT' }), ready);
   assert.equal(res.status, 405);
   assert.equal(res.headers.get('allow'), 'GET, HEAD, POST');
+});
+
+test('un message contenant un secret est refusé sans être transmis ni journalisé', async () => {
+  const secrets = [
+    '-----BEGIN OPENSSH PRIVATE KEY-----',
+    'AKIAABCDEFGHIJKLMNOP',
+    'ghp_' + 'a'.repeat(36),
+    'mot de passe : Sup3rSecret!',
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U',
+  ];
+  for (const secret of secrets) {
+    const d = deps();
+    const res = await handleContact(post({ ...valid, message: `Voici notre configuration : ${secret}` }), ready, d.deps, new RateLimiter());
+    assert.equal(res.status, 400, secret);
+    assert.equal((await res.json()).code, 'secret');
+    assert.equal(d.calls.length, 0);
+    assert.ok(!JSON.stringify(d.events).includes(secret.slice(0, 12)), 'le secret n’est pas journalisé');
+  }
+});
+
+test('un champ inattendu ou répété fait refuser l’envoi', async () => {
+  for (const body of [{ ...valid, fichier: 'contenu' }, null]) {
+    const d = deps();
+    const req = body
+      ? post(body)
+      : new Request('https://luxia-it.com/api/contact', {
+          method: 'POST',
+          headers: { Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+          body: `${new URLSearchParams(valid).toString()}&email=autre@example.org`,
+        });
+    const res = await handleContact(req, ready, d.deps, new RateLimiter());
+    assert.equal(res.status, 400);
+    assert.equal((await res.json()).code, 'refused');
+    assert.equal(d.events[0].reason, 'unexpected_field');
+    assert.equal(d.calls.length, 0);
+  }
+});
+
+test('les refus techniques renvoient une réponse générique', async () => {
+  const d = deps();
+  const origin = await handleContact(post(valid, { Origin: 'https://evil.example' }), ready, d.deps, new RateLimiter());
+  const big = await handleContact(post({ ...valid, message: 'x'.repeat(20_000) }), ready, d.deps, new RateLimiter());
+  const bodies = [await origin.json(), await big.json()];
+  assert.deepEqual(bodies.map((b) => b.code), ['refused', 'refused']);
+  assert.equal(bodies[0].message, bodies[1].message);
+  assert.deepEqual(d.events.map((e) => e.reason), ['forbidden_origin', 'too_large']);
 });

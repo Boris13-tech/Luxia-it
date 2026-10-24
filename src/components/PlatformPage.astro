@@ -13,6 +13,7 @@ import EvidenceScale from './EvidenceScale.astro';
 import LevelTag from './LevelTag.astro';
 import StageTag from './StageTag.astro';
 import CtaBlock from './CtaBlock.astro';
+import Tabs from './Tabs.astro';
 import Icon from './Icon.astro';
 import { facts, formatDate } from '../data/facts';
 import { getPlatform, type Platform } from '../data/platforms';
@@ -24,6 +25,20 @@ interface Props {
 
 const p = getPlatform(Astro.props.slug);
 const contact = `${href('contact')}?sujet=${p.slug}`;
+// Sécurité, exploitation et déploiement : regroupés en onglets quand il y en a plusieurs.
+const groups = [
+  { id: 'securite', label: 'Sécurité', title: 'Mesures de sécurité', lead: undefined, claims: p.security },
+  { id: 'exploitation', label: 'Exploitation', title: 'Comment elle est exploitée', lead: undefined, claims: p.operations },
+  {
+    id: 'deploiement',
+    label: 'Déploiement',
+    title: 'Où elle peut fonctionner',
+    lead: 'Un seul modèle est en service aujourd’hui. Les autres sont des principes d’architecture, sans déploiement à ce jour.',
+    claims: p.deployment,
+  },
+].filter((g) => g.claims.length > 0);
+// Au-delà, les éléments d'une liste sont repliés (divulgation progressive).
+const VISIBLE = 4;
 
 const sections = [
   { id: 'probleme', show: true },
@@ -31,9 +46,7 @@ const sections = [
   { id: 'capacites', show: p.capabilities.length > 0 },
   { id: 'ensuite', show: p.next.length > 0 },
   { id: 'integrations', show: p.integrations.length > 0 },
-  { id: 'securite', show: p.security.length > 0 },
-  { id: 'exploitation', show: p.operations.length > 0 },
-  { id: 'deploiement', show: p.deployment.length > 0 },
+  { id: 'confiance', show: p.security.length + p.operations.length + p.deployment.length > 0 },
   { id: 'limites', show: p.limits.length > 0 },
 ].filter((s) => s.show);
 const n = (id: string) => String(sections.findIndex((s) => s.id === id) + 1).padStart(2, '0');
@@ -105,7 +118,19 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
             title="Ce qui fonctionne aujourd’hui"
             lead="Chaque capacité indique son niveau de preuve. Aucune n’est présentée au-delà de ce qui a été démontré."
           />
-          <ClaimList claims={p.capabilities} columns={2} />
+          <ClaimList claims={p.capabilities.slice(0, VISIBLE)} columns={2} />
+          {
+            p.capabilities.length > VISIBLE && (
+              <details class="disclosure more-claims">
+                <summary>
+                  Voir {p.capabilities.length - VISIBLE === 1 ? 'l’autre' : `les ${p.capabilities.length - VISIBLE} autres`} capacités
+                </summary>
+                <div class="disclosure__body">
+                  <ClaimList claims={p.capabilities.slice(VISIBLE)} columns={2} />
+                </div>
+              </details>
+            )
+          }
         </div>
       </section>
     )
@@ -122,7 +147,19 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
             title="Ce qui n’est pas encore disponible"
             lead="Conçu ou visé, mais pas en service. Le niveau indique jusqu’où chaque élément est allé."
           />
-          <ClaimList claims={p.next} columns={2} />
+          <ClaimList claims={p.next.slice(0, VISIBLE)} columns={2} />
+          {
+            p.next.length > VISIBLE && (
+              <details class="disclosure more-claims">
+                <summary>
+                  Voir {p.next.length - VISIBLE === 1 ? 'l’autre' : `les ${p.next.length - VISIBLE} autres`} éléments
+                </summary>
+                <div class="disclosure__body">
+                  <ClaimList claims={p.next.slice(VISIBLE)} columns={2} />
+                </div>
+              </details>
+            )
+          }
         </div>
       </section>
     )
@@ -148,41 +185,35 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
   }
 
   {
-    p.security.length > 0 && (
-      <section class:list={['section', alt('securite') && 'section--alt']} id="securite" aria-labelledby="securite-title">
-        <div class="wrap">
-          <SectionHead id="securite-title" index={n('securite')} kicker="Sécurité" title="Mesures de sécurité" />
-          <ClaimList claims={p.security} columns={2} />
-        </div>
-      </section>
-    )
-  }
-
-  {
-    p.operations.length > 0 && (
-      <section class:list={['section', alt('exploitation') && 'section--alt']} id="exploitation" aria-labelledby="exploitation-title">
-        <div class="wrap">
-          <SectionHead id="exploitation-title" index={n('exploitation')} kicker="Exploitation" title="Comment elle est exploitée" />
-          <ClaimList claims={p.operations} columns={2} />
-        </div>
-      </section>
-    )
-  }
-
-  {
-    p.deployment.length > 0 && (
-      <section class:list={['section', alt('deploiement') && 'section--alt']} id="deploiement" aria-labelledby="deploiement-title">
+    groups.length > 0 && (
+      <section class:list={['section', alt('confiance') && 'section--alt']} id="confiance" aria-labelledby="confiance-title">
         <div class="wrap">
           <SectionHead
-            id="deploiement-title"
-            index={n('deploiement')}
-            kicker="Déploiement"
-            title="Où elle peut fonctionner"
-            lead="Un seul modèle est en service aujourd’hui. Les autres sont des principes d’architecture, sans déploiement à ce jour."
-          >
-            <p><a class="more" href={href('architectures')}>Voir les architectures de référence <Icon name="arrow-right" size={16} /></a></p>
-          </SectionHead>
-          <ClaimList claims={p.deployment} columns={3} />
+            id="confiance-title"
+            index={n('confiance')}
+            kicker="Sécurité et exploitation"
+            title={groups.length > 1 ? 'Comment elle est protégée, exploitée et déployée' : groups[0]?.title ?? ''}
+          />
+          {groups.length > 1 ? (
+            <Tabs label="Sécurité, exploitation et déploiement" items={groups.map((g) => ({ id: g.id, label: g.label }))}>
+              {groups.map((g) => (
+                <section class="tabs__panel" id={g.id}>
+                  <h3 class="tabs__panel-title t-h3">{g.title}</h3>
+                  {g.lead && <p class="group-lead">{g.lead}</p>}
+                  <ClaimList claims={g.claims} columns={g.id === 'deploiement' ? 3 : 2} as="h4" />
+                  {g.id === 'deploiement' && (
+                    <p class="group-after">
+                      <a class="more" href={href('architectures')}>
+                        Comparer les modèles de déploiement <Icon name="arrow-right" size={16} />
+                      </a>
+                    </p>
+                  )}
+                </section>
+              ))}
+            </Tabs>
+          ) : (
+            groups.map((g) => <ClaimList claims={g.claims} columns={2} />)
+          )}
         </div>
       </section>
     )
@@ -207,7 +238,12 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
   <section class="section section--alt" id="echelle" aria-labelledby="echelle-title">
     <div class="wrap">
       <SectionHead id="echelle-title" kicker="Lecture" title="Comment lire les niveaux de preuve" />
-      <EvidenceScale />
+      <details class="disclosure">
+        <summary>Les cinq niveaux de preuve et les cinq étapes</summary>
+        <div class="disclosure__body">
+          <EvidenceScale />
+        </div>
+      </details>
     </div>
   </section>
 
@@ -265,6 +301,20 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
 
   .principle__text {
     max-width: 50rem;
+  }
+
+  .group-lead {
+    max-width: 46rem;
+    margin-bottom: 8px;
+    color: var(--ink-2);
+  }
+
+  .group-after {
+    margin-top: 24px;
+  }
+
+  .more-claims {
+    margin-top: 8px;
   }
 
   .limits {

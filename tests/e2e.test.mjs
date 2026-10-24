@@ -1,0 +1,189 @@
+// Tests de bout en bout dans Chrome sans interface (protocole DevTools) :
+// confidentialité (aucun cookie, aucun stockage, aucune requête tierce),
+// absence d'erreur console, clavier, rendu sans JavaScript, mouvement réduit,
+// formulaire disponible et indisponible.
+// Prérequis : npm run build. Ignoré si Chrome est introuvable (CHROME_PATH).
+import { after, before, describe, test } from 'node:test';
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { chromePath, freePort, launch } from './helpers/browser.mjs';
+import { routes } from '../src/i18n/route-map.mjs';
+
+const PAGES = [...Object.values(routes).map((r) => r.fr), '/contact/envoye/', '/contact/erreur/'];
+const skip = !chromePath ? 'Chrome introuvable (définir CHROME_PATH)' : !existsSync('dist') ? 'dist/ absent : lancer npm run build' : false;
+
+/** Démarre l'aperçu sécurisé (en-têtes de production + fonction du formulaire). */
+async function startServer(delivery) {
+  const port = await freePort();
+  const proc = spawn(process.execPath, ['tools/preview-secure.mjs'], {
+    env: { ...process.env, PORT: String(port), CONTACT_DELIVERY: delivery, RESEND_API_KEY: '', CONTACT_FROM: '' },
+    stdio: ['ignore', 'pipe', 'inherit'],
+  });
+  await new Promise((resolve, reject) => {
+    proc.stdout.on('data', (d) => String(d).includes('Aperçu sécurisé') && resolve());
+    proc.on('exit', (code) => reject(new Error(`aperçu arrêté (${code})`)));
+  });
+  return { origin: `http://localhost:${port}`, stop: () => proc.kill() };
+}
+
+describe('site construit, dans Chrome', { skip }, () => {
+  let browser;
+  let ready;
+  let down;
+
+  before(async () => {
+    ready = await startServer('log');
+    down = await startServer('resend');
+    browser = await launch();
+  });
+
+  after(async () => {
+    await browser?.close();
+    ready?.stop();
+    down?.stop();
+  });
+
+  /** Collecte requêtes et erreurs pendant `fn`. */
+  async function observe(fn) {
+    const requests = [];
+    const errors = [];
+    const off = browser.on((m) => {
+      if (m.method === 'Network.requestWillBeSent') requests.push(m.params.request.url);
+      if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error') errors.push(m.params.entry.text);
+      if (m.method === 'Runtime.consoleAPICalled' && m.params.type === 'error') errors.push(m.params.args.map((a) => a.value ?? a.description).join(' '));
+      if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.exception?.description ?? m.params.exceptionDetails.text);
+    });
+    try {
+      await fn();
+      await browser.sleep(400);
+    } finally {
+      off();
+    }
+    return { requests, errors };
+  }
+
+  test('aucun cookie, aucun stockage, aucune requête tierce, aucune erreur console', async () => {
+    for (const path of PAGES) {
+      const { requests, errors } = await observe(() => browser.goto(ready.origin + path));
+      const foreign = requests.filter((u) => !u.startsWith(ready.origin) && !/^(data|blob|about):/.test(u));
+      assert.deepEqual(foreign, [], `${path} : requêtes vers un autre domaine`);
+      assert.deepEqual(errors, [], `${path} : erreurs console`);
+      const { cookies } = await browser.send('Network.getAllCookies');
+      assert.equal(cookies.length, 0, `${path} : cookie déposé`);
+      const storage = await browser.evaluate(
+        'Promise.resolve(indexedDB.databases ? indexedDB.databases() : []).then((dbs) => ({ local: localStorage.length, session: sessionStorage.length, idb: dbs.length }))',
+      );
+      assert.deepEqual(storage, { local: 0, session: 0, idb: 0 }, `${path} : stockage navigateur utilisé`);
+    }
+  });
+
+  test('onglets au clavier : flèches, Fin, Début, puis Tab vers le panneau', async () => {
+    await browser.goto(`${ready.origin}/`);
+    await browser.evaluate("document.querySelector('.explorer [role=tab]').focus()");
+    const state = () =>
+      browser.evaluate(`(() => {
+        const tabs = [...document.querySelectorAll('.explorer [role=tab]')];
+        return { selected: tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'), focused: tabs.indexOf(document.activeElement),
+          visible: [...document.querySelectorAll('.explorer [role=tabpanel]')].map((p) => !p.hidden) };
+      })()`);
+    await browser.press('ArrowRight', 'ArrowRight', 39);
+    await browser.sleep(350);
+    assert.deepEqual(await state(), { selected: 1, focused: 1, visible: [false, true, false] });
+    await browser.press('End', 'End', 35);
+    await browser.sleep(350);
+    assert.equal((await state()).selected, 2);
+    await browser.press('Home', 'Home', 36);
+    await browser.sleep(350);
+    assert.equal((await state()).selected, 0);
+    await browser.press('Tab', 'Tab', 9);
+    assert.equal(await browser.evaluate("document.activeElement.getAttribute('role')"), 'tabpanel');
+  });
+
+  test('parcours en étapes : Suivant met à jour l’étape et l’annonce', async () => {
+    await browser.goto(`${ready.origin}/architectures/plateforme-execution/`);
+    await browser.evaluate("document.querySelector('[data-step-next]').click()");
+    await browser.sleep(350);
+    const s = await browser.evaluate(`({ status: document.querySelector('[data-step-status]').textContent,
+      prevDisabled: document.querySelector('[data-step-prev]').disabled,
+      selected: document.querySelector('.tabs--steps [aria-selected=true]').textContent.trim() })`);
+    assert.deepEqual(s, { status: 'Étape 2 sur 8', prevDisabled: false, selected: 'Identité' });
+  });
+
+  test('mouvement réduit : aucune transition animée', async () => {
+    const vt = async () => {
+      await browser.goto(`${ready.origin}/`);
+      return browser.evaluate(`(() => {
+        window.__vt = 0;
+        const native = document.startViewTransition?.bind(document);
+        if (native) document.startViewTransition = (cb) => { window.__vt += 1; return native(cb); };
+        document.querySelectorAll('.explorer [role=tab]')[1].click();
+        return new Promise((r) => setTimeout(() => r({ calls: window.__vt, supported: !!native,
+          duration: getComputedStyle(document.querySelector('.tabs__tab')).transitionDuration }), 400));
+      })()`);
+    };
+    await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    const reduced = await vt();
+    assert.equal(reduced.calls, 0, 'aucune View Transition sous mouvement réduit');
+    assert.ok(reduced.duration.split(',').every((d) => parseFloat(d) <= 0.0001), `transitions CSS neutralisées (${reduced.duration})`);
+    await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
+    const normal = await vt();
+    if (normal.supported) assert.equal(normal.calls, 1, 'View Transition utilisée hors mouvement réduit');
+  });
+
+  test('sans JavaScript, tout le contenu reste lisible', async () => {
+    await browser.send('Emulation.setScriptExecutionDisabled', { value: true });
+    try {
+      for (const [path, panels] of [
+        ['/', '.explorer .tabs__panel'],
+        ['/architectures/', '.cmp__panel'],
+        ['/architectures/plateforme-execution/', '.flow__panel'],
+      ]) {
+        await browser.goto(ready.origin + path);
+        const r = await browser.evaluate(`({ visible: [...document.querySelectorAll('${panels}')].every((p) => p.offsetHeight > 0),
+          count: document.querySelectorAll('${panels}').length,
+          tablist: getComputedStyle(document.querySelector('[data-tablist]')).display })`);
+        assert.ok(r.count > 1 && r.visible, `${path} : tous les panneaux visibles`);
+        assert.equal(r.tablist, 'none', `${path} : onglets masqués sans JavaScript`);
+      }
+      await browser.goto(`${ready.origin}/contact/`);
+      assert.equal(await browser.evaluate("document.querySelector('[data-contact-form]').getAttribute('action')"), '/api/contact');
+    } finally {
+      await browser.send('Emulation.setScriptExecutionDisabled', { value: false });
+    }
+  });
+
+  test('formulaire disponible : validation puis envoi réussi', async () => {
+    const { errors } = await observe(async () => {
+      await browser.goto(`${ready.origin}/contact/?sujet=luxia-identity`);
+      await browser.sleep(300);
+      await browser.evaluate("document.querySelector('[data-submit]').click()");
+      await browser.sleep(200);
+      const invalid = await browser.evaluate(`({ summary: !document.querySelector('[data-summary]').hidden,
+        invalid: [...document.querySelectorAll('[aria-invalid=true]')].map((e) => e.id) })`);
+      assert.deepEqual(invalid, { summary: true, invalid: ['nom', 'organisation', 'email', 'message'] });
+      await browser.evaluate(`(() => {
+        const set = (id, v) => { document.getElementById(id).value = v; };
+        set('nom', 'Camille Test'); set('organisation', 'Organisation de test');
+        set('email', 'camille@example.org'); set('message', 'Test de bout en bout du formulaire de contact.');
+        document.querySelector('[data-submit]').click();
+      })()`);
+      await browser.sleep(800);
+      const done = await browser.evaluate(`({ success: !document.querySelector('[data-success]').hidden,
+        focused: document.activeElement.hasAttribute('data-success'), sujet: document.getElementById('sujet').value })`);
+      assert.deepEqual(done, { success: true, focused: true, sujet: 'cadrage' });
+    });
+    assert.deepEqual(errors, []);
+  });
+
+  test('formulaire indisponible : repli calme, sans erreur console', async () => {
+    const { errors } = await observe(async () => {
+      await browser.goto(`${down.origin}/contact/`);
+      await browser.sleep(500);
+    });
+    const r = await browser.evaluate(`({ formHidden: document.querySelector('[data-contact-form]').hidden,
+      fallback: !document.querySelector('[data-fallback]').hidden })`);
+    assert.deepEqual(r, { formHidden: true, fallback: true });
+    assert.deepEqual(errors, []);
+  });
+});

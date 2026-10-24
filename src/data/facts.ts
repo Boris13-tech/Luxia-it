@@ -41,14 +41,37 @@ export const facts = {
     linkedin: null as string | null,
   },
 
-  /** Éditeur du site (mentions légales). */
+  /**
+   * Éditeur du site (mentions légales), d'après les documents officiels
+   * d'immatriculation uniquement. Aucun pays n'est présumé : chaque
+   * champ reste null tant qu'il n'est pas fourni.
+   */
   publisher: {
+    /** Pays d'immatriculation. */
+    country: null as string | null,
+    /** Dénomination sociale enregistrée. */
     legalName: null as string | null,
+    /** Nom commercial, s'il diffère de la dénomination. */
+    tradeName: null as string | null,
     legalForm: null as string | null,
+    /** Registre compétent (nom de l'organisme ou du registre). */
+    register: null as string | null,
     registration: null as string | null,
-    vatId: null as string | null,
+    /** Numéro fiscal ou de TVA, s'il existe. */
+    taxId: null as string | null,
+    /** Capital social, si la forme juridique en comporte un. */
+    shareCapital: null as string | null,
     address: null as string | null,
+    legalRepresentative: null as string | null,
     publicationDirector: null as string | null,
+    /** Droit applicable et juridiction, après validation juridique. */
+    governingLaw: null as string | null,
+  },
+
+  /** Protection des données : autorité compétente et délégué, s'ils sont établis. */
+  privacy: {
+    supervisoryAuthority: null as string | null,
+    dpo: null as string | null,
   },
 
   company: {
@@ -94,11 +117,15 @@ export const facts = {
 
 /** Faits sans lesquels le site ne doit pas être mis en production. */
 export const requiredFacts: readonly { path: string; label: string; value: unknown }[] = [
-  { path: 'publisher.legalName', label: 'Raison sociale de l’éditeur', value: facts.publisher.legalName },
+  { path: 'publisher.country', label: 'Pays d’immatriculation', value: facts.publisher.country },
+  { path: 'publisher.legalName', label: 'Dénomination sociale de l’éditeur', value: facts.publisher.legalName },
   { path: 'publisher.legalForm', label: 'Forme juridique de l’éditeur', value: facts.publisher.legalForm },
+  { path: 'publisher.register', label: 'Registre compétent', value: facts.publisher.register },
   { path: 'publisher.registration', label: 'Numéro d’immatriculation', value: facts.publisher.registration },
   { path: 'publisher.address', label: 'Adresse du siège', value: facts.publisher.address },
+  { path: 'publisher.legalRepresentative', label: 'Représentant légal', value: facts.publisher.legalRepresentative },
   { path: 'publisher.publicationDirector', label: 'Directeur de la publication', value: facts.publisher.publicationDirector },
+  { path: 'privacy.supervisoryAuthority', label: 'Autorité de contrôle des données compétente', value: facts.privacy.supervisoryAuthority },
   { path: 'contactForm.deliveryProcessor', label: 'Prestataire d’acheminement du formulaire', value: facts.contactForm.deliveryProcessor },
   { path: 'contactForm.mailboxProcessor', label: 'Fournisseur de la boîte de réception', value: facts.contactForm.mailboxProcessor },
   { path: 'reviews.platformStatus', label: 'Revue des statuts des plateformes', value: facts.reviews.platformStatus },

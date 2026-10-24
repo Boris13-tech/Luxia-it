@@ -14,10 +14,46 @@ tant qu'un point bloquant reste ouvert.
 | # | Point | Où le renseigner | Effet tant qu'il manque |
 |---|---|---|---|
 | B1 | **Réception des e-mails du domaine.** `luxia-it.com` n'a aucun enregistrement MX : Contact@Luxia-it.com ne reçoit rien. Option à 0 € : routage des e-mails de Cloudflare (le DNS y est déjà) vers une boîte existante. Ajouter aussi SPF et DMARC. | DNS Cloudflare | `release:check` échoue |
-| B2 | **Éditeur du site** : raison sociale, forme juridique, immatriculation, siège, directeur de la publication (TVA si applicable). | `facts.publisher` | Bloc « Éditeur » masqué, `release:check` échoue |
-| B3 | **Prestataire d'envoi du formulaire.** Créer un compte (Resend, offre gratuite), vérifier le domaine d'envoi, puis renseigner `RESEND_API_KEY`, `CONTACT_FROM` dans Vercel et `facts.contactForm.deliveryProcessor`. | Vercel, `facts.contactForm` | Le formulaire se masque et affiche les coordonnées ; `release:check` échoue |
+| B2 | **Éditeur du site et protection des données** : voir la section 1 bis. Aucune information n'est déduite : uniquement les documents officiels d'immatriculation. | `facts.publisher`, `facts.privacy` | Blocs masqués, `release:check` échoue |
+| B3 | **Prestataire d'envoi du formulaire.** Étapes dans la section 1 ter. Le code est prêt et testé ; il manque le compte et sa clé, que seul le propriétaire peut créer et saisir. | Vercel, `facts.contactForm` | Le formulaire se masque et affiche les coordonnées ; `release:check` échoue |
 | B4 | **Offre d'hébergement.** Le projet Vercel est sur l'offre Hobby, réservée à un usage personnel et non commercial, sans accord de traitement des données. Passer sur Vercel Pro, ou déployer sur Cloudflare Pages (gratuit, usage commercial autorisé ; une fonction équivalente est fournie dans `functions/api/contact.ts`). | Décision de l'opérateur | À vérifier à la main (`release:check` le rappelle) |
 | B5 | **Revues du propriétaire** : statuts des plateformes, offre de services, pages d'architecture, pages légales (revue juridique). Renseigner la date de chaque revue. | `facts.reviews` | `release:check` échoue |
+
+## 1 bis. Informations juridiques à fournir
+
+À tirer des documents officiels (extrait d'immatriculation, statuts, avis fiscal). Ne rien déduire du lieu de résidence ni des plans : aucune entité n'est enregistrée à notre connaissance au 24 octobre 2026.
+
+| Information | Champ | Page |
+|---|---|---|
+| Pays d'immatriculation | `publisher.country` | Mentions légales |
+| Dénomination sociale enregistrée | `publisher.legalName` | Mentions légales, Confidentialité, JSON-LD |
+| Nom commercial, s'il diffère | `publisher.tradeName` | Mentions légales |
+| Forme juridique | `publisher.legalForm` | Mentions légales |
+| Registre compétent et numéro d'enregistrement | `publisher.register`, `publisher.registration` | Mentions légales |
+| Numéro fiscal ou TVA, s'il existe | `publisher.taxId` | Mentions légales |
+| Capital social, si la forme en comporte un | `publisher.shareCapital` | Mentions légales |
+| Siège social | `publisher.address` | Mentions légales, Confidentialité |
+| Représentant légal | `publisher.legalRepresentative` | Mentions légales |
+| Directeur de la publication | `publisher.publicationDirector` | Mentions légales |
+| Droit applicable et juridiction (après revue juridique) | `publisher.governingLaw` | Mentions légales |
+| Autorité de contrôle des données compétente | `privacy.supervisoryAuthority` | Confidentialité |
+| Délégué à la protection des données, s'il existe | `privacy.dpo` | Confidentialité |
+| Sous-traitants réels et leurs régions (envoi du formulaire, boîte e-mail) | `contactForm.deliveryProcessor`, `contactForm.mailboxProcessor` | Confidentialité |
+| Durée de conservation des messages reçus (proposée : trois ans après le dernier échange) | `contactForm.retention` | Confidentialité |
+
+Divulgation responsable, à valider avant publication : adresse de sécurité dédiée, clé OpenPGP, environnements hors périmètre, délai cible d'accusé de réception et cadence de suivi, règle de crédit, présence ou absence de récompense, clause de recherche de bonne foi.
+
+## 1 ter. Mettre le formulaire en service
+
+1. Recevoir le courrier du domaine (B1) : routage des e-mails Cloudflare vers une boîte existante (`Contact@Luxia-it.com`), puis SPF et DMARC.
+2. Créer un compte Resend et vérifier le domaine d'envoi `luxia-it.com` (enregistrements DNS fournis par Resend, à ajouter dans Cloudflare).
+3. Dans Vercel, projet `luxia-it-cswq`, ajouter pour la production : `RESEND_API_KEY` (clé créée dans Resend, saisie par le propriétaire), `CONTACT_FROM` (par exemple `Site Luxia-IT <formulaire@luxia-it.com>`) et, si besoin, `CONTACT_TO`.
+4. Renseigner `facts.contactForm.deliveryProcessor` et `mailboxProcessor` (nom, finalité, pays, URL), redéployer.
+5. Vérifier : `npm run release:check -- --url https://luxia-it.com` (le formulaire doit répondre `{"ready":true}`), puis un envoi réel.
+
+## 1 quater. Démonstrations guidées des plateformes
+
+Elles exigent des captures ou vidéos réelles des logiciels (consoles, parcours de connexion, journaux). Aucune n'est fournie : aucune démonstration n'est publiée, et aucune interface n'est simulée. À déposer dans `public/media/`, puis à intégrer aux pages plateformes avec annotations et étapes.
 
 ## 2. Informations non fournies (blocs masqués)
 

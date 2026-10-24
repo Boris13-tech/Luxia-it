@@ -6,6 +6,17 @@
    ink-3 sur paper-2 5,45:1 ; link sur paper-2 6,41:1 ; on-dark-2 sur dark 8,82:1.
    ========================================================================== */
 
+/* Police de repli aux métriques de Roboto : le remplacement par la police
+   web ne déplace pas le texte (aucun décalage de mise en page). */
+@font-face {
+  font-family: 'Roboto Fallback';
+  src: local('Arial'), local('Helvetica');
+  size-adjust: 100.3%;
+  ascent-override: 92.77%;
+  descent-override: 24.41%;
+  line-gap-override: 0%;
+}
+
 :root {
   /* Fonds */
   --paper: #f6f6f3;
@@ -41,7 +52,7 @@
   --success: #1d6b3a;
 
   /* Typographie */
-  --font: 'Roboto Variable', 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font: 'Roboto Variable', 'Roboto Fallback', 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
   --mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --fs-display: clamp(2.375rem, 1.45rem + 3.9vw, 4.5rem);
   --fs-h1: clamp(2.125rem, 1.5rem + 2.6vw, 3.5rem);
@@ -610,6 +621,233 @@ main:focus {
 
   .prose dd {
     margin-top: 0;
+  }
+}
+
+/* Onglets (src/scripts/tabs.ts) -----------------------------------------
+   Sans JavaScript : liste masquée, panneaux à la suite avec leur titre.
+   Avec JavaScript : un seul panneau visible. La requête « scripting » donne
+   la mise en page finale dès le premier rendu, avant l'exécution du script
+   (aucun décalage de mise en page, sans script en ligne). */
+
+.tabs__list,
+.stepper {
+  display: none;
+}
+
+@media (scripting: enabled) {
+  .tabs__list {
+    display: flex;
+  }
+
+  .stepper {
+    display: flex;
+  }
+
+  .tabs:not([data-enhanced]) .tabs__panel:not(:first-child) {
+    display: none;
+  }
+
+  .tabs .tabs__panels {
+    padding-top: 28px;
+  }
+
+  /* Le titre du panneau double l'onglet : il reste pour les lecteurs d'écran */
+  .tabs .tabs__panel-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.tabs__list {
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  /* Filet inférieur dessiné à l'intérieur : l'onglet actif le recouvre */
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.tabs__tab {
+  flex: none;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  color: var(--ink-3);
+  text-align: left;
+  transition:
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.tabs__tab:hover {
+  color: var(--ink);
+}
+
+.tabs__tab[aria-selected='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--blue);
+}
+
+.tabs__tab:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Sans JavaScript, les panneaux se suivent, séparés par une marge seulement */
+@media (not (scripting: enabled)) {
+  .tabs__panel + .tabs__panel {
+    margin-top: 48px;
+  }
+}
+
+.tabs[data-enhanced] .tabs__panel:focus-visible {
+  outline-offset: 6px;
+}
+
+/* Mode « étapes » : les onglets forment une chaîne numérotée */
+.tabs--steps .tabs__list {
+  gap: 4px;
+  padding-bottom: 2px;
+  box-shadow: none;
+  counter-reset: step;
+}
+
+.tabs--steps .tabs__tab {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 7.5rem;
+  padding: 10px 12px 12px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--line);
+  background-color: var(--white);
+  font-size: var(--fs-small);
+  counter-increment: step;
+}
+
+.tabs--steps .tabs__tab::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.tabs--steps .tabs__tab[aria-selected='true'] {
+  border-top-color: var(--blue);
+  border-color: var(--ink);
+  border-top-color: var(--blue);
+}
+
+.tabs--steps .tabs__tab[aria-selected='true']::before {
+  color: var(--blue);
+}
+
+/* Sur petit écran, la chaîne se répartit sur plusieurs lignes : toutes les
+   étapes restent visibles, sans défilement horizontal. */
+@media (max-width: 899.98px) {
+  .tabs--steps .tabs__list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .tabs--steps .tabs__tab {
+    min-width: 0;
+    min-height: 56px;
+    padding: 8px 8px 10px;
+    font-size: 0.8125rem;
+    hyphens: auto;
+  }
+}
+
+@media (max-width: 899.98px) and (not (scripting: enabled)) {
+  .tabs--steps .tabs__list {
+    display: none;
+  }
+}
+
+.stepper {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 28px;
+}
+
+.stepper__status {
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Divulgation progressive : <details> natif, clavier et sans JavaScript */
+.disclosure {
+  border-top: 1px solid var(--line);
+}
+
+.disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding-block: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary::after {
+  content: '+';
+  flex: none;
+  font-family: var(--mono);
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--blue);
+}
+
+.disclosure[open] > summary::after {
+  content: '−';
+}
+
+.disclosure > summary:hover {
+  color: var(--link);
+}
+
+.disclosure__body {
+  padding-bottom: 20px;
+}
+
+/* Transitions de page natives (amélioration progressive) ------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 160ms;
+  }
+
+  ::view-transition-old(tabs-panels),
+  ::view-transition-new(tabs-panels) {
+    animation-duration: 200ms;
   }
 }
 
