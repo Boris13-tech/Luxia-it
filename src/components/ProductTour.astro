@@ -1,0 +1,134 @@
+---
+/**
+ * Visite guidée de LUXIA Identity : un onglet par fonction, le texte à gauche
+ * et l'écran de la console à droite. Sans JavaScript, les fonctions se
+ * suivent (src/scripts/tabs.ts).
+ */
+import Tabs from './Tabs.astro';
+import ProductScreen from './ProductScreen.astro';
+import Icon from './Icon.astro';
+import { tour } from '../data/product';
+
+interface Props {
+  label?: string | undefined;
+}
+
+const { label = 'Fonctions de LUXIA Identity' } = Astro.props;
+---
+
+<Tabs label={label} items={tour.map((t) => ({ id: t.id, label: t.tab }))} class="ptour">
+  {
+    tour.map((t) => (
+      <div class="tabs__panel ptour__panel" id={t.id}>
+        <div class="ptour__text">
+          <h3 class="tabs__panel-title">{t.tab}</h3>
+          <p class="ptour__title">{t.title}</p>
+          <p class="ptour__lead">{t.text}</p>
+          <ul class="ptour__points">
+            {t.points.map((p) => (
+              <li>
+                <Icon name="check" size={18} stroke={2} />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+          {t.limit && <p class="ptour__limit">{t.limit}</p>}
+        </div>
+        <ProductScreen screen={t.screen} caption={t.caption} class="ptour__screen" />
+      </div>
+    ))
+  }
+</Tabs>
+
+<style>
+  :global(.ptour .tabs__list) {
+    gap: 6px;
+    padding: 6px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: none;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  :global(.ptour .tabs__tab) {
+    min-height: 40px;
+    padding: 8px 18px;
+    border: 0;
+    border-radius: 999px;
+    font-size: var(--fs-small);
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  :global(.ptour .tabs__list .tabs__tab[aria-selected='true']) {
+    border: 0;
+    background: var(--dark);
+    color: var(--on-dark);
+  }
+
+  /* Onglets en pastilles : le fond suit l'onglet actif, pas de filet glissant */
+  :global(.ptour .tabs__list::after) {
+    display: none;
+  }
+
+  .ptour__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px var(--gap);
+    align-items: center;
+  }
+
+  .ptour__text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ptour__title {
+    font-family: var(--serif);
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .ptour__lead {
+    color: var(--ink-2);
+  }
+
+  .ptour__points {
+    display: grid;
+    gap: 10px;
+  }
+
+  .ptour__points li {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 10px;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .ptour__points :global(svg) {
+    margin-top: 3px;
+    color: var(--sage-text);
+  }
+
+  .ptour__limit {
+    padding: 12px 14px;
+    border-left: 3px solid var(--ochre);
+    background: var(--ochre-tint);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  @media (min-width: 1024px) {
+    .ptour__panel {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+</style>

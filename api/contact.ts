@@ -38,6 +38,7 @@ export interface ContactDeps {
 }
 
 export const SUBJECTS: Record<string, string> = {
+  demo: 'Démonstration de LUXIA Identity',
   cadrage: 'Échange de cadrage',
   'luxia-identity': 'LUXIA Identity',
   'luxia-key': 'LUXIA Key',

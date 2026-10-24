@@ -9,8 +9,9 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { chromePath, freePort, launch } from './helpers/browser.mjs';
 import { routes } from '../src/i18n/route-map.mjs';
+import { guideHref, guides } from '../src/data/guides.ts';
 
-const PAGES = [...Object.values(routes).map((r) => r.fr), '/contact/envoye/', '/contact/erreur/'];
+const PAGES = [...Object.values(routes).map((r) => r.fr), ...guides.map((g) => guideHref(g.slug)), '/contact/envoye/', '/contact/erreur/'];
 const skip = !chromePath ? 'Chrome introuvable (définir CHROME_PATH)' : !existsSync('dist') ? 'dist/ absent : lancer npm run build' : false;
 
 /** Démarre l'aperçu sécurisé (en-têtes de production + fonction du formulaire). */
@@ -80,19 +81,19 @@ describe('site construit, dans Chrome', { skip }, () => {
 
   test('onglets au clavier : flèches, Fin, Début, puis Tab vers le panneau', async () => {
     await browser.goto(`${ready.origin}/`);
-    await browser.evaluate("document.querySelector('.explorer [role=tab]').focus()");
+    await browser.evaluate("document.querySelector('.ptour [role=tab]').focus()");
     const state = () =>
       browser.evaluate(`(() => {
-        const tabs = [...document.querySelectorAll('.explorer [role=tab]')];
+        const tabs = [...document.querySelectorAll('.ptour [role=tab]')];
         return { selected: tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'), focused: tabs.indexOf(document.activeElement),
-          visible: [...document.querySelectorAll('.explorer [role=tabpanel]')].map((p) => !p.hidden) };
+          visible: [...document.querySelectorAll('.ptour [role=tabpanel]')].map((p) => !p.hidden) };
       })()`);
     await browser.press('ArrowRight', 'ArrowRight', 39);
     await browser.sleep(350);
-    assert.deepEqual(await state(), { selected: 1, focused: 1, visible: [false, true, false] });
+    assert.deepEqual(await state(), { selected: 1, focused: 1, visible: [false, true, false, false, false] });
     await browser.press('End', 'End', 35);
     await browser.sleep(350);
-    assert.equal((await state()).selected, 2);
+    assert.equal((await state()).selected, 4);
     await browser.press('Home', 'Home', 36);
     await browser.sleep(350);
     assert.equal((await state()).selected, 0);
@@ -115,10 +116,10 @@ describe('site construit, dans Chrome', { skip }, () => {
       await browser.goto(`${ready.origin}/`);
       await browser.sleep(150);
       return browser.evaluate(`(async () => {
-        document.querySelectorAll('.explorer [role=tab]')[1].click();
+        document.querySelectorAll('.ptour [role=tab]')[1].click();
         // L'animation démarre à l'image suivante.
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-        const panel = document.querySelectorAll('.explorer [role=tabpanel]')[1];
+        const panel = document.querySelectorAll('.ptour [role=tabpanel]')[1];
         const cs = getComputedStyle(panel);
         const title = getComputedStyle(document.querySelector('.hero__title'));
         return { name: cs.animationName, duration: parseFloat(cs.animationDuration), titleAnimation: title.animationName,
@@ -170,7 +171,7 @@ describe('site construit, dans Chrome', { skip }, () => {
     await browser.send('Emulation.setScriptExecutionDisabled', { value: true });
     try {
       for (const [path, panels] of [
-        ['/', '.explorer .tabs__panel'],
+        ['/', '.ptour .tabs__panel'],
         ['/architectures/', '.cmp__panel'],
         ['/architectures/plateforme-execution/', '.flow__panel'],
       ]) {
@@ -206,7 +207,7 @@ describe('site construit, dans Chrome', { skip }, () => {
       await browser.sleep(800);
       const done = await browser.evaluate(`({ success: !document.querySelector('[data-success]').hidden,
         focused: document.activeElement.hasAttribute('data-success'), sujet: document.getElementById('sujet').value })`);
-      assert.deepEqual(done, { success: true, focused: true, sujet: 'cadrage' });
+      assert.deepEqual(done, { success: true, focused: true, sujet: 'demo' });
     });
     assert.deepEqual(errors, []);
   });

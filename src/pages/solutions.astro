@@ -1,0 +1,155 @@
+---
+/**
+ * Solutions : une situation concrète par section, ce que fait LUXIA Identity,
+ * l'écran correspondant et, s'il y a lieu, ce qui n'est pas encore couvert.
+ * Contenus : src/data/product.ts.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import ProductScreen from '../components/ProductScreen.astro';
+import CtaBlock from '../components/CtaBlock.astro';
+import Icon from '../components/Icon.astro';
+import { useCases } from '../data/product';
+import { href } from '../i18n/routes';
+
+const demo = `${href('contact')}?sujet=demo`;
+---
+
+<BaseLayout
+  title="Solutions"
+  description="Arrivées et départs, revues d’accès, séparation des tâches, connexion sans mot de passe, preuve pour l’audit : ce que LUXIA Identity règle, écran par écran."
+  crumbs={[{ label: 'Solutions' }]}
+>
+  <PageHead
+    crumbs={[{ label: 'Solutions' }]}
+    kicker="Solutions"
+    title="Les situations que LUXIA Identity règle"
+    lead="Cinq problèmes que rencontrent la plupart des organisations, et la façon dont la plateforme y répond aujourd’hui, avec ses limites."
+  >
+    <nav class="jump" aria-label="Aller à une solution">
+      <ul>
+        {
+          useCases.map((c) => (
+            <li>
+              <a href={`#${c.id}`}>{c.title}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </PageHead>
+
+  {
+    useCases.map((c, i) => (
+      <section class:list={['section', i % 2 === 1 && 'section--alt']} id={c.id} aria-labelledby={`${c.id}-title`}>
+        <div class:list={['wrap', 'sol', i % 2 === 1 && 'sol--flip']}>
+          <div class="sol__text">
+            <h2 class="t-h2" id={`${c.id}-title`}>
+              {c.title}
+            </h2>
+            <div class="sol__block">
+              <p class="sol__label">La situation</p>
+              <p class="t-lead sol__situation">{c.situation}</p>
+            </div>
+            <div class="sol__block">
+              <p class="sol__label">Avec LUXIA Identity</p>
+              <ul class="sol__points">
+                {c.answer.map((a) => (
+                  <li>
+                    <Icon name="check" size={18} stroke={2} />
+                    <span>{a}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {c.limit && (
+              <p class="sol__limit">
+                <strong>Pas encore disponible.</strong> {c.limit}
+              </p>
+            )}
+          </div>
+          <ProductScreen screen={c.screen} caption={c.caption} />
+        </div>
+      </section>
+    ))
+  }
+
+  <CtaBlock
+    title="Votre situation n’est pas dans la liste ?"
+    text="Décrivez-la : vos fournisseurs d’identité, vos applications, vos contraintes. Nous vous dirons si LUXIA Identity y répond, et sinon, ce que nous recommandons."
+    href={demo}
+    label="Demander une démonstration"
+    secondary={{ href: href('identity'), label: 'Découvrir le produit' }}
+  />
+</BaseLayout>
+
+<style>
+  .sol {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px var(--gap);
+    align-items: center;
+  }
+
+  .sol__text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .sol__block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sol__label {
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    color: var(--terra-text);
+  }
+
+  .sol__situation {
+    color: var(--ink-2);
+  }
+
+  .sol__points {
+    display: grid;
+    gap: 10px;
+  }
+
+  .sol__points li {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 10px;
+    color: var(--ink-2);
+  }
+
+  .sol__points :global(svg) {
+    margin-top: 4px;
+    color: var(--sage-text);
+  }
+
+  .sol__limit {
+    padding: 12px 14px;
+    border-left: 3px solid var(--ochre);
+    background: var(--ochre-tint);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: var(--fs-small);
+    color: var(--ink);
+  }
+
+  @media (min-width: 1024px) {
+    .sol {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .sol--flip {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+
+    .sol--flip .sol__text {
+      order: 2;
+    }
+  }
+</style>

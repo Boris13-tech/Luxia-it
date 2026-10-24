@@ -42,7 +42,7 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
 
     <div class="hdr__end">
       <LanguageSwitcher />
-      <a class="btn btn--primary btn--sm hdr__cta" href={`${href('contact', locale)}?sujet=cadrage`}>{t.cta}</a>
+      <a class="btn btn--primary btn--sm hdr__cta" href={`${href('contact', locale)}?sujet=demo`}>{t.cta}</a>
       <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-trigger>
         <span class="visually-hidden" data-menu-label data-open-label={t.menuOpen} data-close-label={t.menuClose}>
           {t.menuOpen}
@@ -67,7 +67,7 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
           ))
         }
       </ul>
-      <a class="btn btn--primary mnav__cta" href={`${href('contact', locale)}?sujet=cadrage`}>{t.cta}</a>
+      <a class="btn btn--primary mnav__cta" href={`${href('contact', locale)}?sujet=demo`}>{t.cta}</a>
     </nav>
   </div>
 </header>

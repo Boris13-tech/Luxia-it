@@ -1,0 +1,1090 @@
+---
+/**
+ * Écrans de la console LUXIA Identity, reconstitués en HTML. Navigation,
+ * libellés, colonnes et actions reprennent l'interface réelle (dépôt public
+ * Boris13-tech/iam-azure-pme : app/dashboard/layout.tsx, page.tsx, users,
+ * governance/access-reviews, governance/sod, audit ; app/login ; libellés de
+ * lib/ui/activity-labels.ts), lus le 24 octobre 2026. Les données affichées
+ * sont fictives : aucune personne, organisation ou mesure réelle. La légende
+ * le dit à chaque écran.
+ *
+ * L'image est décorative pour les technologies d'assistance (aria-hidden) :
+ * la légende en donne le sens. Aucun élément n'y est interactif.
+ * Ne pas y montrer de capacité absente du produit (pas de SSO vers des
+ * applications tierces, pas de SAML ni de SCIM).
+ */
+import Icon from './Icon.astro';
+import type { IconName } from '../data/icons';
+
+export type ScreenName = 'overview' | 'identities' | 'review' | 'sod' | 'audit' | 'login';
+
+interface Props {
+  screen: ScreenName;
+  /** Ce que montre l'écran, pour la légende (lue par tous). */
+  caption: string;
+  /** Écran principal de la page : plus grand, sans ombre portée réduite. */
+  hero?: boolean | undefined;
+  class?: string | undefined;
+}
+
+const { screen, caption, hero = false, class: className } = Astro.props;
+
+const nav: { id: ScreenName | 'org' | 'auth' | 'resources'; label: string; icon: IconName }[] = [
+  { id: 'overview', label: 'Vue d’ensemble', icon: 'gauge' },
+  { id: 'identities', label: 'Identités', icon: 'users' },
+  { id: 'org', label: 'Organisation', icon: 'building' },
+  { id: 'auth', label: 'Authentification', icon: 'shield-check' },
+  { id: 'resources', label: 'Ressources', icon: 'boxes' },
+  { id: 'sod', label: 'Séparation des tâches', icon: 'scale' },
+  { id: 'review', label: 'Revues d’accès', icon: 'clipboard-check' },
+  { id: 'audit', label: 'Journal d’audit', icon: 'fingerprint' },
+];
+
+const people = [
+  { name: 'Camille Laurent', type: 'Personne', state: 'Active', tone: 'ok', actions: ['Suspendre', 'Départ définitif'] },
+  { name: 'Inès Moreau', type: 'Personne', state: 'En création', tone: 'wait', actions: ['Activer', 'Départ définitif'] },
+  { name: 'Thomas Petit', type: 'Personne', state: 'Suspendue', tone: 'warn', actions: ['Activer', 'Départ définitif'] },
+  { name: 'Agent de rapprochement bancaire', type: 'Agent IA', state: 'Active', tone: 'ok', actions: ['Suspendre', 'Départ définitif'] },
+  { name: 'Traitement de la paie', type: 'Charge de travail', state: 'Active', tone: 'ok', actions: ['Suspendre', 'Départ définitif'] },
+  { name: 'Julien Roux', type: 'Personne', state: 'Partie', tone: 'off', actions: [] },
+] as const;
+
+const journal = [
+  { date: '24/10/2026 09:12:04', event: 'Connexion', ok: true, detail: 'Clé d’accès, résistante à l’hameçonnage', actor: 'Camille Laurent', target: '' },
+  { date: '24/10/2026 09:03:51', event: 'Accès bloqué (séparation des tâches)', ok: false, detail: '', actor: 'Hugo Bernard', target: 'Inès Moreau' },
+  { date: '24/10/2026 08:57:19', event: 'Accès retiré après revue', ok: true, detail: '', actor: 'Camille Laurent', target: 'Thomas Petit' },
+  { date: '24/10/2026 08:41:02', event: 'Connexion refusée', ok: false, detail: 'Microsoft Entra ID, identité non active', actor: 'Julien Roux', target: '' },
+  { date: '23/10/2026 18:20:37', event: 'Session révoquée', ok: true, detail: '', actor: 'Hugo Bernard', target: 'Thomas Petit' },
+  { date: '23/10/2026 17:48:10', event: 'Identité créée', ok: true, detail: '', actor: 'Hugo Bernard', target: 'Inès Moreau' },
+] as const;
+
+const active = nav.some((n) => n.id === screen) ? screen : 'overview';
+---
+
+<figure class:list={['pshot', hero && 'pshot--hero', className]}>
+  <div class="pshot__window" aria-hidden="true">
+    <div class="pshot__chrome">
+      <span class="pshot__dot"></span><span class="pshot__dot"></span><span class="pshot__dot"></span>
+      <span class="pshot__title">LUXIA Identity</span>
+    </div>
+
+    {
+      screen === 'login' ? (
+        <div class="pshot__login">
+          <div class="pl-card">
+            <div class="pl-brand">
+              <span class="pl-mark">
+                <svg viewBox="0 0 48 40" width="30" height="25">
+                  <polygon fill="#8db3e8" points="23.6,8.4 32.2,8.4 44,34.6 34.6,34.6" />
+                  <polygon fill="#1f5fbf" points="22,2 32.2,2 18.2,34.6 8,34.6" />
+                </svg>
+              </span>
+              <span>
+                <b>LUXIA</b>
+                <small>Identity</small>
+              </span>
+            </div>
+            <p class="pl-h">Connexion</p>
+            <p class="pl-sub">Indiquez l’identifiant de votre organisation, puis votre méthode de connexion.</p>
+            <span class="pl-label">Identifiant de l’organisation</span>
+            <span class="pl-input">organisation-demo</span>
+            <span class="pl-btn pl-btn--primary">
+              <Icon name="lock" size={16} /> Se connecter avec Microsoft
+            </span>
+            <span class="pl-or">ou</span>
+            <span class="pl-label">Votre identifiant</span>
+            <span class="pl-input">camille.laurent</span>
+            <span class="pl-btn">
+              <Icon name="fingerprint" size={16} /> Se connecter avec une clé d’accès
+            </span>
+            <span class="pl-link">J’ai perdu ma clé d’accès</span>
+          </div>
+        </div>
+      ) : (
+        <div class="pshot__app">
+          <div class="ps-side">
+            <div class="ps-logo">
+              <svg viewBox="0 0 48 40" width="24" height="20">
+                <polygon fill="#8db3e8" points="23.6,8.4 32.2,8.4 44,34.6 34.6,34.6" />
+                <polygon fill="#ffffff" points="22,2 32.2,2 18.2,34.6 8,34.6" />
+              </svg>
+              <span>
+                <b>LUXIA</b>
+                <small>Identity</small>
+              </span>
+            </div>
+            <ul class="ps-nav">
+              {nav.map((n) => (
+                <li class:list={['ps-nav__item', n.id === active && 'is-active']}>
+                  <Icon name={n.icon} size={15} stroke={1.8} />
+                  <span>{n.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="ps-work">
+            <div class="ps-top">
+              <span class="ps-ctx">
+                <Icon name="building" size={13} /> Organisation <b>Organisation de démonstration</b>
+              </span>
+              <span class="ps-ctx ps-ctx--env">
+                <span class="ps-live" /> Environnement <b>Production</b>
+              </span>
+              <span class="ps-profile">
+                <span class="ps-avatar">CL</span>
+                <span>
+                  <b>Camille Laurent</b>
+                  <small>Microsoft Entra ID</small>
+                </span>
+              </span>
+            </div>
+
+            <div class="ps-main">
+              {screen === 'overview' && (
+                <>
+                  <p class="ps-h">Vue d’ensemble</p>
+                  <p class="ps-sub">Organisation de démonstration, environnement Production. Mis à jour le 24/10/2026 09:12.</p>
+                  <div class="ps-panel ps-attn">
+                    <p class="ps-panel__h">
+                      <Icon name="triangle-alert" size={15} /> À traiter
+                    </p>
+                    <ul>
+                      <li><b>2</b><span>Identités inactives ayant encore un accès</span><em>Voir</em></li>
+                      <li><b>5</b><span>Accès en attente de revue</span><em>Voir</em></li>
+                      <li><b>1</b><span>Accès expirant sous 7 jours</span><em>Voir</em></li>
+                    </ul>
+                  </div>
+                  <div class="ps-panel">
+                    <p class="ps-panel__h">
+                      <Icon name="shield-check" size={15} /> Accès
+                    </p>
+                    <div class="ps-grid">
+                      <div class="ps-w"><span>Accès en vigueur</span><b>148</b></div>
+                      <div class="ps-w"><span>Identités disposant d’un accès</span><b>41</b></div>
+                      <div class="ps-w ps-w--list">
+                        <span>Durée des accès</span>
+                        <ul>
+                          <li>Limités dans le temps <b>23</b></li>
+                          <li>Permanents <b>125</b></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ps-panel ps-panel--wide">
+                    <p class="ps-panel__h">
+                      <Icon name="scale" size={15} /> Gouvernance
+                    </p>
+                    <div class="ps-grid">
+                      <div class="ps-w"><span>Attributions bloquées (30 jours)</span><b>3</b></div>
+                      <div class="ps-w ps-w--list">
+                        <span>Campagnes de revue</span>
+                        <ul>
+                          <li>En cours <b>1</b></li>
+                          <li>Terminées <b>4</b></li>
+                        </ul>
+                      </div>
+                      <div class="ps-w"><span>Conflits parmi les accès existants</span><b>0</b></div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {screen === 'identities' && (
+                <>
+                  <p class="ps-h">Identités</p>
+                  <p class="ps-sub">Arrivées, changements de statut et départs.</p>
+                  <div class="ps-form">
+                    <span class="ps-field">
+                      <small>Nom de la nouvelle personne</small>
+                      <span class="ps-input">Nom complet</span>
+                    </span>
+                    <span class="ps-btn ps-btn--primary">
+                      <Icon name="user-plus" size={14} /> Ajouter une personne
+                    </span>
+                  </div>
+                  <div class="ps-table">
+                    <div class="ps-tr ps-tr--head ps-tr--ids">
+                      <span>Identité</span><span>Type</span><span>État</span><span>Actions</span>
+                    </div>
+                    {people.map((p) => (
+                      <div class="ps-tr ps-tr--ids">
+                        <span class="ps-strong">{p.name}</span>
+                        <span class="ps-muted">{p.type}</span>
+                        <span><span class={`ps-pill ps-pill--${p.tone}`}>{p.state}</span></span>
+                        <span class="ps-acts">
+                          {p.actions.map((a) => (
+                            <span class:list={['ps-act', a === 'Activer' && 'ps-act--go', a === 'Suspendre' && 'ps-act--pause', a === 'Départ définitif' && 'ps-act--out']}>
+                              {a}
+                            </span>
+                          ))}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {screen === 'review' && (
+                <>
+                  <p class="ps-h">Revues d’accès</p>
+                  <p class="ps-sub">
+                    Vérifiez régulièrement que chaque accès est toujours justifié. Conserver maintient l’accès, Retirer le supprime sur
+                    toutes ses ressources.
+                  </p>
+                  <div class="ps-camp">
+                    <b>Revue trimestrielle, service comptable</b>
+                    <span>En cours, échéance le 31/10/2026 18:00</span>
+                  </div>
+                  <div class="ps-item">
+                    <dl>
+                      <div><dt>Identité</dt><dd>Thomas Petit</dd></div>
+                      <div><dt>Droit</dt><dd>Valider les paiements</dd></div>
+                      <div><dt>Ressources couvertes</dt><dd>Logiciel de comptabilité</dd></div>
+                      <div><dt>Décision</dt><dd>en attente. État : à examiner.</dd></div>
+                    </dl>
+                    <span class="ps-label">Justification (ne saisissez aucun mot de passe ni secret)</span>
+                    <span class="ps-textarea">A rejoint le service achats le 1er octobre : ce droit n’est plus nécessaire.</span>
+                    <span class="ps-acts">
+                      <span class="ps-btn">Conserver l’accès</span>
+                      <span class="ps-btn ps-btn--danger">Retirer l’accès</span>
+                    </span>
+                  </div>
+                  <p class="ps-mini">Un réviseur ne peut pas examiner ses propres accès.</p>
+                </>
+              )}
+
+              {screen === 'sod' && (
+                <>
+                  <p class="ps-h">Séparation des tâches</p>
+                  <p class="ps-sub">Empêchez qu’une même personne détienne deux droits incompatibles.</p>
+                  <div class="ps-item">
+                    <p class="ps-item__h">
+                      Paiements fournisseurs <span class="ps-pill ps-pill--ok">active</span>
+                    </p>
+                    <p class="ps-rule">
+                      <span class="ps-chip">Créer un fournisseur</span>
+                      <span class="ps-plus">+</span>
+                      <span class="ps-chip">Valider les paiements</span>
+                      <span class="ps-muted">exclusion active</span>
+                    </p>
+                  </div>
+                  <p class="ps-h2">Attributions bloquées</p>
+                  <div class="ps-block">
+                    <Icon name="triangle-alert" size={16} />
+                    <span>
+                      <b>Accès bloqué (séparation des tâches)</b>
+                      <small>
+                        « Valider les paiements » pour Inès Moreau, qui détient déjà « Créer un fournisseur ». Demandé par Hugo Bernard,
+                        le 24/10/2026 09:03.
+                      </small>
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {screen === 'audit' && (
+                <>
+                  <p class="ps-h">Journal d’audit</p>
+                  <p class="ps-sub">Connexions et actions enregistrées dans votre environnement, de la plus récente à la plus ancienne.</p>
+                  <div class="ps-filters">
+                    <span class="ps-field">
+                      <small>Type</small>
+                      <span class="ps-input ps-input--select">Tous les événements</span>
+                    </span>
+                    <span class="ps-check">Afficher les consultations</span>
+                  </div>
+                  <div class="ps-table">
+                    <div class="ps-tr ps-tr--head ps-tr--log">
+                      <span>Date</span><span>Événement</span><span>Résultat</span><span>Détail</span><span>Auteur</span><span>Cible</span>
+                    </div>
+                    {journal.map((j) => (
+                      <div class="ps-tr ps-tr--log">
+                        <span class="ps-muted ps-nowrap">{j.date}</span>
+                        <span class="ps-strong">{j.event}</span>
+                        <span><span class:list={['ps-pill', j.ok ? 'ps-pill--ok' : 'ps-pill--no']}>{j.ok ? 'Réussi' : 'Refusé'}</span></span>
+                        <span class="ps-muted">{j.detail}</span>
+                        <span>{j.actor}</span>
+                        <span class="ps-muted">{j.target}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </div>
+  <figcaption class="pshot__caption">
+    {caption} <span class="pshot__note">Reconstitution de l’interface, données fictives.</span>
+  </figcaption>
+</figure>
+
+<style>
+  .pshot {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .pshot__window {
+    container-type: inline-size;
+    overflow: hidden;
+    border: 1px solid #d9dee7;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow:
+      0 1px 2px rgb(23 33 49 / 0.06),
+      0 18px 40px -18px rgb(23 33 49 / 0.28);
+    font-family: var(--font);
+    color: #1e293b;
+    line-height: 1.4;
+    text-align: left;
+  }
+
+  .pshot--hero .pshot__window {
+    box-shadow:
+      0 1px 2px rgb(23 33 49 / 0.06),
+      0 40px 80px -32px rgb(23 33 49 / 0.38);
+  }
+
+  .pshot__chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    background: #f1f3f7;
+    border-bottom: 1px solid #e2e6ee;
+  }
+
+  .pshot__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #cfd5df;
+  }
+
+  .pshot__title {
+    margin-left: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #5b6576;
+  }
+
+  .pshot__caption {
+    margin-top: 14px;
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+
+  .pshot__note {
+    white-space: nowrap;
+  }
+
+  /* Application ---------------------------------------------------------- */
+
+  .pshot__app {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 100%;
+  }
+
+  .ps-side {
+    display: none;
+    padding: 16px 10px;
+    background: #172131;
+    color: #c9d2df;
+  }
+
+  .ps-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px 16px;
+    color: #ffffff;
+  }
+
+  .ps-logo b {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  .ps-logo small {
+    display: block;
+    font-size: 10px;
+    color: #8db3e8;
+  }
+
+  .ps-nav {
+    display: grid;
+    gap: 2px;
+  }
+
+  .ps-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .ps-nav__item.is-active {
+    background: #2a3a55;
+    color: #ffffff;
+  }
+
+  .ps-work {
+    min-width: 0;
+    background: #f6f8fb;
+  }
+
+  .ps-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 9px 14px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e9f0;
+    font-size: 11px;
+    color: #5b6576;
+  }
+
+  .ps-ctx {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .ps-ctx b {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .ps-ctx--env {
+    display: none;
+  }
+
+  .ps-live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2f9e5a;
+  }
+
+  .ps-profile {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .ps-profile b {
+    display: block;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .ps-profile small {
+    display: block;
+    font-size: 10px;
+  }
+
+  .ps-avatar {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #dce7f7;
+    color: #174a96;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .ps-main {
+    display: grid;
+    gap: 10px;
+    padding: 16px 14px 18px;
+  }
+
+  .ps-h {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-h2 {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-sub {
+    margin-top: -6px;
+    font-size: 12px;
+    color: #475569;
+  }
+
+  .ps-panel {
+    padding: 11px 12px;
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 10px;
+  }
+
+  .ps-panel__h {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-attn {
+    border-color: #f1d9a6;
+    background: #fffbf2;
+  }
+
+  .ps-attn ul {
+    display: grid;
+    gap: 6px;
+  }
+
+  .ps-attn li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    color: #334155;
+  }
+
+  .ps-attn li b {
+    min-width: 18px;
+    font-size: 14px;
+    color: #8a5a0a;
+  }
+
+  .ps-attn em,
+  .ps-link {
+    margin-left: auto;
+    font-style: normal;
+    font-weight: 600;
+    color: #1f5fbf;
+  }
+
+  .ps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .ps-w {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 9px 10px;
+    border: 1px solid #edf0f5;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #475569;
+  }
+
+  .ps-w > b {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-w ul {
+    display: grid;
+    gap: 2px;
+  }
+
+  .ps-w li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: #334155;
+  }
+
+  .ps-w li b {
+    color: #0f172a;
+  }
+
+  .ps-form,
+  .ps-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 11px 12px;
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 10px;
+  }
+
+  .ps-field {
+    display: grid;
+    flex: 1 1 140px;
+    gap: 4px;
+  }
+
+  .ps-field small,
+  .ps-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .ps-input,
+  .ps-textarea {
+    display: block;
+    padding: 6px 9px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    background: #ffffff;
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .ps-input--select {
+    color: #1e293b;
+  }
+
+  .ps-textarea {
+    min-height: 44px;
+    color: #1e293b;
+  }
+
+  .ps-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 6px;
+    font-size: 11px;
+    color: #334155;
+  }
+
+  .ps-check::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 1px solid #94a3b8;
+    border-radius: 3px;
+  }
+
+  .ps-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+  }
+
+  .ps-btn--primary {
+    border-color: #1f5fbf;
+    background: #1f5fbf;
+    color: #ffffff;
+  }
+
+  .ps-btn--danger {
+    border-color: #e7b9b2;
+    color: #a3261b;
+  }
+
+  .ps-table {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 10px;
+  }
+
+  .ps-tr {
+    display: grid;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-top: 1px solid #f0f2f6;
+    font-size: 11.5px;
+    color: #1e293b;
+  }
+
+  .ps-tr--head {
+    border-top: 0;
+    background: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .ps-tr--ids {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  }
+
+  .ps-tr--ids > :nth-child(3),
+  .ps-tr--ids > :nth-child(4) {
+    display: none;
+  }
+
+  .ps-tr--log {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  }
+
+  .ps-tr--log > :nth-child(n + 4) {
+    display: none;
+  }
+
+  .ps-strong {
+    font-weight: 600;
+    min-width: 0;
+  }
+
+  .ps-muted {
+    color: #5b6576;
+    min-width: 0;
+  }
+
+  .ps-nowrap {
+    white-space: nowrap;
+  }
+
+  .ps-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ps-pill--ok {
+    background: #e7f4ea;
+    color: #22603a;
+  }
+
+  .ps-pill--no {
+    background: #fbe9e7;
+    color: #9a2a1e;
+  }
+
+  .ps-pill--wait {
+    background: #e6eefb;
+    color: #174a96;
+  }
+
+  .ps-pill--warn {
+    background: #fbf0dc;
+    color: #7a4f05;
+  }
+
+  .ps-pill--off {
+    background: #eef0f4;
+    color: #475569;
+  }
+
+  .ps-acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ps-act {
+    padding: 3px 8px;
+    border: 1px solid #d7dde6;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .ps-act--go {
+    color: #22603a;
+  }
+
+  .ps-act--pause {
+    color: #7a4f05;
+  }
+
+  .ps-act--out {
+    color: #9a2a1e;
+  }
+
+  .ps-camp {
+    display: grid;
+    gap: 2px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #1f5fbf;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #475569;
+  }
+
+  .ps-camp b {
+    color: #0f172a;
+  }
+
+  .ps-item {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e9f0;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .ps-item dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+  }
+
+  .ps-item dt {
+    font-size: 10.5px;
+    color: #5b6576;
+  }
+
+  .ps-item dd {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-item__h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .ps-rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ps-chip {
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: #eef3fb;
+    color: #174a96;
+    font-weight: 600;
+    font-size: 11.5px;
+  }
+
+  .ps-plus {
+    font-weight: 700;
+    color: #5b6576;
+  }
+
+  .ps-block {
+    display: flex;
+    gap: 10px;
+    padding: 11px 12px;
+    background: #fff6f4;
+    border: 1px solid #f0cdc6;
+    border-radius: 10px;
+    color: #9a2a1e;
+    font-size: 12px;
+  }
+
+  .ps-block b {
+    display: block;
+  }
+
+  .ps-block small {
+    display: block;
+    margin-top: 2px;
+    font-size: 11.5px;
+    color: #4b3330;
+  }
+
+  .ps-mini {
+    font-size: 11px;
+    color: #5b6576;
+  }
+
+  /* Connexion ------------------------------------------------------------- */
+
+  .pshot__login {
+    display: grid;
+    place-items: center;
+    padding: 28px 16px;
+    background: linear-gradient(#f6f8fb, #eef2f8);
+  }
+
+  .pl-card {
+    display: grid;
+    gap: 8px;
+    width: min(100%, 330px);
+    padding: 22px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e6ee;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px -18px rgb(23 33 49 / 0.35);
+    font-size: 12px;
+  }
+
+  .pl-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .pl-brand b {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: #0f172a;
+  }
+
+  .pl-brand small {
+    display: block;
+    font-size: 10px;
+    color: #1f5fbf;
+  }
+
+  .pl-h {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .pl-sub {
+    color: #475569;
+  }
+
+  .pl-label {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .pl-input {
+    padding: 7px 10px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    color: #1e293b;
+  }
+
+  .pl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    font-weight: 500;
+    color: #1e293b;
+  }
+
+  .pl-btn--primary {
+    border-color: #1f5fbf;
+    background: #1f5fbf;
+    color: #ffffff;
+  }
+
+  .pl-or {
+    text-align: center;
+    font-size: 11px;
+    color: #5b6576;
+  }
+
+  .pl-link {
+    margin: 4px auto 0;
+  }
+
+  /* Largeurs ------------------------------------------------------------- */
+
+  /* Écran étroit : la vue d'ensemble se limite aux points à traiter et aux accès */
+  .ps-panel--wide {
+    display: none;
+  }
+
+  @container (min-width: 520px) {
+    .ps-ctx--env {
+      display: inline-flex;
+    }
+
+    .ps-panel--wide {
+      display: block;
+    }
+
+    .ps-tr--ids {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto;
+    }
+
+    .ps-tr--ids > :nth-child(3) {
+      display: block;
+    }
+
+    .ps-tr--log {
+      grid-template-columns: 9.5em minmax(0, 1.5fr) auto minmax(0, 1fr);
+    }
+
+    .ps-tr--log > :nth-child(5) {
+      display: block;
+    }
+
+    .ps-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @container (min-width: 720px) {
+    .pshot__app {
+      grid-template-columns: 186px minmax(0, 1fr);
+    }
+
+    .ps-side {
+      display: block;
+    }
+
+    .ps-profile {
+      display: inline-flex;
+    }
+
+    .ps-main {
+      padding: 20px 20px 22px;
+    }
+
+    .ps-tr--ids {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr) auto minmax(0, 1.4fr);
+    }
+
+    .ps-tr--ids > :nth-child(4) {
+      display: flex;
+    }
+  }
+
+  @container (min-width: 900px) {
+    .ps-tr--log {
+      grid-template-columns: 9.5em minmax(0, 1.4fr) auto minmax(0, 1.4fr) minmax(0, 0.9fr) minmax(0, 0.9fr);
+    }
+
+    .ps-tr--log > :nth-child(4),
+    .ps-tr--log > :nth-child(6) {
+      display: block;
+    }
+  }
+</style>
