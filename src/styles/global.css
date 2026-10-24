@@ -772,6 +772,29 @@ main:focus {
   }
 }
 
+/* Rail de progression du mode « étapes » (rempli par tabs.ts) */
+.stepper-rail {
+  display: none;
+  height: 3px;
+  margin-top: 14px;
+  background-color: var(--line);
+  overflow: hidden;
+}
+
+.stepper-rail__fill {
+  display: block;
+  height: 100%;
+  background-color: var(--blue);
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0.125));
+}
+
+@media (scripting: enabled) {
+  .stepper-rail {
+    display: block;
+  }
+}
+
 .stepper {
   flex-wrap: wrap;
   align-items: center;
@@ -840,15 +863,6 @@ main:focus {
     navigation: auto;
   }
 
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 160ms;
-  }
-
-  ::view-transition-old(tabs-panels),
-  ::view-transition-new(tabs-panels) {
-    animation-duration: 200ms;
-  }
 }
 
 /* Mouvement --------------------------------------------------------------- */

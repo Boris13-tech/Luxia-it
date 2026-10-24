@@ -110,25 +110,46 @@ describe('site construit, dans Chrome', { skip }, () => {
     assert.deepEqual(s, { status: 'Étape 2 sur 8', prevDisabled: false, selected: 'Identité' });
   });
 
-  test('mouvement réduit : aucune transition animée', async () => {
-    const vt = async () => {
+  test('mouvement réduit : aucune animation ; sinon, le panneau qui arrive est animé', async () => {
+    const motion = async () => {
       await browser.goto(`${ready.origin}/`);
+      await browser.sleep(150);
       return browser.evaluate(`(() => {
-        window.__vt = 0;
-        const native = document.startViewTransition?.bind(document);
-        if (native) document.startViewTransition = (cb) => { window.__vt += 1; return native(cb); };
         document.querySelectorAll('.explorer [role=tab]')[1].click();
-        return new Promise((r) => setTimeout(() => r({ calls: window.__vt, supported: !!native,
-          duration: getComputedStyle(document.querySelector('.tabs__tab')).transitionDuration }), 400));
+        const panel = document.querySelectorAll('.explorer [role=tabpanel]')[1];
+        const cs = getComputedStyle(panel);
+        const title = getComputedStyle(document.querySelector('.hero__title'));
+        return { name: cs.animationName, duration: parseFloat(cs.animationDuration), titleAnimation: title.animationName,
+          tabTransition: parseFloat(getComputedStyle(document.querySelector('.tabs__tab')).transitionDuration) };
       })()`);
     };
     await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
-    const reduced = await vt();
-    assert.equal(reduced.calls, 0, 'aucune View Transition sous mouvement réduit');
-    assert.ok(reduced.duration.split(',').every((d) => parseFloat(d) <= 0.0001), `transitions CSS neutralisées (${reduced.duration})`);
+    const reduced = await motion();
+    assert.ok(reduced.name === 'none' || reduced.duration <= 0.0001, `panneau non animé (${reduced.name}, ${reduced.duration})`);
+    assert.equal(reduced.titleAnimation, 'none', 'titre non animé');
+    assert.ok(reduced.tabTransition <= 0.0001, 'transitions neutralisées');
     await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
-    const normal = await vt();
-    if (normal.supported) assert.equal(normal.calls, 1, 'View Transition utilisée hors mouvement réduit');
+    const normal = await motion();
+    assert.equal(normal.name, 'panel-in', 'le panneau qui arrive est animé');
+    assert.equal(normal.titleAnimation, 'rise');
+  });
+
+  test('parcours : la lecture avance seule puis se met en pause à la demande', async () => {
+    await browser.goto(`${ready.origin}/architectures/plateforme-execution/`);
+    const state = () => browser.evaluate(`({ status: document.querySelector('[data-step-status]').textContent,
+      pressed: document.querySelector('[data-step-play]').getAttribute('aria-pressed'),
+      label: document.querySelector('[data-step-play]').textContent.trim(),
+      progress: getComputedStyle(document.querySelector('.tabs--steps')).getPropertyValue('--progress') })`);
+    await browser.evaluate("document.querySelector('[data-step-play]').click()");
+    assert.equal((await state()).pressed, 'true');
+    await browser.sleep(4100);
+    const running = await state();
+    assert.equal(running.status, 'Étape 2 sur 8');
+    assert.equal(running.progress.trim(), '0.25');
+    await browser.evaluate("document.querySelector('[data-step-play]').click()");
+    await browser.sleep(4100);
+    const paused = await state();
+    assert.deepEqual([paused.status, paused.pressed, paused.label], ['Étape 2 sur 8', 'false', 'Reprendre le parcours']);
   });
 
   test('sans JavaScript, tout le contenu reste lisible', async () => {

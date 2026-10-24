@@ -6,17 +6,17 @@
  * Le script :
  * - attribue les rôles et masque les panneaux inactifs ;
  * - gère le clavier : flèches, Début, Fin (focus mobile, activation directe) ;
- * - en mode « étapes » (data-tabs-stepper), active Précédent / Suivant et
- *   annonce « Étape n sur N » ;
- * - ouvre le panneau visé par l'ancre de l'adresse ;
- * - anime le changement par une View Transition native, sauf si
- *   prefers-reduced-motion est actif ou si le navigateur ne la gère pas.
+ * - place l'indicateur de l'onglet actif (variables CSS --ind-x et --ind-w) ;
+ * - marque le panneau qui arrive (data-entering) : src/styles/motion.css
+ *   l'anime, ainsi que les liaisons de ses schémas, sauf mouvement réduit ;
+ * - en mode « étapes » (data-tabs-stepper) : Précédent / Suivant, annonce
+ *   « Étape n sur N », rail de progression (--progress) et lecture du
+ *   parcours étape par étape, que l'on peut mettre en pause ;
+ * - ouvre le panneau visé par l'ancre de l'adresse.
  * Aucune dépendance, aucun innerHTML.
  */
 
-const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-type ViewTransitionDoc = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
+const STEP_DELAY_MS = 3800;
 
 function enhance(root: HTMLElement): void {
   const list = root.querySelector<HTMLElement>('[data-tablist]');
@@ -27,10 +27,28 @@ function enhance(root: HTMLElement): void {
   const stepper = root.hasAttribute('data-tabs-stepper');
   const prev = root.querySelector<HTMLButtonElement>('[data-step-prev]');
   const next = root.querySelector<HTMLButtonElement>('[data-step-next]');
+  const play = root.querySelector<HTMLButtonElement>('[data-step-play]');
   const status = root.querySelector<HTMLElement>('[data-step-status]');
-  let current = 0;
+  let current = -1;
+  let timer: number | undefined;
 
-  const render = (index: number, focus: boolean) => {
+  const placeIndicator = () => {
+    const tab = tabs[current];
+    if (!tab) return;
+    list.style.setProperty('--ind-x', `${tab.offsetLeft}px`);
+    list.style.setProperty('--ind-w', String(tab.offsetWidth));
+  };
+
+  const mark = (el: Element | null | undefined) => {
+    if (!el) return;
+    el.removeAttribute('data-entering');
+    // Relance l'animation si le même élément revient.
+    void (el as HTMLElement).offsetWidth;
+    el.setAttribute('data-entering', '');
+    el.addEventListener('animationend', () => el.removeAttribute('data-entering'), { once: true });
+  };
+
+  const render = (index: number, focus: boolean, animate: boolean) => {
     current = index;
     tabs.forEach((tab, i) => {
       const selected = i === index;
@@ -40,7 +58,13 @@ function enhance(root: HTMLElement): void {
       if (panel) panel.hidden = !selected;
     });
     root.dataset['active'] = tabs[index]?.dataset['tab'] ?? String(index);
+    placeIndicator();
+    if (animate) {
+      mark(panels[index]);
+      if (stepper) mark(tabs[index]);
+    }
     if (stepper) {
+      root.style.setProperty('--progress', String((index + 1) / tabs.length));
       if (prev) prev.disabled = index === 0;
       if (next) next.disabled = index === tabs.length - 1;
       if (status) status.textContent = `Étape ${index + 1} sur ${tabs.length}`;
@@ -48,25 +72,30 @@ function enhance(root: HTMLElement): void {
     if (focus) tabs[index]?.focus();
   };
 
+  const stop = () => {
+    if (timer === undefined) return;
+    window.clearInterval(timer);
+    timer = undefined;
+    if (play) {
+      play.setAttribute('aria-pressed', 'false');
+      play.textContent = current === tabs.length - 1 ? 'Relancer le parcours' : 'Reprendre le parcours';
+    }
+  };
+
   const select = (index: number, focus = false) => {
     if (index === current) {
       if (focus) tabs[index]?.focus();
       return;
     }
-    const doc = document as ViewTransitionDoc;
-    if (!doc.startViewTransition || reduceMotion()) {
-      render(index, focus);
-      return;
-    }
-    // Seule la zone des panneaux de ce composant participe à la transition.
-    const area = root.querySelector<HTMLElement>('[data-panels]') ?? root;
-    area.style.setProperty('view-transition-name', 'tabs-panels');
-    doc
-      .startViewTransition(() => render(index, focus))
-      .finished.finally(() => area.style.removeProperty('view-transition-name'));
+    render(index, focus, true);
   };
 
-  list.setAttribute('role', 'tablist');
+  /** Action de la personne : arrête la lecture automatique. */
+  const userSelect = (index: number, focus = false) => {
+    stop();
+    select(index, focus);
+  };
+
   tabs.forEach((tab, i) => {
     tab.setAttribute('role', 'tab');
     const panel = panels[i];
@@ -75,7 +104,7 @@ function enhance(root: HTMLElement): void {
       panel.setAttribute('aria-labelledby', tab.id);
       panel.tabIndex = 0;
     }
-    tab.addEventListener('click', () => select(i));
+    tab.addEventListener('click', () => userSelect(i));
     tab.addEventListener('keydown', (event) => {
       const last = tabs.length - 1;
       const target =
@@ -90,17 +119,43 @@ function enhance(root: HTMLElement): void {
                 : null;
       if (target === null) return;
       event.preventDefault();
-      select(target, true);
+      userSelect(target, true);
     });
   });
 
-  prev?.addEventListener('click', () => select(Math.max(0, current - 1)));
-  next?.addEventListener('click', () => select(Math.min(tabs.length - 1, current + 1)));
+  prev?.addEventListener('click', () => userSelect(Math.max(0, current - 1)));
+  next?.addEventListener('click', () => userSelect(Math.min(tabs.length - 1, current + 1)));
+
+  play?.addEventListener('click', () => {
+    if (timer !== undefined) {
+      stop();
+      return;
+    }
+    if (current === tabs.length - 1) select(0);
+    play.setAttribute('aria-pressed', 'true');
+    play.textContent = 'Mettre en pause';
+    timer = window.setInterval(() => {
+      if (current >= tabs.length - 1) {
+        stop();
+        return;
+      }
+      select(current + 1);
+      if (current === tabs.length - 1) stop();
+    }, STEP_DELAY_MS);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+  });
+
+  // Les largeurs changent quand la police arrive ou que l'écran change.
+  new ResizeObserver(placeIndicator).observe(list);
 
   const fromHash = panels.findIndex((p) => p && `#${p.id}` === window.location.hash);
-  const initial = Math.max(0, fromHash);
   root.setAttribute('data-enhanced', '');
-  render(initial, false);
+  render(Math.max(0, fromHash), false, false);
+  // Le mouvement n'est activé qu'après le premier rendu : rien ne bouge au chargement.
+  requestAnimationFrame(() => root.setAttribute('data-motion', ''));
 }
 
 export function initTabs(): void {

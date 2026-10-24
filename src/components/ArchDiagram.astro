@@ -141,6 +141,8 @@ const { title, inputs, core, outputs, base, links = {}, note } = Astro.props;
   .arch__link {
     position: relative;
     min-height: 64px;
+    /* Sens du tracé animé (src/styles/motion.css) : vertical sur mobile */
+    --draw-from: inset(0 0 100% 0);
   }
 
   .arch__link::before {
@@ -221,6 +223,11 @@ const { title, inputs, core, outputs, base, links = {}, note } = Astro.props;
     .arch__link {
       min-height: 0;
       height: 48px;
+      --draw-from: inset(0 100% 0 0);
+    }
+
+    .arch__link--v {
+      --draw-from: inset(0 0 100% 0);
     }
 
     .arch__link::before {
