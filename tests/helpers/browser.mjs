@@ -101,10 +101,12 @@ export async function launch() {
     await evaluate('document.fonts.ready.then(() => true)');
   };
 
-  /** Appuie sur une touche dans la page (événement clavier réel). */
+  /** Appuie sur une touche dans la page (événement clavier réel). Entrée et
+   *  Espace portent leur caractère : sans lui, un bouton n'est pas activé. */
   const press = async (key, code = key, keyCode = 0) => {
+    const text = key === 'Enter' ? String.fromCharCode(13) : key === ' ' ? ' ' : undefined;
     for (const type of ['keyDown', 'keyUp']) {
-      await send('Input.dispatchKeyEvent', { type, key, code, windowsVirtualKeyCode: keyCode });
+      await send('Input.dispatchKeyEvent', { type, key, code, windowsVirtualKeyCode: keyCode, ...(type === 'keyDown' && text ? { text } : {}) });
     }
   };
 

@@ -14,6 +14,11 @@
   Cross-Origin-Resource-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   X-DNS-Prefetch-Control: off
+  Speculation-Rules: "/speculation-rules.json"
+
+/speculation-rules.json
+  Content-Type: application/speculationrules+json
+  Cache-Control: public, max-age=3600
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

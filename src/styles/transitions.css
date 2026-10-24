@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Transitions de page cinématiques (docs/DESIGN_SYSTEM.md, section 5)
+   Transitions de document natives : le navigateur charge la page suivante
+   sans attendre l'animation, gère retour, avance, liens directs et échecs.
+   Une seule famille, trois variantes, choisies par le sens de navigation
+   (public/scripts/transitions.js pose le type) :
+   - profondeur : on entre dans une page plus précise ;
+   - retour : on revient en arrière ou on remonte ;
+   - latéral : page sœur (par défaut).
+   Signature commune : un faisceau de lumière traverse le haut de l'écran
+   dans le sens du déplacement. L'en-tête ne bouge pas ; l'écran du produit
+   se transforme d'une page à l'autre (élément partagé).
+   Tout est désactivé sous prefers-reduced-motion.
+   ========================================================================== */
+
+/* Faisceau : présent sur chaque page, invisible hors transition */
+.beam {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 99;
+  height: 40vh;
+  pointer-events: none;
+  opacity: 0;
+  view-transition-name: beam;
+}
+
+.beam::before,
+.beam::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+}
+
+/* Allumé seulement pendant une transition : son image « new » l'anime */
+html:active-view-transition .beam {
+  opacity: 1;
+}
+
+/* Le trait de lumière */
+.beam::before {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--electric) 45%, #dbe8ff 50%, var(--electric) 55%, transparent);
+}
+
+/* Le halo qu'il projette vers le bas */
+.beam::after {
+  height: 100%;
+  background: radial-gradient(40% 70% at 50% 0%, rgb(91 155 255 / 0.22), transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  /* Durée totale perçue : 560 à 700 ms. La nouvelle page est utilisable dès
+     son affichage : les instantanés ne bloquent pas la saisie au-delà. */
+  ::view-transition-group(*) {
+    animation-duration: 560ms;
+    animation-timing-function: var(--ease-precise);
+  }
+
+  /* Latéral (par défaut) : la page part de côté et se voile, la suivante
+     glisse depuis l'autre côté en se précisant. */
+  ::view-transition-old(root) {
+    animation: vt-out-left 300ms var(--ease-precise) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in-right 480ms var(--ease) 120ms both;
+  }
+
+  /* Profondeur : on traverse la page actuelle, la suivante sort de l'ombre */
+  html:active-view-transition-type(deeper)::view-transition-old(root) {
+    animation-name: vt-through;
+  }
+
+  html:active-view-transition-type(deeper)::view-transition-new(root) {
+    animation-name: vt-from-depth;
+  }
+
+  /* Retour : la page recule dans l'ombre, la précédente revient vers nous */
+  html:active-view-transition-type(back)::view-transition-old(root) {
+    animation-name: vt-recede;
+  }
+
+  html:active-view-transition-type(back)::view-transition-new(root) {
+    animation-name: vt-return;
+  }
+
+  /* Faisceau : de gauche à droite, ou de droite à gauche au retour */
+  ::view-transition-old(beam) {
+    display: none;
+  }
+
+  ::view-transition-new(beam) {
+    animation: vt-beam 700ms var(--ease-precise) both;
+  }
+
+  html:active-view-transition-type(back)::view-transition-new(beam) {
+    animation-name: vt-beam-back;
+  }
+
+  /* L'en-tête reste immobile : aucune animation sur son groupe */
+  ::view-transition-group(site-header) {
+    animation: none;
+  }
+
+  ::view-transition-old(site-header) {
+    display: none;
+  }
+
+  ::view-transition-new(site-header) {
+    animation: none;
+  }
+
+  /* Écran du produit : il se déplace et se redimensionne d'une page à
+     l'autre (accueil ↔ LUXIA Identity) ; les contenus se fondent. */
+  ::view-transition-group(product-screen) {
+    animation-duration: 640ms;
+  }
+
+  ::view-transition-old(product-screen),
+  ::view-transition-new(product-screen) {
+    animation-duration: 640ms;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+}
+
+/* Visible le temps de l'animation de sa vue « new », puis retombe à 0 */
+@keyframes vt-beam {
+  0% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+
+@keyframes vt-beam-back {
+  0% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+}
+
+@keyframes vt-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-28px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes vt-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+    filter: blur(8px);
+  }
+}
+
+@keyframes vt-through {
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(8px);
+  }
+}
+
+@keyframes vt-from-depth {
+  from {
+    opacity: 0;
+    transform: scale(0.965) translateY(18px);
+    filter: blur(10px);
+  }
+}
+
+@keyframes vt-recede {
+  to {
+    opacity: 0;
+    transform: scale(0.965);
+    filter: blur(8px);
+  }
+}
+
+@keyframes vt-return {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+    filter: blur(8px);
+  }
+}

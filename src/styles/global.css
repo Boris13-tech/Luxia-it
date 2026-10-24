@@ -1,21 +1,31 @@
 /* ==========================================================================
-   Luxia-IT — système éditorial, chaleureux
-   Papier crème, encre chaude, bleu Luxia et trois accents terreux (ocre,
-   terre cuite, sauge) ; titres en Fraunces, texte en Roboto ; formes
-   arrondies. Ni dégradé violet, ni néon, ni verre dépoli.
-   Contrastes vérifiés (WCAG 2.2 AA), au pire : ink-3 sur sable 5,59:1 ;
-   accents texte sur sable ≥ 5,01:1 ; on-night-2 sur nuit 8,84:1.
+   LUXIA — écosystème de confiance (docs/DESIGN_SYSTEM.md)
+   Obsidienne, bleu nuit, bleu électrique ; violet réservé à l'IA ; ambre de
+   signal, rare. Titres en Inter Tight, texte en Roboto, libellés en
+   JetBrains Mono. Un seul halo de lumière par écran.
+   Contrastes vérifiés (WCAG 2.2 AA), au pire : ink-3 sur surface 6,17:1 ;
+   blanc sur --blue 4,70:1 ; filets de champ --line-strong ≥ 3:1.
    ========================================================================== */
 
-/* Titres : Fraunces, sous-ensemble latin auto-hébergé (36 Ko). « optional » :
-   si la police n'est pas là au premier rendu, la page garde la police de
-   repli jusqu'au bout — jamais de saut de mise en page. */
+/* Titres : Inter Tight variable, sous-ensemble latin auto-hébergé, préchargé.
+   « optional » : si la police n'est pas là au premier rendu, la page garde la
+   police de repli jusqu'au bout — jamais de saut de mise en page. */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Inter Tight';
   font-style: normal;
   font-weight: 100 900;
   font-display: optional;
-  src: url('../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2') format('woff2-variations');
+  src: url('../../node_modules/@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Libellés techniques : JetBrains Mono variable, non préchargée. */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: optional;
+  src: url('../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -31,61 +41,70 @@
 }
 
 :root {
-  /* Fonds */
-  --paper: #fbf7f1;
-  --paper-2: #f3ebdf;
-  --white: #ffffff;
-  --tint-blue: #eaf0fa;
-  --tint-sage: #e6efe6;
-  --dark: #172131;
-  --dark-2: #1f2b3e;
+  color-scheme: dark;
 
-  /* Encre chaude */
-  --ink: #1c1e24;
-  --ink-2: #373a43;
-  --ink-3: #615c57;
+  /* Fonds */
+  --paper: #07090d;
+  --paper-2: #0b1019;
+  --surface: #111827;
+  --surface-2: #172033;
+  --white: #ffffff;
+  --tint-blue: #08122a;
+  --tint-sage: #08150f;
+  --dark: #0a1122;
+  --dark-2: #111b30;
+
+  /* Encre claire */
+  --ink: #eef2f8;
+  --ink-2: #b9c3d4;
+  --ink-3: #8d99ae;
 
   /* Filets */
-  --line: #e2d8c9;
-  --line-soft: #ece4d7;
-  --line-strong: #8e887f;
+  --line: #1d2638;
+  --line-soft: #151c2a;
+  --line-strong: #5d6b86;
 
-  /* Bleu Luxia (logo) */
-  --blue: #1f5fbf;
-  --blue-hover: #174a96;
-  --link: #1a52a8;
-  --blue-tint: #dce7f7;
-  --blue-light: #8db3e8;
+  /* Bleu Luxia et lumière électrique */
+  --blue: #2f6fe0;
+  --blue-hover: #3f7ef0;
+  --link: #8cb8ff;
+  --blue-tint: #13234a;
+  --blue-light: #5b9bff;
+  --electric: #5b9bff;
+  --glow: rgb(91 155 255 / 0.35);
 
-  /* Accents chaleureux : couleur pleine (décor) et couleur de texte (AA) */
-  --ochre: #e0a43b;
-  --ochre-text: #8a5a0a;
-  --ochre-tint: #f6e6c4;
-  --terra: #d06a4e;
-  --terra-text: #a3402a;
-  --terra-tint: #f6ddd4;
-  --sage: #6f9a78;
-  --sage-text: #356445;
-  --sage-tint: #dcebdf;
+  /* Violet, réservé à l'IA */
+  --violet: #a78bfa;
+  --violet-tint: #1d1638;
 
-  /* Sur fond nuit */
-  --on-dark: #f4efe6;
-  --on-dark-2: #b9c0cc;
-  --on-dark-line: #2c3a50;
+  /* Signaux : couleur pleine (décor), couleur de texte (AA), teinte de fond */
+  --ochre: #e8b04f;
+  --ochre-text: #f0c070;
+  --ochre-tint: #2a2110;
+  --terra: #ff8a73;
+  --terra-text: #ff9c88;
+  --terra-tint: #2c1612;
+  --sage: #5fbf8f;
+  --sage-text: #7fd3a8;
+  --sage-tint: #0f2a1f;
+
+  /* Bandeaux bleu nuit */
+  --on-dark: #eef2f8;
+  --on-dark-2: #b9c3d4;
+  --on-dark-line: #24304a;
 
   /* États */
-  --error: #a3261b;
-  --success: #2f5e3d;
+  --error: #ff8a73;
+  --success: #7fd3a8;
 
   /* Typographie */
   --font: 'Roboto Variable', 'Roboto Fallback', 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
-  /* Libellés : même famille que le texte (plus de police à chasse fixe) */
-  --mono: var(--font);
-  --fs-display: clamp(2.5rem, 1.5rem + 4.2vw, 4.75rem);
-  --fs-h1: clamp(2.25rem, 1.55rem + 2.8vw, 3.75rem);
-  --fs-h2: clamp(1.875rem, 1.4rem + 1.8vw, 2.875rem);
-  --fs-h3: clamp(1.3rem, 1.15rem + 0.55vw, 1.6rem);
+  --display: 'Inter Tight', 'Roboto Variable', 'Roboto Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Consolas, monospace;
+  --fs-display: clamp(2.5rem, 1.4rem + 4.6vw, 5.25rem);
+  --fs-h1: clamp(2.25rem, 1.5rem + 3vw, 4rem);
+  --fs-h2: clamp(1.875rem, 1.4rem + 1.9vw, 3rem);
+  --fs-h3: clamp(1.3125rem, 1.18rem + 0.55vw, 1.625rem);
   --fs-h4: 1.1875rem;
   --fs-lead: clamp(1.125rem, 1.04rem + 0.4vw, 1.375rem);
   --fs-body: 1.0625rem;
@@ -96,13 +115,27 @@
   --max: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
   --gap: clamp(20px, 2.6vw, 40px);
-  --header-h: 68px;
+  --header-h: 76px;
   --section-y: clamp(64px, 9vw, 128px);
   --radius: 14px;
   --radius-sm: 10px;
 
+  /* Mouvement */
   --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-precise: cubic-bezier(0.2, 0.8, 0.2, 1);
   --dur: 220ms;
+}
+
+/* Univers des produits : la lumière active prend la couleur du produit.
+   Le violet est réservé à l'IA (ALMA). Contrastes sur --paper : 7,3:1 et 9,3:1. */
+html[data-universe='alma'] {
+  --electric: #a78bfa;
+  --glow: rgb(167 139 250 / 0.35);
+}
+
+html[data-universe='key'] {
+  --electric: #8db3e8;
+  --glow: rgb(141 179 232 / 0.35);
 }
 
 /* Base -------------------------------------------------------------------- */
@@ -134,6 +167,9 @@ body {
   line-height: 1.6;
   color: var(--ink-2);
   background-color: var(--paper);
+  /* Grain très léger : le noir n'est jamais un aplat mort */
+  background-image: radial-gradient(120rem 60rem at 50% -20%, rgb(47 111 224 / 0.07), transparent 60%);
+  background-repeat: no-repeat;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -174,11 +210,10 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 480;
-  font-optical-sizing: auto;
-  line-height: 1.14;
-  letter-spacing: -0.01em;
+  font-family: var(--display);
+  font-weight: 580;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   color: var(--ink);
   text-wrap: balance;
 }
@@ -221,7 +256,7 @@ table {
 }
 
 :focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--electric);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -260,7 +295,11 @@ main:focus {
 }
 
 .section--dark {
-  background-color: var(--dark);
+  position: relative;
+  background:
+    radial-gradient(70rem 30rem at 15% 0%, rgb(47 111 224 / 0.16), transparent 70%),
+    var(--dark);
+  border-block: 1px solid var(--line);
   color: var(--on-dark-2);
 }
 
@@ -291,7 +330,7 @@ main:focus {
   z-index: 200;
   padding: 10px 16px;
   background: var(--ink);
-  color: var(--white);
+  color: var(--paper);
   font-weight: 500;
 }
 
@@ -303,23 +342,23 @@ main:focus {
 
 .t-display {
   font-size: var(--fs-display);
-  font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
 }
 
 .t-h1 {
   font-size: var(--fs-h1);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
 }
 
 .t-h2 {
   font-size: var(--fs-h2);
-  font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  font-weight: 590;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
 .t-h3 {
@@ -351,23 +390,24 @@ main:focus {
   color: var(--ink-3);
 }
 
-/* Libellé technique au-dessus d'un titre */
+/* Libellé technique au-dessus d'un titre : chasse fixe, bleu électrique */
 .kicker {
   display: block;
-  font-family: var(--font);
-  font-size: var(--fs-meta);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--terra-text);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--electric);
 }
 
 .measure {
   max-width: 44rem;
 }
 
-/* Libellé sur fond nuit (contraste ≥ 7:1 sur --dark) */
+/* Libellé sur bandeau nuit : même lumière électrique (7,2:1 sur --dark) */
 .kicker--dark {
-  color: #f2b8a6;
+  color: var(--electric);
 }
 
 /* Liens de texte : soulignés, bleu Luxia */
@@ -410,6 +450,7 @@ main:focus {
 /* Boutons ----------------------------------------------------------------- */
 
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -425,7 +466,8 @@ main:focus {
   transition:
     background-color var(--dur) var(--ease),
     color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
 }
 
 .btn svg {
@@ -435,20 +477,27 @@ main:focus {
 .btn--primary {
   background-color: var(--blue);
   color: var(--white);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 0 0 0 var(--glow);
 }
 
 .btn--primary:hover {
   background-color: var(--blue-hover);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 8px 28px -6px var(--glow);
 }
 
 .btn--secondary {
-  border-color: var(--ink);
+  border-color: var(--line-strong);
   color: var(--ink);
 }
 
 .btn--secondary:hover {
+  border-color: var(--ink);
   background-color: var(--ink);
-  color: var(--white);
+  color: var(--paper);
 }
 
 .btn--light {
@@ -498,7 +547,7 @@ main:focus {
 .ruled__title {
   margin-bottom: 8px;
   font-size: var(--fs-h4);
-  font-weight: 500;
+  font-weight: 580;
   line-height: 1.35;
   letter-spacing: 0;
 }
@@ -624,7 +673,7 @@ main:focus {
   padding: 6px 16px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--white);
+  background: var(--surface);
   font-size: var(--fs-small);
   font-weight: 500;
   color: var(--ink);
@@ -804,7 +853,7 @@ main:focus {
   margin: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background-color: var(--white);
+  background-color: var(--surface);
   font-size: var(--fs-small);
   counter-increment: step;
 }
@@ -941,14 +990,7 @@ main:focus {
   padding-bottom: 20px;
 }
 
-/* Transitions de page natives (amélioration progressive) ------------------ */
-
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-
-}
+/* Transitions de page : src/styles/transitions.css */
 
 /* Mouvement --------------------------------------------------------------- */
 

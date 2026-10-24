@@ -9,6 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductScreen from '../components/ProductScreen.astro';
 import ProductTour from '../components/ProductTour.astro';
 import KeyFacts from '../components/KeyFacts.astro';
+import ConstellationScene from '../components/ConstellationScene.astro';
 import Pictogram, { type PictogramName } from '../components/Pictogram.astro';
 import CtaBlock from '../components/CtaBlock.astro';
 import Icon from '../components/Icon.astro';
@@ -17,6 +18,8 @@ import { guideHref, guides, readingMinutes } from '../data/guides';
 import { href } from '../i18n/routes';
 
 const demo = `${href('contact')}?sujet=demo`;
+// Titre découpé en mots : chacun se précise à son tour (src/styles/motion.css)
+const titleWords = 'Gouvernez qui accède à quoi. Prouvez chaque décision.'.split(' ');
 
 const roles: { title: string; text: string; picto: PictogramName; tone: 'blue' | 'terra' | 'ochre' | 'sage' }[] = [
   {
@@ -72,10 +75,13 @@ const services = [
   description="LUXIA Identity : identités, cycle de vie, revues d’accès, séparation des tâches et journal d’audit en ajout seul. Connexion par Microsoft Entra ID ou par clé d’accès. Bêta privée en préparation."
 >
   <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap">
-      <div class="hero__text">
+    <div class="hero__stage">
+      <ConstellationScene variant="identity" />
+      <div class="wrap hero__text">
         <p class="hero__badge"><span class="hero__badge-dot" aria-hidden="true"></span> LUXIA Identity · bêta privée en préparation, sur invitation</p>
-        <h1 class="t-h1 hero__title" id="hero-title">Gouvernez qui accède à quoi. Prouvez chaque décision.</h1>
+        <h1 class="t-display hero__title" id="hero-title">
+          {titleWords.map((w, i) => <>{i > 0 && ' '}<span class="hero__word">{w}</span></>)}
+        </h1>
         <p class="t-lead hero__lead">
           LUXIA Identity réunit les personnes, les comptes et les droits de votre organisation dans un seul registre : arrivées et
           départs, revues d’accès, séparation des tâches et journal d’audit que personne ne peut réécrire.
@@ -88,6 +94,8 @@ const services = [
           <a class="btn btn--secondary" href="#visite">Visiter le produit</a>
         </div>
       </div>
+    </div>
+    <div class="wrap">
       <ProductScreen
         screen="overview"
         hero
@@ -266,19 +274,27 @@ const services = [
 
 <style>
   .hero {
-    padding-block: clamp(40px, 6vw, 88px) clamp(48px, 6vw, 88px);
-    background:
-      radial-gradient(60rem 28rem at 85% -10%, var(--tint-blue), transparent 70%),
-      var(--paper);
+    position: relative;
+    margin-top: calc(var(--header-h) * -1);
+    padding-bottom: clamp(48px, 6vw, 88px);
+  }
+
+  /* Scène : la constellation occupe toute la tête de page, sous l'en-tête */
+  .hero__stage {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: clamp(600px, 92svh, 880px);
+    padding-top: calc(var(--header-h) + 48px);
+    padding-bottom: clamp(40px, 6vw, 72px);
   }
 
   .hero__text {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
-    max-width: 62rem;
-    margin-bottom: clamp(36px, 5vw, 64px);
   }
 
   .hero__badge {
@@ -288,7 +304,7 @@ const services = [
     padding: 6px 14px 6px 10px;
     border: 1px solid var(--line);
     border-radius: 999px;
-    background: var(--white);
+    background: var(--surface);
     font-size: var(--fs-meta);
     font-weight: 500;
     color: var(--ink-2);
@@ -303,9 +319,11 @@ const services = [
   }
 
   .hero__title {
-    max-width: 24ch;
-    font-size: clamp(2.375rem, 1.5rem + 3.2vw, 4rem);
-    letter-spacing: -0.02em;
+    max-width: 15ch;
+  }
+
+  .hero__word {
+    display: inline-block;
   }
 
   .hero__lead {
@@ -352,7 +370,7 @@ const services = [
     flex-direction: column;
     gap: 10px;
     padding: 24px 24px 52px;
-    background: var(--white);
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     transition:
@@ -482,7 +500,7 @@ const services = [
     flex-direction: column;
     gap: 10px;
     padding: 24px;
-    background: var(--white);
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
   }
@@ -490,7 +508,7 @@ const services = [
   .guide__meta {
     font-size: var(--fs-meta);
     font-weight: 500;
-    color: var(--terra-text);
+    color: var(--electric);
   }
 
   .guide__title {

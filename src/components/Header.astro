@@ -1,12 +1,13 @@
 ---
 /**
- * En-tête fixe, fond blanc cassé. Navigation plate (aucun menu au survol :
- * rien n'apparaît sans action explicite, critère 1.4.13). Sur mobile, un
- * bouton ouvre la navigation ; Échap la ferme et rend le focus au bouton.
+ * En-tête flottant : une barre en pastille, translucide, au-dessus du contenu.
+ * Navigation plate sur grand écran (aucun menu au survol, critère 1.4.13).
+ * Le bouton « Explorer » ouvre le navigateur d'univers, un menu plein écran
+ * modal ; sur petit écran, c'est lui qui porte toute la navigation.
  */
 import Logo from './Logo.astro';
-import Icon from './Icon.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import UniverseNavigator from './UniverseNavigator.astro';
 import { localeFromPath } from '../i18n/config';
 import { href } from '../i18n/routes';
 import { ui } from '../i18n/ui';
@@ -20,80 +21,83 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
 ---
 
 <header class="hdr" data-header>
-  <div class="wrap hdr__bar">
-    <a class="hdr__brand" href={home}>
-      <Logo />
-      <span class="visually-hidden">{t.homeSuffix}</span>
-    </a>
+  <div class="wrap">
+    <div class="hdr__bar">
+      <a class="hdr__brand" href={home}>
+        <Logo />
+        <span class="visually-hidden">{t.homeSuffix}</span>
+      </a>
 
-    <nav class="hdr__nav" aria-label={t.nav}>
-      <ul class="hdr__menu">
-        {
-          items.map((item) => (
-            <li>
-              <a class="hdr__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+      <nav class="hdr__nav" aria-label={t.nav}>
+        <ul class="hdr__menu">
+          {
+            items.map((item) => (
+              <li>
+                <a class="hdr__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-    <div class="hdr__end">
-      <LanguageSwitcher />
-      <a class="btn btn--primary btn--sm hdr__cta" href={`${href('contact', locale)}?sujet=demo`}>{t.cta}</a>
-      <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="menu-mobile" data-menu-trigger>
-        <span class="visually-hidden" data-menu-label data-open-label={t.menuOpen} data-close-label={t.menuClose}>
-          {t.menuOpen}
-        </span>
-        <span class="hdr__icon hdr__icon--open"><Icon name="menu" size={24} /></span>
-        <span class="hdr__icon hdr__icon--close"><Icon name="x" size={24} /></span>
-      </button>
+      <div class="hdr__end">
+        <LanguageSwitcher />
+        <a class="btn btn--primary btn--sm hdr__cta" href={`${href('contact', locale)}?sujet=demo`}>{t.cta}</a>
+        <button
+          class="hdr__explore"
+          type="button"
+          commandfor="univers"
+          command="show-modal"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="univers"
+          data-universe-open
+        >
+          <span class="hdr__explore-label">Explorer</span>
+          <span class="visually-hidden">l’écosystème et toutes les pages</span>
+          <span class="hdr__explore-icon" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </button>
+      </div>
     </div>
   </div>
-
-  <div class="mnav" id="menu-mobile" data-menu>
-    <nav class="wrap mnav__inner" aria-label={t.nav}>
-      <ul>
-        {
-          items.map((item) => (
-            <li>
-              <a class="mnav__link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-                {item.label}
-                <Icon name="arrow-right" size={18} />
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <a class="btn btn--primary mnav__cta" href={`${href('contact', locale)}?sujet=demo`}>{t.cta}</a>
-    </nav>
-  </div>
+  <UniverseNavigator />
 </header>
 
 <style>
   .hdr {
     position: sticky;
     top: 0;
+    z-index: 100;
+    isolation: isolate;
+    padding-top: 12px;
     /* L'en-tête reste en place pendant les transitions de page */
     view-transition-name: site-header;
-    z-index: 100;
-    background-color: var(--paper);
-    border-bottom: 1px solid var(--line);
   }
 
   .hdr__bar {
     display: flex;
     align-items: center;
-    gap: 24px;
-    height: var(--header-h);
+    gap: 16px;
+    height: calc(var(--header-h) - 12px);
+    padding: 0 8px 0 18px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 999px;
+    background: rgb(13 18 30 / 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 12px 40px -18px rgb(0 0 0 / 0.8);
   }
 
   .hdr__brand {
     flex: none;
     display: inline-flex;
     margin-right: auto;
+    border-radius: 8px;
   }
 
   .hdr__nav {
@@ -103,129 +107,136 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
   .hdr__menu {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
   }
 
   .hdr__link {
     position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    padding: 0 12px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
     font-size: 0.9375rem;
     font-weight: 500;
     color: var(--ink-2);
-    transition: color var(--dur) var(--ease);
+    transition:
+      color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
   }
 
   .hdr__link:hover {
     color: var(--ink);
-    text-decoration: underline;
-    text-underline-offset: 6px;
+    background-color: rgb(255 255 255 / 0.06);
   }
 
   .hdr__link[aria-current='page'] {
     color: var(--ink);
-  }
-
-  .hdr__link[aria-current='page']::after {
-    content: '';
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: 4px;
-    height: 2px;
-    background-color: var(--blue);
+    background-color: rgb(91 155 255 / 0.12);
   }
 
   .hdr__end {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
   }
 
   .hdr__cta {
     display: none;
+    white-space: nowrap;
   }
 
-  .hdr__burger {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    margin-right: -10px;
-    color: var(--ink);
-  }
-
-  .hdr__icon--close,
-  .hdr__burger[aria-expanded='true'] .hdr__icon--open {
-    display: none;
-  }
-
-  .hdr__burger[aria-expanded='true'] .hdr__icon--close {
-    display: block;
-  }
-
-  /* Navigation mobile */
-  .mnav {
-    position: fixed;
-    inset: var(--header-h) 0 0 0;
-    background-color: var(--paper);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    visibility: hidden;
-    opacity: 0;
-    transition:
-      opacity 160ms var(--ease),
-      visibility 0s linear 160ms;
-  }
-
-  .mnav:global([data-open]) {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 160ms var(--ease);
-  }
-
-  .mnav__inner {
-    padding-block: 8px 40px;
-  }
-
-  .mnav__link {
-    display: flex;
+  .hdr__explore {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 56px;
-    border-bottom: 1px solid var(--line);
-    font-size: 1.25rem;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 8px 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 500;
     color: var(--ink);
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
   }
 
-  .mnav__link[aria-current='page'] {
-    color: var(--link);
+  .hdr__explore:hover,
+  .hdr__explore[aria-expanded='true'] {
+    border-color: var(--electric);
+    background-color: rgb(91 155 255 / 0.1);
   }
 
-  .mnav__cta {
-    width: 100%;
-    margin-top: 28px;
+  /* Quatre points : la constellation, en miniature */
+  .hdr__explore-icon {
+    display: grid;
+    grid-template-columns: repeat(2, 5px);
+    gap: 4px;
+    place-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgb(91 155 255 / 0.14);
   }
 
-  @media (min-width: 1120px) {
-    .hdr__nav {
-      display: block;
+  .hdr__explore-icon span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--electric);
+    transition: transform 320ms var(--ease);
+  }
+
+  .hdr__explore:hover .hdr__explore-icon span:nth-child(1) {
+    transform: translate(-1px, -1px);
+  }
+
+  .hdr__explore:hover .hdr__explore-icon span:nth-child(2) {
+    transform: translate(1px, -1px);
+  }
+
+  .hdr__explore:hover .hdr__explore-icon span:nth-child(3) {
+    transform: translate(-1px, 1px);
+  }
+
+  .hdr__explore:hover .hdr__explore-icon span:nth-child(4) {
+    transform: translate(1px, 1px);
+  }
+
+  @media (max-width: 479.98px) {
+    .hdr__bar {
+      padding-left: 14px;
     }
 
+    .hdr__explore-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .hdr__explore {
+      padding: 0 8px;
+    }
+  }
+
+  @media (min-width: 720px) {
     .hdr__cta {
       display: inline-flex;
     }
+  }
 
-    .hdr__burger,
-    .mnav {
-      display: none;
+  @media (min-width: 1240px) {
+    .hdr__nav {
+      display: block;
     }
   }
 </style>
 
 <script>
-  import { initHeader } from '../scripts/header';
-  initHeader();
+  import { initUniverse } from '../scripts/universe';
+  initUniverse();
 </script>

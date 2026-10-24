@@ -69,6 +69,13 @@
   }
 }
 
+@keyframes word-focus {
+  from {
+    filter: blur(12px);
+    transform: translateY(0.18em);
+  }
+}
+
 @keyframes fade {
   from {
     opacity: 0;
@@ -96,19 +103,6 @@
 @keyframes blob-in {
   from {
     transform: scale(0.55) rotate(-12deg);
-  }
-}
-
-@keyframes page-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes page-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
   }
 }
 
@@ -141,6 +135,40 @@
   .hero .pshot,
   .phero .pshot {
     animation: reveal var(--t-slow) var(--ease-out) 200ms both;
+  }
+
+  /* Titre de l'accueil : chaque mot se précise à son tour, sans changer
+     d'opacité (le texte reste lisible et mesuré dès le premier rendu) */
+  .hero__word {
+    animation: word-focus 900ms var(--ease-out) both;
+  }
+
+  .hero__word:nth-child(2) {
+    animation-delay: 60ms;
+  }
+
+  .hero__word:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .hero__word:nth-child(4) {
+    animation-delay: 180ms;
+  }
+
+  .hero__word:nth-child(5) {
+    animation-delay: 240ms;
+  }
+
+  .hero__word:nth-child(6) {
+    animation-delay: 360ms;
+  }
+
+  .hero__word:nth-child(7) {
+    animation-delay: 420ms;
+  }
+
+  .hero__word:nth-child(8) {
+    animation-delay: 480ms;
   }
 
   /* Étape d'une plateforme : la jauge se remplit, segment par segment */
@@ -268,14 +296,15 @@
     transition: transform 560ms var(--ease-out);
   }
 
-  /* Ombre de l'en-tête : apparaît dès que l'on quitte le haut de la page */
+  /* Voile de l'en-tête : apparaît dès que l'on quitte le haut de la page,
+     pour que la barre flottante reste lisible au-dessus du contenu */
   @supports (animation-timeline: scroll()) {
     .hdr::after {
       content: '';
       position: absolute;
-      inset: auto 0 -12px 0;
-      height: 12px;
-      background-image: linear-gradient(rgb(17 20 24 / 0.07), rgb(17 20 24 / 0));
+      inset: 0 0 -28px 0;
+      z-index: -1;
+      background-image: linear-gradient(rgb(7 9 13 / 0.92), rgb(7 9 13 / 0));
       pointer-events: none;
       /* Propriétés séparées : la minification ne doit pas les fusionner dans
          le raccourci « animation », qui n'accepte pas animation-timeline. */
@@ -356,16 +385,6 @@
       animation-timeline: view();
       animation-range: entry 20% cover 35%;
     }
-  }
-
-  /* Transitions de page : l'ancienne s'efface, la nouvelle monte.
-     L'en-tête reste en place (view-transition-name: site-header). */
-  ::view-transition-old(root) {
-    animation: page-out 200ms var(--ease-out) both;
-  }
-
-  ::view-transition-new(root) {
-    animation: page-in 420ms var(--ease-out) 60ms both;
   }
 }
 

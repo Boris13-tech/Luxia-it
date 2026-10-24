@@ -222,4 +222,77 @@ describe('site construit, dans Chrome', { skip }, () => {
     assert.deepEqual(r, { formHidden: true, fallback: true });
     assert.deepEqual(errors, []);
   });
+
+  test('navigateur d’univers : ouverture au clavier, focus retenu, Échap, retour du focus', async () => {
+    await browser.goto(`${ready.origin}/solutions/`);
+    await browser.evaluate("document.querySelector('[data-universe-open]').focus()");
+    await browser.press('Enter', 'Enter', 13);
+    await browser.sleep(450);
+    const opened = await browser.evaluate(`({
+      open: document.querySelector('[data-universe]').open,
+      expanded: document.querySelector('[data-universe-open]').getAttribute('aria-expanded'),
+      inside: document.querySelector('[data-universe]').contains(document.activeElement),
+      links: document.querySelectorAll('.univ__link').length,
+      nodes: document.querySelectorAll('.univ__node a').length,
+      levels: document.querySelectorAll('.univ__preview .lvl').length,
+      current: document.querySelector('.univ__link[aria-current=page] .univ__label')?.textContent,
+      scrollLocked: getComputedStyle(document.documentElement).overflow })`);
+    assert.deepEqual(opened, { open: true, expanded: 'true', inside: true, links: 9, nodes: 8, levels: 8, current: 'Solutions', scrollLocked: 'hidden' });
+    // Survol d'un domaine : son aperçu et son niveau s'affichent
+    const preview = await browser.evaluate(`(() => {
+      document.querySelector('.univ__node a[data-domain=alma]').dispatchEvent(new PointerEvent('pointerenter'));
+      const shown = [...document.querySelectorAll('[data-preview]')].filter((p) => !p.hidden);
+      return shown.map((p) => [p.dataset.preview, p.querySelector('.lvl').textContent.includes('Implémenté')]);
+    })()`);
+    assert.deepEqual(preview, [['alma', true]]);
+    await browser.press('Escape', 'Escape', 27);
+    await browser.sleep(450);
+    const closed = await browser.evaluate(`({
+      open: document.querySelector('[data-universe]').open,
+      expanded: document.querySelector('[data-universe-open]').getAttribute('aria-expanded'),
+      focus: document.activeElement.hasAttribute('data-universe-open') })`);
+    assert.deepEqual(closed, { open: false, expanded: 'false', focus: true });
+  });
+
+  test('constellation : image fixe en mouvement réduit ; scène WebGL ou repli sinon', async () => {
+    const state = () =>
+      browser.evaluate(`({
+        tier: document.querySelector('[data-scene]').dataset.tier,
+        ready: document.querySelector('.scene__canvas').classList.contains('is-ready'),
+        poster: document.querySelector('.scene__poster circle') !== null })`);
+    await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await browser.goto(`${ready.origin}/`);
+    await browser.sleep(2500);
+    assert.deepEqual(await state(), { tier: 'essential', ready: false, poster: true });
+    await browser.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] });
+    await browser.goto(`${ready.origin}/?rendu=haut`);
+    const webgl = await browser.evaluate("!!document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true })");
+    // Le décor démarre au repos, après le chargement : on lui laisse jusqu'à 5 s
+    let s = await state();
+    for (let i = 0; i < 20 && (webgl ? !s.ready : s.tier !== 'essential'); i += 1) {
+      await browser.sleep(250);
+      s = await state();
+    }
+    // Avec WebGL 2 accéléré : la scène s'affiche ; sinon (rendu logiciel, pas de WebGL) : l'image fixe reste, sans erreur
+    assert.deepEqual(s, webgl ? { tier: 'high', ready: true, poster: true } : { tier: 'essential', ready: false, poster: true });
+  });
+
+  test('transitions de page : le sens suit la navigation (profondeur, puis retour)', async () => {
+    const { identifier } = await browser.send('Page.addScriptToEvaluateOnNewDocument', {
+      source: "addEventListener('pagereveal', (e) => setTimeout(() => { window.__vt = e.viewTransition ? [...e.viewTransition.types] : null; }, 0));",
+    });
+    try {
+      await browser.goto(`${ready.origin}/`);
+      await browser.evaluate("location.href = '/plateformes/luxia-identity/'");
+      await browser.sleep(1500);
+      const deeper = await browser.evaluate('({ path: location.pathname, vt: window.__vt })');
+      assert.deepEqual(deeper, { path: '/plateformes/luxia-identity/', vt: ['deeper'] });
+      await browser.evaluate('history.back()');
+      await browser.sleep(1500);
+      const back = await browser.evaluate('({ path: location.pathname, vt: window.__vt })');
+      assert.deepEqual(back, { path: '/', vt: ['back'] });
+    } finally {
+      await browser.send('Page.removeScriptToEvaluateOnNewDocument', { identifier });
+    }
+  });
 });

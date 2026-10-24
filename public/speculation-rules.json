@@ -1,0 +1,16 @@
+{
+  "prerender": [
+    {
+      "where": {
+        "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/api/*" } },
+          { "not": { "href_matches": "/contact/envoye/" } },
+          { "not": { "href_matches": "/contact/erreur/" } },
+          { "not": { "href_matches": "/*.*" } }
+        ]
+      },
+      "eagerness": "moderate"
+    }
+  ]
+}
