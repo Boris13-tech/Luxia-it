@@ -43,7 +43,7 @@ export const facts = {
 
   /**
    * Éditeur du site (mentions légales), d'après les documents officiels
-   * d'immatriculation uniquement. Aucune hypothèse sur le pays : chaque
+   * d'immatriculation uniquement. Aucun pays n'est présumé : chaque
    * champ reste null tant qu'il n'est pas fourni.
    */
   publisher: {

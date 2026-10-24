@@ -5,6 +5,8 @@
  * Les données structurées ne reprennent que des faits du registre.
  */
 import '@fontsource-variable/roboto';
+// Police principale préchargée : elle arrive avec la feuille de style (pas de décalage au remplacement).
+import robotoLatin from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -115,6 +117,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
         alternates.map((a) => <link rel="alternate" hreflang={localeMeta[a.locale].lang} href={new URL(a.path, site).href} />)
     }
     {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, site).href} />}
+    <link rel="preload" href={robotoLatin} as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#f6f6f3" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

@@ -23,7 +23,7 @@ const items = platforms.map((p) => ({ id: `plateforme-${p.slug}`, label: p.name 
   <Tabs label="Choisir une plateforme" items={items}>
     {
       platforms.map((p) => (
-        <article class="tabs__panel explorer__panel" id={`plateforme-${p.slug}`}>
+        <div class="tabs__panel explorer__panel" id={`plateforme-${p.slug}`}>
           <h3 class="tabs__panel-title explorer__name">{p.name}</h3>
           <p class="kicker">{p.role}</p>
           <dl class="explorer__facts">
@@ -53,7 +53,7 @@ const items = platforms.map((p) => ({ id: `plateforme-${p.slug}`, label: p.name 
             <span class="visually-hidden">de {p.name}</span>
             <Icon name="arrow-right" size={16} />
           </a>
-        </article>
+        </div>
       ))
     }
   </Tabs>
