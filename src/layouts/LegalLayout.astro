@@ -94,12 +94,13 @@ const { email, phone, phoneHref } = facts.contact;
   }
 
   .legal__toc li::before {
-    content: counter(toc, decimal-leading-zero);
+    content: '';
     flex: none;
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    color: var(--ink-3);
-    padding-top: 2px;
+    width: 6px;
+    height: 6px;
+    margin-top: 0.55em;
+    border-radius: 50%;
+    background-color: var(--terra);
   }
 
   .legal__toc a {

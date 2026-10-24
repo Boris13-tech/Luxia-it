@@ -1,0 +1,335 @@
+---
+/**
+ * Illustration d'ouverture : ce que fait LUXIA Identity, en image.
+ * Des personnes aux profils différents passent par le registre, qui décide
+ * de leurs droits, alimente les revues d'accès et garde la trace. Les points
+ * qui circulent représentent des demandes de connexion ; ils s'arrêtent après
+ * deux passages (aucun mouvement sans fin) et disparaissent sous mouvement
+ * réduit. Pas d'authentification unique vers des applications tierces : ce
+ * n'est pas une capacité de la plateforme, l'illustration ne la montre pas.
+ */
+const people = [
+  { y: 70, label: 'Équipes', tone: 'terra' },
+  { y: 170, label: 'Partenaires', tone: 'ochre' },
+  { y: 270, label: 'Prestataires', tone: 'sage' },
+  { y: 370, label: 'Administrateurs', tone: 'blue' },
+] as const;
+
+const outcomes = [
+  { y: 110, label: 'Droits explicites', icon: 'door' },
+  { y: 220, label: 'Revues d’accès', icon: 'review' },
+  { y: 330, label: 'Journal en ajout seul', icon: 'journal' },
+] as const;
+
+const inPath = (y: number) => `M104 ${y} C160 ${y} 170 220 212 220`;
+const outPath = (y: number) => `M368 220 C410 220 410 ${y} 452 ${y}`;
+---
+
+<figure class="flow-art">
+  <svg viewBox="0 0 580 440" role="img" aria-labelledby="flow-art-title flow-art-desc" focusable="false">
+    <title id="flow-art-title">Le parcours d’une identité dans LUXIA Identity</title>
+    <desc id="flow-art-desc">
+      Équipes, partenaires, prestataires et administrateurs passent par le registre LUXIA Identity, qui attribue des
+      droits explicites, alimente les revues d’accès et inscrit chaque décision au journal.
+    </desc>
+
+    <g class="flow-art__paths" fill="none">
+      {people.map((p) => <path class={`flow-art__path flow-art__path--${p.tone}`} d={inPath(p.y)} pathLength="1" />)}
+      {outcomes.map((o) => <path class="flow-art__path flow-art__path--out" d={outPath(o.y)} pathLength="1" />)}
+    </g>
+
+    <g class="flow-art__people">
+      {
+        people.map((p, i) => (
+          <g class={`flow-art__person flow-art__person--${p.tone}`} data-i={i}>
+            <circle cx="70" cy={p.y} r="32" />
+            <circle class="flow-art__glyph" cx="70" cy={p.y - 8} r="8.5" />
+            <path class="flow-art__glyph" d={`M52 ${p.y + 19} C55 ${p.y + 8} 62 ${p.y + 4} 70 ${p.y + 4} S85 ${p.y + 8} 88 ${p.y + 19}`} />
+            <text x="70" y={p.y + 50} text-anchor="middle">{p.label}</text>
+          </g>
+        ))
+      }
+    </g>
+
+    <g class="flow-art__registry">
+      <rect x="212" y="142" width="156" height="156" rx="26" />
+      <g transform="translate(250 166) scale(2.05)">
+        <polygon class="flow-art__mark-light" points="23.6,8.4 32.2,8.4 44,34.6 34.6,34.6" />
+        <polygon class="flow-art__mark-dark" points="22,2 32.2,2 18.2,34.6 8,34.6" />
+      </g>
+      <text x="290" y="268" text-anchor="middle" class="flow-art__registry-label">Registre</text>
+      <text x="290" y="286" text-anchor="middle" class="flow-art__registry-sub">LUXIA Identity</text>
+    </g>
+
+    <g class="flow-art__outcomes">
+      {
+        outcomes.map((o) => (
+          <g class="flow-art__outcome">
+            <rect x="452" y={o.y - 30} width="96" height="60" rx="14" />
+            {o.icon === 'door' && (
+              <path class="flow-art__ink" d={`M486 ${o.y - 16} h28 v32 h-28z M507 ${o.y + 1} h.1`} />
+            )}
+            {o.icon === 'review' && (
+              <path class="flow-art__ink" d={`M484 ${o.y - 15} h32 v30 h-32z M491 ${o.y - 2} l5 5 10 -11`} />
+            )}
+            {o.icon === 'journal' && (
+              <path class="flow-art__ink" d={`M486 ${o.y - 16} h28 v32 h-28z M492 ${o.y - 7} h16 M492 ${o.y} h16 M492 ${o.y + 7} h10`} />
+            )}
+            <g class="flow-art__check">
+              <circle cx="546" cy={o.y - 28} r="11" />
+              <path d={`M541 ${o.y - 28} l3.5 3.5 6.5 -7`} />
+            </g>
+            <text x="500" y={o.y + 48} text-anchor="middle">{o.label}</text>
+          </g>
+        ))
+      }
+    </g>
+
+    <!-- Demandes de connexion : deux passages, puis arrêt -->
+    <g class="flow-art__dots">
+      {
+        people.map((p, i) => (
+          <circle class={`flow-art__dot flow-art__dot--${p.tone}`} r="5.5" opacity="0">
+            <animateMotion dur="1.6s" begin={`${2.8 + i * 0.45}s`} repeatCount="2" path={inPath(p.y)} fill="remove" />
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.6s" begin={`${2.8 + i * 0.45}s`} repeatCount="2" />
+          </circle>
+        ))
+      }
+      {
+        outcomes.map((o, i) => (
+          <circle class="flow-art__dot flow-art__dot--blue" r="5.5" opacity="0">
+            <animateMotion dur="1.4s" begin={`${4.1 + i * 0.4}s`} repeatCount="2" path={outPath(o.y)} fill="remove" />
+            <animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin={`${4.1 + i * 0.4}s`} repeatCount="2" />
+          </circle>
+        ))
+      }
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .flow-art {
+    margin: 0;
+  }
+
+  .flow-art svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .flow-art text {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    fill: var(--ink-2);
+  }
+
+  .flow-art__path {
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .flow-art__path--terra {
+    stroke: var(--terra);
+  }
+
+  .flow-art__path--ochre {
+    stroke: var(--ochre);
+  }
+
+  .flow-art__path--sage {
+    stroke: var(--sage);
+  }
+
+  .flow-art__path--blue,
+  .flow-art__path--out {
+    stroke: var(--blue-light);
+  }
+
+  .flow-art__person circle:first-child {
+    fill: var(--person);
+  }
+
+  .flow-art__person--terra {
+    --person: var(--terra);
+  }
+
+  .flow-art__person--ochre {
+    --person: var(--ochre);
+  }
+
+  .flow-art__person--sage {
+    --person: var(--sage);
+  }
+
+  .flow-art__person--blue {
+    --person: var(--blue);
+  }
+
+  .flow-art__glyph {
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .flow-art__registry rect {
+    fill: var(--white);
+    stroke: var(--blue);
+    stroke-width: 2;
+  }
+
+  .flow-art__mark-dark {
+    fill: var(--blue);
+  }
+
+  .flow-art__mark-light {
+    fill: var(--blue-light);
+  }
+
+  .flow-art .flow-art__registry-label {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 560;
+    fill: var(--ink);
+  }
+
+  .flow-art .flow-art__registry-sub {
+    font-size: 12px;
+    fill: var(--ink-3);
+  }
+
+  .flow-art__outcome rect {
+    fill: var(--white);
+    stroke: var(--line);
+    stroke-width: 1.5;
+  }
+
+  .flow-art__ink {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .flow-art__check circle {
+    fill: var(--sage);
+  }
+
+  .flow-art__check path {
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .flow-art__dot--terra {
+    fill: var(--terra);
+  }
+
+  .flow-art__dot--ochre {
+    fill: var(--ochre);
+  }
+
+  .flow-art__dot--sage {
+    fill: var(--sage);
+  }
+
+  .flow-art__dot--blue {
+    fill: var(--blue);
+  }
+
+  /* Petit écran : libellés agrandis pour rester lisibles une fois le dessin réduit */
+  @media (max-width: 639.98px) {
+    .flow-art text {
+      font-size: 18px;
+    }
+
+    .flow-art .flow-art__registry-label {
+      font-size: 21px;
+    }
+
+    .flow-art .flow-art__registry-sub {
+      font-size: 15px;
+    }
+  }
+
+  /* Mouvement réduit : pas de points en circulation */
+  @media (prefers-reduced-motion: reduce) {
+    .flow-art__dots {
+      display: none;
+    }
+  }
+
+  /* Entrée orchestrée : personnes, liaisons, registre, résultats, validations */
+  @media (prefers-reduced-motion: no-preference) {
+    .flow-art__person {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: flow-pop 620ms var(--ease) both;
+    }
+
+    .flow-art__person[data-i='1'] {
+      animation-delay: 90ms;
+    }
+
+    .flow-art__person[data-i='2'] {
+      animation-delay: 180ms;
+    }
+
+    .flow-art__person[data-i='3'] {
+      animation-delay: 270ms;
+    }
+
+    .flow-art__path {
+      stroke-dasharray: 1;
+      animation: flow-draw 900ms var(--ease) 380ms both;
+    }
+
+    .flow-art__path--out {
+      animation-delay: 1250ms;
+    }
+
+    .flow-art__registry {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: flow-pop 700ms var(--ease) 700ms both;
+    }
+
+    .flow-art__outcome {
+      animation: flow-slide 600ms var(--ease) 1500ms both;
+    }
+
+    .flow-art__check {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: flow-pop 460ms var(--ease) 2300ms both;
+    }
+  }
+
+  @keyframes flow-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+
+  @keyframes flow-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes flow-slide {
+    from {
+      opacity: 0;
+      transform: translateX(-14px);
+    }
+  }
+</style>

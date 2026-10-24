@@ -4,34 +4,44 @@ import SectionHead from '../components/SectionHead.astro';
 import ClaimList from '../components/ClaimList.astro';
 import Method from '../components/Method.astro';
 import PlatformExplorer from '../components/PlatformExplorer.astro';
+import IdentityFlow from '../components/IdentityFlow.astro';
+import Pictogram, { type PictogramName } from '../components/Pictogram.astro';
 import CtaBlock from '../components/CtaBlock.astro';
 import Icon from '../components/Icon.astro';
 import { facts } from '../data/facts';
 import { href } from '../i18n/routes';
 
-const audiences = [
+const audiences: { title: string; text: string; picto: PictogramName; tone: 'blue' | 'terra' | 'ochre' | 'sage' }[] = [
   {
-    title: 'Directions des systèmes d’information',
-    text: 'Un registre unique des identités et des accès, qui ne dépend pas des fournisseurs que vous utilisez aujourd’hui.',
+    title: 'Vous dirigez un système d’information',
+    text: 'Vous voulez un registre unique des identités et des accès, qui ne dépende pas des fournisseurs que vous utilisez aujourd’hui.',
+    picto: 'screen',
+    tone: 'blue',
   },
   {
-    title: 'Responsables de la sécurité',
-    text: 'Des droits explicites, des revues d’accès, une séparation des tâches et un journal que l’application ne peut pas réécrire.',
+    title: 'Vous répondez de la sécurité',
+    text: 'Vous voulez des droits explicites, des revues d’accès, une séparation des tâches et un journal que personne ne peut réécrire après coup.',
+    picto: 'shield',
+    tone: 'terra',
   },
   {
-    title: 'Architectes',
-    text: 'Des décisions d’architecture écrites et des modèles de déploiement décrits sans raccourci, avec ce qui est en service et ce qui ne l’est pas.',
+    title: 'Vous concevez l’architecture',
+    text: 'Vous voulez des décisions écrites et des modèles de déploiement décrits sans raccourci, avec ce qui est en service et ce qui ne l’est pas.',
+    picto: 'compass',
+    tone: 'ochre',
   },
   {
-    title: 'Achats et conformité',
-    text: 'Ce qui est démontré, ce qui ne l’est pas encore et où sont les données : dit dès le premier échange.',
+    title: 'Vous achetez ou vous auditez',
+    text: 'Vous voulez savoir ce qui est démontré, ce qui ne l’est pas encore et où sont les données. Nous le disons dès le premier échange.',
+    picto: 'clipboard',
+    tone: 'sage',
   },
 ];
 
 const answers = [
   {
     title: 'L’identité reste dans votre registre',
-    text: 'Les fournisseurs d’identité se branchent sur la plateforme. Ils prouvent une identité ; ils ne la possèdent pas.',
+    text: 'Les fournisseurs d’identité se branchent sur la plateforme. Ils prouvent qui est une personne ; ils ne possèdent ni son compte, ni ses droits.',
     level: 'production' as const,
   },
   {
@@ -47,17 +57,17 @@ const answers = [
 ];
 
 const method = [
-  { title: 'Écrire avant de coder', text: 'Une décision d’architecture, un périmètre et des critères de réussite, écrits et relus.' },
+  { title: 'Écrire avant de coder', text: 'Une décision, un périmètre et des critères de réussite, écrits et relus avant la première ligne.' },
   { title: 'Tester ce qui protège', text: 'Des tests automatisés à chaque changement, y compris sur les règles d’isolation de la base de données.' },
-  { title: 'Répéter avant d’appliquer', text: 'Chaque migration est répétée sur une copie, avec un retour arrière écrit.' },
-  { title: 'Vérifier en production', text: 'Une vérification en lecture seule, consignée, avant de dire qu’une capacité fonctionne.' },
-  { title: 'Restaurer pour prouver', text: 'Une sauvegarde ne compte que si sa restauration a été démontrée.' },
+  { title: 'Répéter avant d’appliquer', text: 'Chaque migration est d’abord répétée sur une copie, avec un retour arrière écrit.' },
+  { title: 'Vérifier pour de vrai', text: 'Une vérification en production, consignée, avant de dire qu’une capacité fonctionne.' },
+  { title: 'Restaurer pour prouver', text: 'Une sauvegarde ne compte que si l’on a déjà su la restaurer.' },
 ];
 
-const services = [
-  { title: 'Cadrage et architecture', text: 'Inventaire des identités et des accès, risques, architecture cible et plan de déploiement.', anchor: '#cadrage' },
-  { title: 'Intégration et migration', text: 'Connexion des fournisseurs, recette, migration par lots avec retour arrière.', anchor: '#integration' },
-  { title: 'Exploitation et sécurité opérationnelle', text: 'Procédures, sauvegardes vérifiées, revue des accès à privilèges.', anchor: '#exploitation' },
+const services: { title: string; text: string; anchor: string; picto: PictogramName; tone: 'blue' | 'terra' | 'ochre' | 'sage' }[] = [
+  { title: 'Cadrage et architecture', text: 'Nous faisons ensemble l’inventaire des identités et des accès, des risques, puis l’architecture cible.', anchor: '#cadrage', picto: 'compass', tone: 'blue' },
+  { title: 'Intégration et migration', text: 'Nous connectons vos fournisseurs, menons la recette avec vous et migrons par lots, toujours avec retour arrière.', anchor: '#integration', picto: 'loop', tone: 'ochre' },
+  { title: 'Exploitation et sécurité', text: 'Nous tenons dans la durée : procédures, sauvegardes vérifiées, revue des accès à privilèges.', anchor: '#exploitation', picto: 'shield', tone: 'sage' },
 ];
 ---
 
@@ -69,34 +79,45 @@ const services = [
     <div class="wrap hero__grid">
       <div class="hero__text">
         <p class="kicker">{facts.brand.signature}</p>
-        <h1 class="t-display hero__title" id="hero-title">Plateformes d’identité et de confiance pour les opérations critiques.</h1>
+        <h1 class="t-display hero__title" id="hero-title">Savoir qui accède à quoi, et pouvoir le prouver.</h1>
         <p class="t-lead">
-          Luxia-IT conçoit des logiciels qui établissent qui accède à quoi, et qui en conservent la preuve. Sur ce site,
-          chaque capacité indique son niveau de preuve.
+          Luxia-IT conçoit des plateformes d’identité et de confiance pour les organisations dont les opérations sont
+          critiques. Nous disons franchement où en est chaque capacité.
         </p>
         <div class="actions">
           <a class="btn btn--primary" href={`${href('contact')}?sujet=cadrage`}>
-            Organiser un échange de cadrage
+            Parlons de votre projet
             <Icon name="arrow-right" size={18} />
           </a>
           <a class="more" href={href('platforms')}>
-            Voir les plateformes
+            Découvrir les plateformes
             <Icon name="arrow-right" size={16} />
           </a>
         </div>
       </div>
 
+      <IdentityFlow />
+    </div>
+  </section>
+
+  <section class="section section--blue" aria-labelledby="etat-title">
+    <div class="wrap explorer-wrap">
+      <div class="explorer-intro">
+        <h2 class="t-h2" id="etat-title">Où en sont nos plateformes, aujourd’hui</h2>
+        <p class="t-lead">Choisissez une plateforme : vous voyez le problème qu’elle traite, son étape réelle et la façon dont elle est déployée.</p>
+      </div>
       <PlatformExplorer />
     </div>
   </section>
 
   <section class="section" aria-labelledby="publics-title">
     <div class="wrap">
-      <SectionHead id="publics-title" index="01" kicker="Publics" title="Pour celles et ceux qui répondent des accès" />
-      <ul class="ruled ruled--4">
+      <SectionHead id="publics-title" kicker="Pour qui" title="Pour celles et ceux qui répondent des accès" />
+      <ul class="ruled ruled--4 people">
         {
           audiences.map((a) => (
             <li>
+              <Pictogram name={a.picto} tone={a.tone} />
               <h3 class="ruled__title">{a.title}</h3>
               <p class="ruled__text">{a.text}</p>
             </li>
@@ -110,23 +131,21 @@ const services = [
     <div class="wrap">
       <SectionHead
         id="probleme-title"
-        index="02"
         kicker="Le problème"
         title="Les accès critiques reposent sur des identités que personne ne maîtrise entièrement"
-        lead="Annuaires, fournisseurs externes, comptes locaux : chaque source applique ses propres règles. Quand un fournisseur fait autorité, en changer remet en cause les comptes, les droits et l’historique. Après un incident, il faut reconstituer qui a fait quoi à partir de journaux que leurs auteurs peuvent modifier."
+        lead="Annuaires, fournisseurs externes, comptes locaux : chaque source applique ses propres règles. Quand un fournisseur fait autorité, en changer remet en cause les comptes, les droits et l’historique. Et après un incident, il faut reconstituer qui a fait quoi à partir de journaux que leurs auteurs peuvent modifier."
       />
       <ClaimList claims={answers} columns={3} />
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="methode-title">
+  <section class="section section--sage" aria-labelledby="methode-title">
     <div class="wrap">
       <SectionHead
         id="methode-title"
-        index="03"
-        kicker="Méthode"
-        title="La méthode que nous appliquons à nos propres plateformes"
-        lead="Un changement fusionné ne vaut pas preuve. Une capacité n’est annoncée qu’une fois démontrée là où elle doit fonctionner."
+        kicker="Notre façon de travailler"
+        title="La méthode que nous appliquons d’abord à nous-mêmes"
+        lead="Un changement fusionné ne vaut pas preuve. Nous n’annonçons une capacité qu’une fois démontrée là où elle doit fonctionner."
       />
       <Method steps={method} />
     </div>
@@ -136,15 +155,15 @@ const services = [
     <div class="wrap">
       <SectionHead
         id="services-title"
-        index="04"
-        kicker="Services"
-        title="Déployer et exploiter l’identité"
-        lead="L’identité reste le point d’entrée. Le cloud Microsoft Azure et Entra, l’automatisation DevSecOps et l’IA appliquée s’y rattachent : là où vivent les identités, la manière de livrer, et les agents qui agissent."
+        kicker="À vos côtés"
+        title="Déployer et faire vivre l’identité"
+        lead="L’identité reste notre point d’entrée. Le cloud Microsoft Azure et Entra, l’automatisation DevSecOps et l’IA appliquée s’y rattachent : là où vivent les identités, la manière de livrer, et les agents qui agissent."
       />
-      <ul class="ruled ruled--3">
+      <ul class="ruled ruled--3 people">
         {
           services.map((s) => (
             <li>
+              <Pictogram name={s.picto} tone={s.tone} />
               <h3 class="ruled__title">
                 <a class="svc-link" href={`${href('services')}${s.anchor}`}>
                   {s.title}
@@ -159,25 +178,24 @@ const services = [
   </section>
 
   <CtaBlock
-    title="Commençons par un échange de cadrage"
-    text="Un premier échange pour établir votre inventaire d’identités, vos contraintes de déploiement et ce que LUXIA Identity couvre, ou ne couvre pas encore."
+    title="Parlons de votre projet"
+    text="Un premier échange, sans engagement : votre inventaire d’identités, vos contraintes de déploiement, et ce que LUXIA Identity couvre — ou ne couvre pas encore."
     href={`${href('contact')}?sujet=cadrage`}
-    label="Organiser un échange"
+    label="Nous écrire"
     secondary={{ href: href('company'), label: 'Qui est Luxia-IT' }}
   />
 </BaseLayout>
 
 <style>
   .hero {
-    padding-block: clamp(48px, 8vw, 112px) clamp(56px, 8vw, 120px);
-    border-bottom: 1px solid var(--line);
+    padding-block: clamp(40px, 7vw, 104px) clamp(48px, 7vw, 104px);
   }
 
   .hero__grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 48px var(--gap);
-    align-items: start;
+    gap: 40px var(--gap);
+    align-items: center;
   }
 
   .hero__text {
@@ -187,11 +205,35 @@ const services = [
   }
 
   .hero__title {
-    max-width: 17ch;
+    max-width: 14ch;
   }
 
   .hero__text .actions {
     margin-top: 4px;
+  }
+
+  .explorer-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px var(--gap);
+    align-items: start;
+  }
+
+  .explorer-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .people > li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .people :global(.picto) {
+    margin-bottom: 10px;
   }
 
   .svc-link {
@@ -208,7 +250,16 @@ const services = [
 
   @media (min-width: 1024px) {
     .hero__grid {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .explorer-wrap {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    }
+
+    .explorer-intro {
+      position: sticky;
+      top: calc(var(--header-h) + 40px);
     }
   }
 </style>

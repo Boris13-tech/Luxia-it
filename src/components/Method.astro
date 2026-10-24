@@ -9,11 +9,9 @@ const { steps } = Astro.props;
 
 <ol class:list={['method', steps.length > 4 ? 'method--5' : 'method--4']}>
   {
-    steps.map((s, i) => (
+    steps.map((s) => (
       <li class="method__step">
-        <span class="method__n" aria-hidden="true">
-          {String(i + 1).padStart(2, '0')}
-        </span>
+        <span class="method__dot" aria-hidden="true" />
         <h3 class="method__title">{s.title}</h3>
         <p class="method__text">{s.text}</p>
       </li>
@@ -33,14 +31,26 @@ const { steps } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-block: 22px 28px;
-    border-top: 2px solid var(--ink);
+    padding-block: 24px 28px;
+    border-top: 1px solid var(--line);
   }
 
-  .method__n {
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    color: var(--blue);
+  .method__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--blue);
+    box-shadow: 0 0 0 5px var(--blue-tint);
+  }
+
+  .method__step:nth-child(3n + 2) .method__dot {
+    background-color: var(--terra);
+    box-shadow: 0 0 0 5px var(--terra-tint);
+  }
+
+  .method__step:nth-child(3n) .method__dot {
+    background-color: var(--sage);
+    box-shadow: 0 0 0 5px var(--sage-tint);
   }
 
   .method__title {

@@ -134,12 +134,9 @@ const mission = [
       <SectionHead id="services-title" index="02" kicker="Services" title="Six services, des livrables écrits" />
       <ol class="svc">
         {
-          services.map((s, i) => (
+          services.map((s) => (
             <li class="svc__item" id={s.id}>
               <div class="svc__id">
-                <span class="svc__n" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 <h3 class="t-h3">{s.title}</h3>
                 <p class="svc__goal">{s.goal}</p>
               </div>
@@ -220,12 +217,6 @@ const mission = [
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
-
-  .svc__n {
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    color: var(--blue);
   }
 
   .svc__goal {

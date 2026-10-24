@@ -285,7 +285,9 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
   .principle {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
+    border-radius: 0 var(--radius) var(--radius) 0;
     margin-top: clamp(40px, 5vw, 64px);
     padding: clamp(24px, 3vw, 40px);
     background-color: var(--white);

@@ -7,6 +7,7 @@
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
+import { brotliCompressSync, constants } from 'node:zlib';
 import { handleContact } from '../api/contact.ts';
 
 const root = resolve('dist');
@@ -97,8 +98,18 @@ createServer(async (req, res) => {
   }
   const file = await resolveFile(url.pathname);
   const target = file ?? join(root, '404.html');
-  res.writeHead(file ? 200 : 404, { 'Content-Type': types[extname(target)] ?? 'application/octet-stream' });
-  res.end(req.method === 'HEAD' ? undefined : await readFile(target));
+  const type = types[extname(target)] ?? 'application/octet-stream';
+  let body = await readFile(target);
+  const headers = { 'Content-Type': type };
+  // Compression Brotli des textes, comme en production : les mesures locales
+  // (Lighthouse) restent comparables à celles du site déployé.
+  if (/^(text\/|application\/(xml|json)|image\/svg)/.test(type) && /\bbr\b/.test(String(req.headers['accept-encoding'] ?? ''))) {
+    body = brotliCompressSync(body, { params: { [constants.BROTLI_PARAM_QUALITY]: 9 } });
+    headers['Content-Encoding'] = 'br';
+    headers['Vary'] = 'Accept-Encoding';
+  }
+  res.writeHead(file ? 200 : 404, headers);
+  res.end(req.method === 'HEAD' ? undefined : body);
 }).listen(port, () => {
   console.log(`Aperçu sécurisé : ${origin}/ (formulaire en mode ${contactEnv.CONTACT_DELIVERY})`);
 });
