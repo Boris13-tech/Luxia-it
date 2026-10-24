@@ -42,10 +42,9 @@ function enhance(root: HTMLElement): void {
   const mark = (el: Element | null | undefined) => {
     if (!el) return;
     el.removeAttribute('data-entering');
-    // Relance l'animation si le même élément revient.
-    void (el as HTMLElement).offsetWidth;
-    el.setAttribute('data-entering', '');
-    el.addEventListener('animationend', () => el.removeAttribute('data-entering'), { once: true });
+    // Relance l'animation à l'image suivante, sans lecture de dimensions.
+    requestAnimationFrame(() => el.setAttribute('data-entering', ''));
+    el.addEventListener('animationend', (e) => e.target === el && el.removeAttribute('data-entering'));
   };
 
   const render = (index: number, focus: boolean, animate: boolean) => {
@@ -58,7 +57,9 @@ function enhance(root: HTMLElement): void {
       if (panel) panel.hidden = !selected;
     });
     root.dataset['active'] = tabs[index]?.dataset['tab'] ?? String(index);
-    placeIndicator();
+    // Au premier rendu, aucune lecture de dimensions (pas de mise en page
+    // forcée) : le ResizeObserver place l'indicateur une fois la page calculée.
+    if (animate) placeIndicator();
     if (animate) {
       mark(panels[index]);
       if (stepper) mark(tabs[index]);

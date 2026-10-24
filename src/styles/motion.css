@@ -13,7 +13,8 @@
    ========================================================================== */
 
 :root {
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Courbe de sortie douce, celle des grands sites produits (observée par REA) */
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --t-fast: 180ms;
   --t-mid: 360ms;
@@ -80,6 +81,21 @@
   }
   100% {
     box-shadow: 0 0 0 10px rgb(31 95 191 / 0);
+  }
+}
+
+@keyframes picto-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blob-in {
+  from {
+    transform: scale(0.55) rotate(-12deg);
   }
 }
 
@@ -307,6 +323,28 @@
     .ruled--4 > li:nth-child(4n),
     .method__step:nth-child(3n) {
       animation-range: entry 12% entry 67%;
+    }
+
+    /* Pictogrammes : le trait se dessine, le fond s'arrondit, à l'entrée */
+    .picto {
+      view-timeline-name: --picto;
+    }
+
+    .picto__ink path {
+      stroke-dasharray: 1;
+      animation-name: picto-draw;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --picto;
+      animation-range: entry 10% cover 45%;
+    }
+
+    .picto__blob {
+      animation-name: blob-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --picto;
+      animation-range: entry 0% cover 35%;
     }
 
     /* Liaisons des schémas : tracées quand le schéma entre dans l'écran */

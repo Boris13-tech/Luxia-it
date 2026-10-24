@@ -114,8 +114,10 @@ describe('site construit, dans Chrome', { skip }, () => {
     const motion = async () => {
       await browser.goto(`${ready.origin}/`);
       await browser.sleep(150);
-      return browser.evaluate(`(() => {
+      return browser.evaluate(`(async () => {
         document.querySelectorAll('.explorer [role=tab]')[1].click();
+        // L'animation démarre à l'image suivante.
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         const panel = document.querySelectorAll('.explorer [role=tabpanel]')[1];
         const cs = getComputedStyle(panel);
         const title = getComputedStyle(document.querySelector('.hero__title'));

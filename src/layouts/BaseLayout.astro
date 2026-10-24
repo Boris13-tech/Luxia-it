@@ -7,6 +7,7 @@
 import '@fontsource-variable/roboto';
 // Police principale préchargée : elle arrive avec la feuille de style (pas de décalage au remplacement).
 import robotoLatin from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
+import frauncesLatin from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/motion.css';
 import Header from '../components/Header.astro';
@@ -119,6 +120,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     }
     {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, site).href} />}
     <link rel="preload" href={robotoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={frauncesLatin} as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#f6f6f3" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

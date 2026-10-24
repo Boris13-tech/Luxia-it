@@ -11,14 +11,13 @@ interface Props {
   lead?: string | undefined;
 }
 
-const { title, id, index, kicker, lead } = Astro.props;
+// `index` est conservé pour compatibilité, mais n'est plus affiché : le site
+// ne numérote plus ses sections.
+const { title, id, kicker, lead } = Astro.props;
 ---
 
 <div class="shead split">
-  <p class="shead__label kicker">
-    {index && <span class="shead__index">{index}</span>}
-    {kicker}
-  </p>
+  <p class="shead__label kicker">{kicker}</p>
   <div class="shead__main">
     <h2 class="t-h2" id={id}>{title}</h2>
     {lead && <p class="t-lead shead__lead">{lead}</p>}
@@ -35,10 +34,6 @@ const { title, id, index, kicker, lead } = Astro.props;
     display: flex;
     gap: 16px;
     padding-top: 0.6em;
-  }
-
-  .shead__index {
-    color: var(--blue);
   }
 
   .shead__lead {

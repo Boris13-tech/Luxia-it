@@ -72,11 +72,9 @@ const steps: readonly { id: string; label: string; where: string; text: string; 
 
 <Tabs label="Étapes du parcours d’une requête" items={steps.map((s) => ({ id: s.id, label: s.label }))} stepper>
   {
-    steps.map((s, i) => (
+    steps.map((s) => (
       <section class="tabs__panel flow__panel" id={s.id}>
-        <h3 class="tabs__panel-title flow__title">
-          {String(i + 1).padStart(2, '0')}. {s.label}
-        </h3>
+        <h3 class="tabs__panel-title flow__title">{s.label}</h3>
         <p class="kicker">Composant : {s.where}</p>
         <p class="t-lead flow__text">{s.text}</p>
         <LevelTag level={s.level} />
