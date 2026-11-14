@@ -14,6 +14,7 @@ import '../styles/worlds.css';
 import '../styles/transitions.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import DemoDrawer from '../components/DemoDrawer.astro';
 import { facts } from '../data/facts';
 import { defaultLocale, localeFromPath, localeMeta } from '../i18n/config';
 import { alternatesOf, href } from '../i18n/routes';
@@ -173,15 +174,18 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       <slot />
     </main>
     <Footer />
+    <DemoDrawer />
     <script>
       import { initTabs } from '../scripts/tabs';
       import { initWorlds } from '../scripts/worlds';
       import { initFlipCards } from '../scripts/flipcards';
       import { initSpatialField } from '../scripts/spatial-field';
+      import { initDrawer } from '../scripts/drawer';
       initTabs();
       initWorlds();
       initFlipCards();
       initSpatialField();
+      initDrawer();
     </script>
   </body>
 </html>
