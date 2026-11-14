@@ -298,6 +298,22 @@
   /* Voile de l'en-tête : apparaît dès que l'on quitte le haut de la page,
      pour que la barre flottante reste lisible au-dessus du contenu */
   @supports (animation-timeline: scroll()) {
+    /* Traceur d'état horizontal lié au défilement global */
+    .hdr::before {
+      content: '';
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 2px;
+      background-color: var(--electric);
+      transform-origin: left center;
+      pointer-events: none;
+      animation-name: progress-x;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll();
+      animation-range: 0% 100%;
+    }
+
     .hdr::after {
       content: '';
       position: absolute;
@@ -315,7 +331,7 @@
     }
   }
 
-  /* Défilement : sections et éléments apparaissent en entrant dans l'écran */
+  /* Défilement : sections et éléments marquent leur changement d'état en entrant dans l'écran */
   @supports (animation-timeline: view()) {
     .shead,
     .ruled > li,
@@ -334,7 +350,11 @@
     .limits li,
     .cta__inner,
     .principle,
-    .legal__contact {
+    .legal__contact,
+    .usm__row,
+    .usm__pillar,
+    .cases-matrix__item,
+    .trust-specs li {
       animation-name: reveal;
       animation-timing-function: linear;
       animation-fill-mode: both;
@@ -342,16 +362,78 @@
       animation-range: entry 0% entry 55%;
     }
 
+    /* Règle architecturale : redressement progressif de la console principale au défilement */
+    .hero__screen {
+      animation-name: console-settle;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+
+    /* Colonne vertébrale LUXIA : verrouillage d'état à l'entrée dans le champ */
+    .usm__spine {
+      animation-name: spine-lock;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 38%;
+    }
+
+    /* Chaîne d'exécution IA Niveau 6 : séquencement progressif au scroll */
+    .usm__step {
+      animation-name: reveal;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 36%;
+    }
+
+    .usm__step:nth-child(2) {
+      animation-range: entry 10% cover 40%;
+    }
+
+    .usm__step:nth-child(3) {
+      animation-range: entry 15% cover 44%;
+    }
+
+    .usm__step:nth-child(4) {
+      animation-range: entry 20% cover 48%;
+    }
+
+    .usm__step:nth-child(5) {
+      animation-range: entry 25% cover 52%;
+    }
+
+    /* Écrans LUXIA Key : mise en scène étagée au défilement */
+    .phone {
+      animation-name: stage-rise;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 44%;
+    }
+
+    .phone:nth-child(2) {
+      animation-range: entry 10% cover 54%;
+    }
+
     /* Grilles : un léger décalage entre colonnes */
     .ruled > li:nth-child(2n),
-    .method__step:nth-child(2n) {
+    .method__step:nth-child(2n),
+    .trust-specs li:nth-child(2n) {
       animation-range: entry 6% entry 61%;
     }
 
     .ruled--3 > li:nth-child(3n),
     .ruled--4 > li:nth-child(4n),
-    .method__step:nth-child(3n) {
-      animation-range: entry 12% entry 67%;
+    .method__step:nth-child(3n),
+    .usm__pillar:nth-child(2) {
+      animation-range: entry 10% entry 64%;
+    }
+
+    .usm__pillar:nth-child(3) {
+      animation-range: entry 16% entry 68%;
     }
 
     /* Pictogrammes : le trait se dessine, le fond s'arrondit, à l'entrée */
@@ -384,6 +466,48 @@
       animation-timeline: view();
       animation-range: entry 20% cover 35%;
     }
+  }
+}
+
+@keyframes progress-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes stage-rise {
+  from {
+    opacity: 0.25;
+    transform: translateY(34px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes console-settle {
+  from {
+    transform: perspective(1200px) rotateX(3.5deg) scale(0.985);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes spine-lock {
+  from {
+    opacity: 0.45;
+    transform: translateY(14px);
+    border-color: var(--line);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    border-color: var(--line-strong);
   }
 }
 

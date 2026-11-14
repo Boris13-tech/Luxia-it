@@ -36,16 +36,17 @@ html:active-view-transition .beam {
   opacity: 1;
 }
 
-/* Le trait de lumière */
+/* Le trait d'état horizontal */
 .beam::before {
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--electric) 45%, #dbe8ff 50%, var(--electric) 55%, transparent);
+  background: linear-gradient(90deg, transparent, var(--electric) 40%, #dbe8ff 50%, var(--electric) 60%, transparent);
 }
 
-/* Le halo qu'il projette vers le bas */
+/* Ligne de champ nette sans halo brumeux */
 .beam::after {
-  height: 100%;
-  background: radial-gradient(40% 70% at 50% 0%, rgb(91 155 255 / 0.22), transparent 70%);
+  height: 1px;
+  top: 2px;
+  background: rgb(95 160 255 / 0.28);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -159,43 +160,67 @@ html:active-view-transition .beam {
 }
 
 @keyframes vt-out-left {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
   to {
-    opacity: 0;
-    transform: translateX(-20px);
+    opacity: 0.25;
+    transform: translateX(-24px);
+    clip-path: inset(0 100% 0 0);
   }
 }
 
 @keyframes vt-in-right {
   from {
-    opacity: 0;
-    transform: translateX(24px);
+    opacity: 0.4;
+    transform: translateX(28px);
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes vt-through {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
   to {
     opacity: 0;
     transform: scale(1.015);
+    clip-path: inset(0 0 100% 0);
   }
 }
 
 @keyframes vt-from-depth {
   from {
     opacity: 0;
-    transform: scale(0.985) translateY(10px);
+    transform: translateY(16px);
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes vt-recede {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
   to {
     opacity: 0;
     transform: scale(0.985);
+    clip-path: inset(100% 0 0 0);
   }
 }
 
 @keyframes vt-return {
   from {
     opacity: 0;
-    transform: scale(1.015);
+    transform: translateY(-14px);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }

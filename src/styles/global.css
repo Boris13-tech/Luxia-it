@@ -167,11 +167,6 @@ body {
   line-height: 1.6;
   color: var(--ink-2);
   background-color: var(--paper);
-  /* Trame orthogonale discrète : géométrie d'ingénierie sans halo néon */
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
-  background-size: 64px 64px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;

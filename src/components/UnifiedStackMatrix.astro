@@ -29,8 +29,7 @@ function layerHref(layer: StackLayer): string {
         <article class="usm__row" role="listitem">
           <div class="usm__meta">
             <div class="usm__code-line">
-              <span class="usm__lvl">NIVEAU {layer.number}</span>
-              <span class="usm__code">{layer.code}</span>
+              <span class="usm__lvl">Niveau {layer.number}</span>
             </div>
             <div class="usm__tags">
               <StageTag stage={layer.stage} />
@@ -104,8 +103,7 @@ function layerHref(layer: StackLayer): string {
         <article class="usm__row" role="listitem">
           <div class="usm__meta">
             <div class="usm__code-line">
-              <span class="usm__lvl">NIVEAU {layer.number}</span>
-              <span class="usm__code">{layer.code}</span>
+              <span class="usm__lvl">Niveau {layer.number}</span>
             </div>
             <div class="usm__tags">
               <StageTag stage={layer.stage} />
@@ -150,12 +148,11 @@ function layerHref(layer: StackLayer): string {
 
   <div class="usm__pillars" aria-label="Piliers stratégiques de la plateforme LUXIA">
     {
-      strategicPillars.map((pillar, i) => (
+      strategicPillars.map((pillar) => (
         <div class="usm__pillar">
-          <p class="usm__pillar-id">PILIER 0{i + 1}</p>
           <h3 class="usm__pillar-title">
             {pillar.leftTitle}
-            <span class="usm__pillar-sep">/</span>
+            <span class="usm__pillar-sep">·</span>
             {pillar.rightTitle}
           </h3>
           <p class="usm__pillar-text">{pillar.detail}</p>
@@ -169,9 +166,7 @@ function layerHref(layer: StackLayer): string {
   .usm {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background-color: var(--paper-2);
+    border-top: 1px solid var(--line);
   }
 
   .usm__tier {
@@ -183,17 +178,8 @@ function layerHref(layer: StackLayer): string {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 20px var(--gap);
-    padding: clamp(20px, 2.8vw, 30px);
+    padding-block: clamp(22px, 3vw, 32px);
     border-bottom: 1px solid var(--line);
-    transition: background-color var(--dur) var(--ease);
-  }
-
-  .usm__row:last-child {
-    border-bottom: 0;
-  }
-
-  .usm__row:hover {
-    background-color: var(--surface);
   }
 
   .usm__meta {
@@ -384,27 +370,20 @@ function layerHref(layer: StackLayer): string {
   .usm__pillars {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    gap: 0 var(--gap);
     border-top: 1px solid var(--line);
-    background-color: var(--paper);
   }
 
   .usm__pillar {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: clamp(20px, 2.5vw, 28px);
+    padding-block: clamp(20px, 2.5vw, 28px);
     border-bottom: 1px solid var(--line);
   }
 
   .usm__pillar:last-child {
     border-bottom: 0;
-  }
-
-  .usm__pillar-id {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    color: var(--ink-3);
   }
 
   .usm__pillar-title {
@@ -429,7 +408,7 @@ function layerHref(layer: StackLayer): string {
 
   @media (min-width: 960px) {
     .usm__row {
-      grid-template-columns: 11.5rem minmax(0, 1.35fr) minmax(0, 1fr);
+      grid-template-columns: 10rem minmax(0, 1.35fr) minmax(0, 1fr);
       align-items: start;
     }
 
@@ -442,15 +421,11 @@ function layerHref(layer: StackLayer): string {
 
     .usm__pillars {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
     }
 
     .usm__pillar {
       border-bottom: 0;
-      border-right: 1px solid var(--line);
-    }
-
-    .usm__pillar:last-child {
-      border-right: 0;
     }
   }
 </style>

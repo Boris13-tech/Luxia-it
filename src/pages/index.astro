@@ -17,22 +17,18 @@ const demo = `${href('contact')}?sujet=demo`;
 
 const roles = [
   {
-    code: 'DIR / DSI',
     title: 'Direction des systèmes d’information',
-    text: 'Un registre unique des identités, des droits et des dépendances applicatives — découplé d’un fournisseur unique et déployable selon vos contraintes d’hébergement.',
+    text: 'Un registre unique des identités, des droits et des dépendances applicatives, découplé d’un fournisseur unique et déployable selon vos contraintes d’hébergement.',
   },
   {
-    code: 'RSSI / SEC',
     title: 'Sécurité et gouvernance Zero Trust',
     text: 'Connexions par passkeys résistantes au phishing, blocage natif des attributions incompatibles (SoD), validation hors bande via LUXIA Key et journal en ajout seul.',
   },
   {
-    code: 'OPS / IA',
     title: 'Exploitation système, DevSecOps et agents IA',
     text: 'Automatisation de l’enrôlement et des révocations, gouvernance explicite des outils exposés aux agents ALMA et contrôle humain sur chaque action sensible.',
   },
   {
-    code: 'AUDIT / METIER',
     title: 'Audit, conformité et responsables métier',
     text: 'Revues d’accès lisibles en quelques secondes et piste forensique reliant identité, politique appliquée, décision d’approbation et horodatage.',
   },
@@ -41,31 +37,27 @@ const roles = [
 const trustMarks = [
   { label: 'CSP stricte sans script en ligne', note: 'Zéro cookie publicitaire, zéro traceur tiers, zéro stockage navigateur' },
   { label: 'Authentification résistante au phishing', note: 'Passkeys WebAuthn / FIDO2 et compagnon applicatif LUXIA Key' },
-  { label: 'Journal en ajout seul', note: 'L’application applicative ne peut ni altérer ni effacer l’historique d’audit' },
+  { label: 'Journal en ajout seul', note: 'L’application ne peut ni altérer ni effacer l’historique d’audit' },
   { label: 'Répartition explicite des responsabilités', note: 'Déploiement managé, sur site client ou périmètre souverain isolé' },
 ] as const;
 
 const advisoryPillars = [
   {
-    code: 'ARCH-01',
-    title: 'Cybersécurité & gouvernance des identités',
+    title: 'Cybersécurité et gouvernance des identités',
     text: 'Audit de maturité IAM, structuration Microsoft Entra ID, accès conditionnel, PIM/PAM, séparation des tâches et passage au sans-mot-de-passe.',
     anchor: '#cadrage',
   },
   {
-    code: 'CLOUD-02',
-    title: 'Architecture Cloud souverain & réseau critique',
+    title: 'Architecture Cloud souverain et réseau critique',
     text: 'Conception de Landing Zones Microsoft Azure, segmentation Hub-Spoke, Private Link, DNS hybride, plans de reprise et maîtrise FinOps.',
     anchor: '#architecture',
   },
   {
-    code: 'DEV-03',
-    title: 'Ingénierie logicielle & usines DevSecOps',
+    title: 'Ingénierie logicielle et usines DevSecOps',
     text: 'Industrialisation Bicep/Terraform, pipelines CI/CD fédérés sans secrets statiques (OIDC), durcissement Windows/Linux et automatisation d’exploitation.',
     anchor: '#integration',
   },
   {
-    code: 'AI-04',
     title: 'Systèmes d’IA d’entreprise sous contrôle',
     text: 'Déploiement d’architectures RAG et d’agents outillés avec identités dédiées, filtrage des flux, approbation humaine et traçabilité complète.',
     anchor: '#securite-operationnelle',
@@ -75,19 +67,19 @@ const advisoryPillars = [
 
 <BaseLayout
   title="Plateforme unifiée de sécurité, identité et IA"
-  description="Plateforme unifiée LUXIA en six niveaux — identités souveraines, LUXIA Key et gouvernance IA — et cabinet d’ingénierie cybersécurité, cloud et DevSecOps."
+  description="Plateforme unifiée LUXIA en six niveaux : identités souveraines, LUXIA Key, gouvernance IA et cabinet d’ingénierie cybersécurité, cloud et DevSecOps."
 >
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__stage">
       <ConstellationScene variant="identity" />
       <div class="wrap hero__text">
-        <p class="hero__index">LUXIA-IT · ÉDITEUR TECHNOLOGIQUE & CABINET D’INGÉNIERIE</p>
         <h1 class="t-display hero__title" id="hero-title">
           Sécurité critique, identités souveraines et systèmes d’IA sous contrôle.
         </h1>
         <p class="t-lead hero__lead">
-          Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux — de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
-          des agents IA — et accompagne les organisations comme cabinet d’architecture, de cybersécurité, de cloud et d’ingénierie IA.
+          Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux, de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
+          des agents IA. Notre cabinet d’architecture et d’ingénierie accompagne également les organisations en cybersécurité,
+          infrastructure cloud et intelligence artificielle.
         </p>
         <div class="actions hero__actions">
           <a class="btn btn--primary" href={demo}>
@@ -96,7 +88,7 @@ const advisoryPillars = [
           </a>
           <a class="btn btn--secondary" href="#stack">Explorer les six niveaux</a>
           <a class="link" href={href('services')}>
-            <span>Voir le cabinet d’ingénierie</span>
+            <span>Découvrir le cabinet de conseil</span>
             <Icon name="chevron-right" size={16} />
           </a>
         </div>
@@ -120,7 +112,7 @@ const advisoryPillars = [
       <SectionHead
         id="stack-title"
         title="La plateforme unifiée LUXIA en six niveaux d’architecture"
-        lead="De la preuve d’identité individuelle jusqu’aux agents autonomes gouvernés : chaque brique adresse une couche opérationnelle précise sans rupture ni boîte noire."
+        lead="De la preuve d’identité individuelle jusqu’aux agents autonomes gouvernés : chaque brique couvre une couche opérationnelle précise sans boîte noire."
       />
       <UnifiedStackMatrix compact />
       <div class="section__footer">
@@ -196,13 +188,12 @@ const advisoryPillars = [
       <SectionHead
         id="roles-title"
         title="Un seul système de vérité pour quatre métiers"
-        lead="Chaque équipe lit la même donnée sous l’angle de sa responsabilité — sans exporter de feuilles de calcul ni perdre la source."
+        lead="Chaque équipe lit la même donnée sous l’angle de sa responsabilité, sans exporter de feuilles de calcul ni perdre la source."
       />
-      <ul class="roles-grid ruled">
+      <ul class="roles-list ruled">
         {
           roles.map((r) => (
-            <li class="roles-grid__item">
-              <p class="roles-grid__code">{r.code}</p>
+            <li class="roles-list__item">
               <h3 class="t-h4">{r.title}</h3>
               <p>{r.text}</p>
             </li>
@@ -219,7 +210,7 @@ const advisoryPillars = [
           <h2 class="t-h2" id="confiance-title">Sécurité conçue pour l’inspection technique</h2>
           <p class="t-lead">
             Luxia-IT applique en production les standards d’isolation qu’elle préconise à ses clients : durcissement applicatif strict,
-            télémétrie zéro-traceur et transparence totale sur l’état réel de chaque composant.
+            télémétrie zéro traceur et transparence totale sur l’état réel de chaque composant.
           </p>
           <div class="trust-layout__cta">
             <a class="btn btn--light" href={href('trust')}>
@@ -257,13 +248,12 @@ const advisoryPillars = [
         </a>
       </div>
 
-      <ol class="advisory-grid ruled">
+      <ol class="advisory-list ruled">
         {
           advisoryPillars.map((s) => (
-            <li class="advisory-grid__item">
-              <p class="advisory-grid__code">{s.code}</p>
+            <li class="advisory-list__item">
               <h3 class="t-h4">
-                <a class="advisory-grid__link" href={`${href('services')}${s.anchor}`}>
+                <a class="advisory-list__link" href={`${href('services')}${s.anchor}`}>
                   {s.title}
                 </a>
               </h3>
@@ -289,11 +279,11 @@ const advisoryPillars = [
         </a>
       </div>
 
-      <ul class="guides-grid ruled">
+      <ul class="guides-list ruled">
         {
           guides.slice(0, 3).map((g) => (
-            <li class="guides-grid__item">
-              <p class="guides-grid__meta">{readingMinutes(g)} min de lecture</p>
+            <li class="guides-list__item">
+              <p class="guides-list__meta">{readingMinutes(g)} min de lecture</p>
               <h3 class="t-h4">
                 <a href={guideHref(g.slug)}>{g.title}</a>
               </h3>
@@ -307,7 +297,7 @@ const advisoryPillars = [
 
   <CtaBlock
     title="Évaluer un projet ou planifier une démonstration"
-    text="Décrivez votre environnement — identités, réseau, infrastructure ou besoins IA — pour obtenir une étude technique ou une démonstration ciblée."
+    text="Décrivez votre environnement (identités, réseau, infrastructure ou besoins IA) pour obtenir une étude technique ou une démonstration ciblée."
     href={demo}
     label="Demander un échange technique"
     secondary={{ href: href('platforms'), label: 'Plateforme unifiée en 6 niveaux' }}
@@ -317,7 +307,7 @@ const advisoryPillars = [
 <style>
   .hero {
     position: relative;
-    padding-block: calc(var(--header-h) + clamp(32px, 5vw, 68px)) clamp(40px, 6vw, 72px);
+    padding-block: calc(var(--header-h) + clamp(36px, 5vw, 72px)) clamp(40px, 6vw, 72px);
     border-bottom: 1px solid var(--line);
   }
 
@@ -332,19 +322,8 @@ const advisoryPillars = [
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 22px;
     padding-bottom: clamp(32px, 5vw, 56px);
-  }
-
-  .hero__index {
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    letter-spacing: 0.08em;
-    color: var(--link);
-    padding: 4px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    background-color: var(--paper-2);
   }
 
   .hero__title {
@@ -377,8 +356,12 @@ const advisoryPillars = [
     margin-bottom: 0;
   }
 
-  /* Matrice 5 cas d'usage */
-  .cases-matrix {
+  /* Lignes techniques ouvertes sans cases carrées */
+  .cases-matrix,
+  .roles-list,
+  .advisory-list,
+  .guides-list,
+  .trust-specs {
     border-top: 1px solid var(--line);
   }
 
@@ -417,64 +400,54 @@ const advisoryPillars = [
     grid-column: 2;
   }
 
-  /* Grilles Rôles & Services & Guides */
-  .roles-grid,
-  .advisory-grid,
-  .guides-grid {
+  .roles-list,
+  .advisory-list,
+  .guides-list,
+  .trust-specs {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background-color: var(--paper-2);
+    gap: 0 var(--gap);
   }
 
-  .roles-grid__item,
-  .advisory-grid__item,
-  .guides-grid__item {
+  .roles-list__item,
+  .advisory-list__item,
+  .guides-list__item,
+  .trust-specs li {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: clamp(20px, 2.5vw, 28px);
+    padding-block: clamp(20px, 2.6vw, 28px);
     border-bottom: 1px solid var(--line);
   }
 
-  .roles-grid__item:last-child,
-  .advisory-grid__item:last-child,
-  .guides-grid__item:last-child {
-    border-bottom: 0;
-  }
-
-  .roles-grid__code,
-  .advisory-grid__code,
-  .guides-grid__meta {
+  .guides-list__meta {
     font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--link);
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
   }
 
-  .roles-grid__item p:last-child,
-  .advisory-grid__item p:last-child,
-  .guides-grid__item p:last-child {
+  .roles-list__item p:last-child,
+  .advisory-list__item p:last-child,
+  .guides-list__item p:last-child,
+  .trust-specs p {
     font-size: var(--fs-small);
     line-height: 1.55;
     color: var(--ink-2);
   }
 
-  .advisory-grid__link,
-  .guides-grid__item a {
+  .advisory-list__link,
+  .guides-list__item a {
     color: var(--ink);
     text-decoration: none;
   }
 
-  .advisory-grid__link:hover,
-  .guides-grid__item a:hover {
+  .advisory-list__link:hover,
+  .guides-list__item a:hover {
     color: var(--link);
     text-decoration: underline;
     text-underline-offset: 4px;
   }
 
-  /* Section confiance sombre */
   .trust-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -492,36 +465,11 @@ const advisoryPillars = [
     margin-top: 6px;
   }
 
-  .trust-specs {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background-color: var(--paper);
-  }
-
-  .trust-specs li {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .trust-specs li:last-child {
-    border-bottom: 0;
-  }
-
   .trust-specs h3 {
     font-family: var(--display);
     font-size: var(--fs-h4);
     font-weight: 600;
     color: var(--ink);
-  }
-
-  .trust-specs p {
-    font-size: var(--fs-small);
-    color: var(--ink-2);
   }
 
   @media (min-width: 720px) {
@@ -531,53 +479,14 @@ const advisoryPillars = [
       justify-content: space-between;
     }
 
-    .roles-grid,
-    .advisory-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .roles-grid__item,
-    .advisory-grid__item {
-      border-right: 1px solid var(--line);
-    }
-
-    .roles-grid__item:nth-child(2n),
-    .advisory-grid__item:nth-child(2n) {
-      border-right: 0;
-    }
-
-    .roles-grid__item:nth-last-child(-n + 2),
-    .advisory-grid__item:nth-last-child(-n + 2) {
-      border-bottom: 0;
-    }
-
-    .guides-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .guides-grid__item {
-      border-bottom: 0;
-      border-right: 1px solid var(--line);
-    }
-
-    .guides-grid__item:last-child {
-      border-right: 0;
-    }
-
+    .roles-list,
+    .advisory-list,
     .trust-specs {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .trust-specs li {
-      border-right: 1px solid var(--line);
-    }
-
-    .trust-specs li:nth-child(2n) {
-      border-right: 0;
-    }
-
-    .trust-specs li:nth-last-child(-n + 2) {
-      border-bottom: 0;
+    .guides-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 

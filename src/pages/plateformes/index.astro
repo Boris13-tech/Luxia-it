@@ -196,21 +196,16 @@ const relations = [
   .rel-list {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background-color: var(--paper-2);
+    gap: 0 var(--gap);
+    border-top: 1px solid var(--line);
   }
 
   .rel-list li {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: clamp(20px, 2.5vw, 28px);
+    padding-block: clamp(20px, 2.5vw, 28px);
     border-bottom: 1px solid var(--line);
-  }
-
-  .rel-list li:last-child {
-    border-bottom: 0;
   }
 
   .rel-list h3 {
@@ -229,18 +224,6 @@ const relations = [
   @media (min-width: 720px) {
     .rel-list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .rel-list li {
-      border-right: 1px solid var(--line);
-    }
-
-    .rel-list li:nth-child(2n) {
-      border-right: 0;
-    }
-
-    .rel-list li:nth-last-child(-n + 2) {
-      border-bottom: 0;
     }
   }
 </style>
