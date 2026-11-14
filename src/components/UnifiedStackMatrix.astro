@@ -25,75 +25,60 @@ function layerHref(layer: StackLayer): string {
 ---
 
 <div class:list={['usm', compact && 'usm--compact']} data-stack-matrix>
-  {
-    showHuman && (
-      <div class="usm__human-brief">
-        <HumanScene
-          src="/images/phase-architecture-team.jpg"
-          alt="Un architecte principal présente le découpage en couches techniques sur grand écran à deux ingénieurs autour d’une table de travail."
-          chapter="Conception et intégration"
-          phaseTitle="Une seule architecture cohérente, de l’infrastructure jusqu’aux agents d’IA"
-          caption="Chaque niveau répond au suivant : le socle exécute, l’annuaire porte les identités, les politiques bornent les droits et la couche IA s’appuie sur cet historique sans bricolage parallèle."
-          layout="wide"
-          focal="top"
-        />
-      </div>
-    )
-  }
-
-  <div class="usm__tier" role="list" aria-label="Niveaux supérieurs : IA, preuves et souveraineté d’exécution">
+  <div class="flip-grid flip-grid--3 usm__grid" role="list" aria-label="Niveaux supérieurs : IA, preuves et souveraineté d’exécution">
     {
       upperLayers.map((layer) => (
-        <article class="usm__row" role="listitem">
-          <div class="usm__meta">
-            <div class="usm__code-line">
-              <span class="usm__lvl">Niveau {layer.number}</span>
-            </div>
-            <div class="usm__tags">
-              <StageTag stage={layer.stage} />
-              <LevelTag level={layer.level} />
-            </div>
-          </div>
+        <article class="flip-card" data-flip-card data-flipped="false" role="listitem">
+          <div class="flip-card__inner">
+            <div class="flip-card__face flip-card__face--front">
+              <div class="usm__card-top">
+                <span class="usm__lvl">Niveau {layer.number}</span>
+                <div class="usm__tags">
+                  <StageTag stage={layer.stage} />
+                  <LevelTag level={layer.level} />
+                </div>
+              </div>
 
-          <div class="usm__main">
-            <div class="usm__head">
               <h3 class="usm__title">{layer.name}</h3>
               <p class="usm__sub">{layer.subtitle}</p>
-            </div>
-            <p class="usm__summary">{layer.summary}</p>
 
-            {layer.workflow && (
-              <ol class="usm__flow" aria-label="Chaîne de gouvernance des agents IA">
-                {layer.workflow.map((step, i) => (
-                  <li class:list={['usm__step', i === layer.workflow!.length - 1 && 'usm__step--done']}>
-                    <span>{step}</span>
-                    {i < layer.workflow!.length - 1 && <Icon name="arrow-right" size={12} stroke={1.8} />}
+              {layer.workflow && (
+                <ol class="usm__flow" aria-label="Chaîne de gouvernance des agents IA">
+                  {layer.workflow.map((step, i) => (
+                    <li class:list={['usm__step', i === layer.workflow!.length - 1 && 'usm__step--done']}>
+                      <span>{step}</span>
+                      {i < layer.workflow!.length - 1 && <Icon name="arrow-right" size={11} stroke={1.8} />}
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              <button type="button" class="flip-card__hint" data-flip-trigger aria-expanded="false">
+                <span>Cliquer pour retourner et explorer</span>
+                <Icon name="arrow-right" size={14} stroke={1.8} />
+              </button>
+            </div>
+
+            <div class="flip-card__face flip-card__face--back">
+              <div class="usm__card-top">
+                <span class="usm__lvl">Niveau {layer.number}</span>
+                <a class="link usm__ext" href={layerHref(layer)}>
+                  <span>{layer.ctaLabel ?? 'Voir la fiche'}</span>
+                  <Icon name="arrow-right" size={14} stroke={1.8} />
+                </a>
+              </div>
+              <p class="usm__summary">{layer.summary}</p>
+              <ul class="usm__caps">
+                {(compact ? layer.capabilities.slice(0, 3) : layer.capabilities).map((cap) => (
+                  <li>
+                    <Icon name="check" size={14} stroke={2} />
+                    <span>{cap}</span>
                   </li>
                 ))}
-              </ol>
-            )}
-
-            <ul class="usm__scopes" aria-label={`Périmètres couverts par ${layer.name}`}>
-              {layer.scopes.map((scope) => (
-                <li>{scope}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div class="usm__spec">
-            <ul class="usm__caps">
-              {(compact ? layer.capabilities.slice(0, 3) : layer.capabilities).map((cap) => (
-                <li>
-                  <Icon name="check" size={14} stroke={2} />
-                  <span>{cap}</span>
-                </li>
-              ))}
-            </ul>
-            <div class="usm__action">
-              <a class="link" href={layerHref(layer)}>
-                <span>{layer.ctaLabel ?? 'Voir la fiche technique'}</span>
-                <Icon name="arrow-right" size={15} stroke={1.8} />
-              </a>
+              </ul>
+              <button type="button" class="flip-card__hint flip-card__hint--back" aria-label={`Retourner la carte ${layer.name}`}>
+                <span>Revenir au recto</span>
+              </button>
             </div>
           </div>
         </article>
@@ -107,13 +92,13 @@ function layerHref(layer: StackLayer): string {
         <HumanScene
           src="/images/phase-ai-governance-human.jpg"
           alt="Une responsable sécurité et un ingénieur IA examinent ensemble un point de contrôle humain sur un poste avant d’autoriser une action critique."
-          chapter="LUXIA AI Security et ALMA"
-          phaseTitle="L’humain garde la main avant toute action sensible"
-          caption="Un agent autonome peut analyser et préparer une modification, jamais l’appliquer en silence : le point de blocage demande une validation explicite et laisse une trace datée."
+          chapter="Supervision en direct"
+          phaseTitle="L’humain valide chaque action critique avant exécution"
+          caption="Un agent prépare et soumet son plan ; le responsable habilité tranche en un clic."
           layout="split"
           focal="top"
           ctaHref="/plateformes/alma/"
-          ctaLabel="Voir ALMA en détail"
+          ctaLabel="Découvrir ALMA"
         />
       </div>
     )
@@ -133,48 +118,55 @@ function layerHref(layer: StackLayer): string {
     <p class="usm__spine-copy">{unifiedCore.statement}</p>
   </div>
 
-  <div class="usm__tier" role="list" aria-label="Niveaux fondateurs : confiance fédérée, politiques et identités">
+  <div class="flip-grid flip-grid--3 usm__grid" role="list" aria-label="Niveaux fondateurs : confiance fédérée, politiques et identités">
     {
       lowerLayers.map((layer) => (
-        <article class="usm__row" role="listitem">
-          <div class="usm__meta">
-            <div class="usm__code-line">
-              <span class="usm__lvl">Niveau {layer.number}</span>
-            </div>
-            <div class="usm__tags">
-              <StageTag stage={layer.stage} />
-              <LevelTag level={layer.level} />
-            </div>
-          </div>
+        <article class="flip-card" data-flip-card data-flipped="false" role="listitem">
+          <div class="flip-card__inner">
+            <div class="flip-card__face flip-card__face--front">
+              <div class="usm__card-top">
+                <span class="usm__lvl">Niveau {layer.number}</span>
+                <div class="usm__tags">
+                  <StageTag stage={layer.stage} />
+                  <LevelTag level={layer.level} />
+                </div>
+              </div>
 
-          <div class="usm__main">
-            <div class="usm__head">
               <h3 class="usm__title">{layer.name}</h3>
               <p class="usm__sub">{layer.subtitle}</p>
+
+              <ul class="usm__scopes" aria-label={`Périmètres couverts par ${layer.name}`}>
+                {layer.scopes.map((scope) => (
+                  <li>{scope}</li>
+                ))}
+              </ul>
+
+              <button type="button" class="flip-card__hint" data-flip-trigger aria-expanded="false">
+                <span>Cliquer pour retourner et explorer</span>
+                <Icon name="arrow-right" size={14} stroke={1.8} />
+              </button>
             </div>
-            <p class="usm__summary">{layer.summary}</p>
 
-            <ul class="usm__scopes" aria-label={`Périmètres couverts par ${layer.name}`}>
-              {layer.scopes.map((scope) => (
-                <li>{scope}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div class="usm__spec">
-            <ul class="usm__caps">
-              {(compact ? layer.capabilities.slice(0, 3) : layer.capabilities).map((cap) => (
-                <li>
-                  <Icon name="check" size={14} stroke={2} />
-                  <span>{cap}</span>
-                </li>
-              ))}
-            </ul>
-            <div class="usm__action">
-              <a class="link" href={layerHref(layer)}>
-                <span>{layer.ctaLabel ?? 'Voir la fiche technique'}</span>
-                <Icon name="arrow-right" size={15} stroke={1.8} />
-              </a>
+            <div class="flip-card__face flip-card__face--back">
+              <div class="usm__card-top">
+                <span class="usm__lvl">Niveau {layer.number}</span>
+                <a class="link usm__ext" href={layerHref(layer)}>
+                  <span>{layer.ctaLabel ?? 'Voir la fiche'}</span>
+                  <Icon name="arrow-right" size={14} stroke={1.8} />
+                </a>
+              </div>
+              <p class="usm__summary">{layer.summary}</p>
+              <ul class="usm__caps">
+                {(compact ? layer.capabilities.slice(0, 3) : layer.capabilities).map((cap) => (
+                  <li>
+                    <Icon name="check" size={14} stroke={2} />
+                    <span>{cap}</span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" class="flip-card__hint flip-card__hint--back" aria-label={`Retourner la carte ${layer.name}`}>
+                <span>Revenir au recto</span>
+              </button>
             </div>
           </div>
         </article>
@@ -202,62 +194,29 @@ function layerHref(layer: StackLayer): string {
   .usm {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--line);
+    gap: clamp(24px, 3vw, 36px);
   }
 
-  .usm__tier {
+  .usm__card-top {
     display: flex;
-    flex-direction: column;
-  }
-
-  .usm__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px var(--gap);
-    padding-block: clamp(22px, 3vw, 32px);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .usm__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .usm__code-line {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: var(--fs-meta);
-    letter-spacing: 0.06em;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .usm__lvl {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.06em;
     color: var(--link);
-    font-weight: 500;
-  }
-
-  .usm__code {
-    color: var(--ink-3);
+    font-weight: 600;
   }
 
   .usm__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-  }
-
-  .usm__main {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .usm__head {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
   }
 
   .usm__title {
@@ -271,33 +230,26 @@ function layerHref(layer: StackLayer): string {
 
   .usm__sub {
     font-size: var(--fs-small);
-    color: var(--ink-3);
-  }
-
-  .usm__summary {
-    max-width: 48rem;
-    font-size: var(--fs-small);
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--ink-2);
   }
 
-  .usm__human-brief {
-    padding-block: clamp(22px, 3vw, 34px);
-    border-bottom: 1px solid var(--line);
+  .usm__summary {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--ink-2);
   }
 
-  .usm__human-guard {
-    padding-block: clamp(26px, 3.6vw, 42px);
-    border-bottom: 1px solid var(--line);
+  .usm__ext {
+    font-size: var(--fs-meta);
   }
 
   .usm__flow {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 10px;
-    margin-top: 6px;
-    padding-block: 10px;
+    gap: 6px 8px;
+    padding-block: 8px;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
@@ -305,9 +257,9 @@ function layerHref(layer: StackLayer): string {
   .usm__step {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     font-family: var(--mono);
-    font-size: 0.78125rem;
+    font-size: 0.72rem;
     color: var(--ink-2);
   }
 
@@ -324,29 +276,21 @@ function layerHref(layer: StackLayer): string {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 0;
-    margin-top: 4px;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--ink-3);
   }
 
   .usm__scopes li + li::before {
     content: ' · ';
-    margin-inline: 8px;
+    margin-inline: 6px;
     color: var(--line-strong);
-  }
-
-  .usm__spec {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 16px;
   }
 
   .usm__caps {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
   }
 
   .usm__caps li {
@@ -355,7 +299,7 @@ function layerHref(layer: StackLayer): string {
     align-items: start;
     gap: 8px;
     font-size: var(--fs-small);
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--ink-2);
   }
 
@@ -364,8 +308,9 @@ function layerHref(layer: StackLayer): string {
     color: var(--link);
   }
 
-  .usm__action {
-    padding-top: 8px;
+  .usm__human-guard {
+    padding-block: clamp(12px, 2vw, 22px);
+    border-top: 1px solid var(--line);
   }
 
   /* Colonne vertébrale : Plateforme unifiée LUXIA */
@@ -450,11 +395,6 @@ function layerHref(layer: StackLayer): string {
   }
 
   @media (min-width: 960px) {
-    .usm__row {
-      grid-template-columns: 10rem minmax(0, 1.35fr) minmax(0, 1fr);
-      align-items: start;
-    }
-
     .usm__spine {
       flex-direction: row;
       align-items: center;

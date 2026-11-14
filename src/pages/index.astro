@@ -223,14 +223,29 @@ const worldChapters = [
         <SectionHead
           id="roles-title"
           title="Un seul système de vérité pour quatre métiers"
-          lead="Chaque équipe lit la même donnée sous l’angle de sa responsabilité, sans exporter de feuilles de calcul ni perdre la source."
+          lead="Cliquez sur votre rôle pour voir immédiatement ce que la plateforme vous apporte."
         />
-        <ul class="roles-list ruled">
+        <ul class="flip-grid flip-grid--2">
           {
-            roles.map((r) => (
-              <li class="roles-list__item">
-                <h3 class="t-h4">{r.title}</h3>
-                <p>{r.text}</p>
+            roles.map((r, i) => (
+              <li class="flip-card" data-flip-card data-flipped="false">
+                <div class="flip-card__inner">
+                  <div class="flip-card__face flip-card__face--front">
+                    <span class="role-card__num">0{i + 1}</span>
+                    <h3 class="t-h4">{r.title}</h3>
+                    <button type="button" class="flip-card__hint" data-flip-trigger aria-expanded="false">
+                      <span>Voir ce que cela change pour ce métier</span>
+                      <Icon name="arrow-right" size={14} stroke={1.8} />
+                    </button>
+                  </div>
+                  <div class="flip-card__face flip-card__face--back">
+                    <h3 class="t-h4">{r.title}</h3>
+                    <p class="role-card__text">{r.text}</p>
+                    <button type="button" class="flip-card__hint flip-card__hint--back" aria-label={`Retourner ${r.title}`}>
+                      <span>Revenir</span>
+                    </button>
+                  </div>
+                </div>
               </li>
             ))
           }
@@ -314,20 +329,37 @@ const worldChapters = [
         <SectionHead
           id="services-title"
           title="Cabinet de conseil et d’ingénierie technologique"
-          lead="Au-delà de nos plateformes, nos architectes et ingénieurs conçoivent, sécurisent et déploient vos solutions globales en entreprise."
+          lead="Cliquez sur un pôle pour afficher nos livrables concrets et accéder à l’offre."
         />
       </div>
 
-      <ol class="advisory-list ruled">
+      <ol class="flip-grid flip-grid--2">
         {
-          advisoryPillars.map((s) => (
-            <li class="advisory-list__item">
-              <h3 class="t-h4">
-                <a class="advisory-list__link" href={`${href('services')}${s.anchor}`}>
-                  {s.title}
-                </a>
-              </h3>
-              <p>{s.text}</p>
+          advisoryPillars.map((s, i) => (
+            <li class="flip-card" data-flip-card data-flipped="false">
+              <div class="flip-card__inner">
+                <div class="flip-card__face flip-card__face--front">
+                  <span class="role-card__num">0{i + 1}</span>
+                  <h3 class="t-h4">{s.title}</h3>
+                  <button type="button" class="flip-card__hint" data-flip-trigger aria-expanded="false">
+                    <span>Retourner pour voir l’intervention</span>
+                    <Icon name="arrow-right" size={14} stroke={1.8} />
+                  </button>
+                </div>
+                <div class="flip-card__face flip-card__face--back">
+                  <h3 class="t-h4">{s.title}</h3>
+                  <p class="role-card__text">{s.text}</p>
+                  <div class="advisory-card__foot">
+                    <a class="link" href={`${href('services')}${s.anchor}`}>
+                      <span>Détails du pôle</span>
+                      <Icon name="arrow-right" size={14} stroke={1.8} />
+                    </a>
+                    <button type="button" class="flip-card__hint flip-card__hint--back" aria-label={`Retourner ${s.title}`}>
+                      <span>Revenir</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </li>
           ))
         }
@@ -532,6 +564,35 @@ const worldChapters = [
     text-underline-offset: 4px;
   }
 
+  .role-card__num {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--link);
+    font-weight: 600;
+  }
+
+  .role-card__text {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .advisory-card__foot {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .advisory-card__foot .flip-card__hint {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
   .trust-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -584,7 +645,36 @@ const worldChapters = [
       grid-column: auto;
     }
 
-    .trust-layout {
+    .role-card__num {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--link);
+    font-weight: 600;
+  }
+
+  .role-card__text {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .advisory-card__foot {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .advisory-card__foot .flip-card__hint {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .trust-layout {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
       align-items: start;
     }
