@@ -11,6 +11,31 @@
 const VS = `#version 300 es
 in vec2 a_pos;
 out vec2 v_uv;
+// Silhouette procédurale réaliste d'un requin nageant au loin dans la brume marine
+float sharkMask(vec2 uv, vec2 center, float scale, float dir, float t, float phase) {
+  vec2 q = (uv - center) / scale;
+  q.x *= dir;
+  // Ondulation fluide du corps vers la queue
+  float tailFactor = smoothstep(0.15, -0.85, q.x);
+  q.y += sin(q.x * 5.2 - t * 3.0 + phase) * 0.065 * tailFactor;
+
+  // Fuselage hydrodynamique (museau en +0.55, queue en -0.75)
+  float bodyHalfW = mix(0.015, 0.105, smoothstep(-0.68, 0.12, q.x)) * smoothstep(0.62, 0.22, q.x);
+  float body = smoothstep(bodyHalfW + 0.014, bodyHalfW - 0.008, abs(q.y));
+
+  // Aileron dorsal
+  float dorsal = smoothstep(0.025, 0.0, abs(q.x - 0.02 + q.y * 0.45))
+    * step(0.04, q.y)
+    * smoothstep(0.24, 0.08, q.y);
+
+  // Nageoire caudale en croissant
+  float tailX = smoothstep(-0.56, -0.78, q.x) * smoothstep(-0.92, -0.72, q.x);
+  float tailY = smoothstep(0.018, 0.0, abs(abs(q.y) - (-q.x - 0.56) * 0.62));
+  float caudal = tailX * tailY;
+
+  return clamp(max(body, max(dorsal, caudal)), 0.0, 1.0);
+}
+
 void main() {
   v_uv = a_pos * 0.5 + 0.5;
   gl_Position = vec4(a_pos, 0.0, 1.0);
@@ -60,6 +85,31 @@ float godRay(vec2 uv, float t, vec2 ptr) {
   return beam * vertical;
 }
 
+// Silhouette procédurale réaliste d'un requin nageant au loin dans la brume marine
+float sharkMask(vec2 uv, vec2 center, float scale, float dir, float t, float phase) {
+  vec2 q = (uv - center) / scale;
+  q.x *= dir;
+  // Ondulation fluide du corps vers la queue
+  float tailFactor = smoothstep(0.15, -0.85, q.x);
+  q.y += sin(q.x * 5.2 - t * 3.0 + phase) * 0.065 * tailFactor;
+
+  // Fuselage hydrodynamique (museau en +0.55, queue en -0.75)
+  float bodyHalfW = mix(0.015, 0.105, smoothstep(-0.68, 0.12, q.x)) * smoothstep(0.62, 0.22, q.x);
+  float body = smoothstep(bodyHalfW + 0.014, bodyHalfW - 0.008, abs(q.y));
+
+  // Aileron dorsal
+  float dorsal = smoothstep(0.025, 0.0, abs(q.x - 0.02 + q.y * 0.45))
+    * step(0.04, q.y)
+    * smoothstep(0.24, 0.08, q.y);
+
+  // Nageoire caudale en croissant
+  float tailX = smoothstep(-0.56, -0.78, q.x) * smoothstep(-0.92, -0.72, q.x);
+  float tailY = smoothstep(0.018, 0.0, abs(abs(q.y) - (-q.x - 0.56) * 0.62));
+  float caudal = tailX * tailY;
+
+  return clamp(max(body, max(dorsal, caudal)), 0.0, 1.0);
+}
+
 void main() {
   vec2 uv = v_uv;
   float aspect = u_res.x / max(1.0, u_res.y);
@@ -93,6 +143,19 @@ void main() {
   float wave = sin(uv.x * 5.0 + t * 0.9 + depthShift * 4.0) * 0.015;
   float currentBand = smoothstep(0.02, 0.0, abs(fract(uv.y * 2.4 - depthShift * 0.6 + wave) - 0.5)) * 0.035;
   water += vec3(0.28, 0.72, 1.0) * currentBand;
+
+  // 5. Silhouettes lointaines de requins glissant dans la profondeur marine
+  float s1x = fract(t * 0.028 + 0.15) * 1.7 - 0.35;
+  float s1 = sharkMask(p, vec2(s1x * aspect, 0.62 + sin(t * 0.35) * 0.03), 0.24, 1.0, t, 0.0);
+
+  float s2x = 1.35 - fract(t * 0.021 + 0.62) * 1.7;
+  float s2 = sharkMask(p, vec2(s2x * aspect, 0.34 + cos(t * 0.28) * 0.025), 0.17, -1.0, t, 2.1);
+
+  float s3x = fract(t * 0.016 + 0.45) * 1.8 - 0.4;
+  float s3 = sharkMask(p, vec2(s3x * aspect, 0.78 + sin(t * 0.22 + 1.0) * 0.02), 0.13, 1.0, t, 4.2);
+
+  float sharkShadow = clamp(s1 * 0.42 + s2 * 0.32 + s3 * 0.24, 0.0, 0.55);
+  water = mix(water, vec3(0.004, 0.016, 0.045), sharkShadow);
 
   // Vignette périphérique douce pour garder la lisibilité des bords
   float vig = smoothstep(1.15, 0.22, length(uv - vec2(0.5, 0.52)));
