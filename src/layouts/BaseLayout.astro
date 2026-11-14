@@ -165,6 +165,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body data-world={resolvedWorld}>
+    <canvas class="spatial-field" data-spatial-field aria-hidden="true"></canvas>
     <a class="skip-link" href="#contenu">{t.skip}</a>
     <div class="beam" aria-hidden="true"></div>
     <Header />
@@ -176,9 +177,11 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
       import { initTabs } from '../scripts/tabs';
       import { initWorlds } from '../scripts/worlds';
       import { initFlipCards } from '../scripts/flipcards';
+      import { initSpatialField } from '../scripts/spatial-field';
       initTabs();
       initWorlds();
       initFlipCards();
+      initSpatialField();
     </script>
   </body>
 </html>
