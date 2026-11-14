@@ -95,18 +95,25 @@ export function initSpatialField(): void {
     { passive: true },
   );
 
-  const initialTarget = WORLD_PALETTE[document.body.dataset.activeWorld ?? 'command'] ?? DEFAULT_RGB;
+  const initialKey = document.body.dataset.activeWorld ?? document.body.dataset.world ?? 'command';
+  const initialTarget = WORLD_PALETTE[initialKey] ?? DEFAULT_RGB;
   const activeColor: Rgb = { r: initialTarget.r, g: initialTarget.g, b: initialTarget.b };
+  let lastWorldKey = initialKey;
+  let portalSurge = 0;
   let time = 0;
   let rafId = 0;
   let running = true;
 
   const renderFrame = () => {
     const worldKey = document.body.dataset.activeWorld ?? document.body.dataset.world ?? 'command';
+    if (worldKey !== lastWorldKey) {
+      lastWorldKey = worldKey;
+      portalSurge = 1;
+    }
     const target = WORLD_PALETTE[worldKey] ?? DEFAULT_RGB;
-    activeColor.r += (target.r - activeColor.r) * 0.04;
-    activeColor.g += (target.g - activeColor.g) * 0.04;
-    activeColor.b += (target.b - activeColor.b) * 0.04;
+    activeColor.r += (target.r - activeColor.r) * 0.045;
+    activeColor.g += (target.g - activeColor.g) * 0.045;
+    activeColor.b += (target.b - activeColor.b) * 0.045;
 
     pointerX += (targetPointerX - pointerX) * 0.06;
     pointerY += (targetPointerY - pointerY) * 0.06;
@@ -115,36 +122,38 @@ export function initSpatialField(): void {
 
     const cx = width * 0.5;
     const cy = height * 0.48;
-    const fov = Math.min(width, height) * 0.72;
+    const fov = Math.min(width, height) * 0.76;
     const cr = Math.round(activeColor.r);
     const cg = Math.round(activeColor.g);
     const cb = Math.round(activeColor.b);
 
-    // Anneaux d'onde de profondeur discrets (repères spatiaux dans l'eau/espace)
-    for (let ring = 0; ring < 3; ring += 1) {
-      const rz = ((ring * 0.62 - time * 0.12 - scrollBoost * 2.5) % 1.86 + 1.86) % 1.86 + 0.18;
-      const radius = (0.72 / rz) * fov;
-      const alpha = Math.max(0, Math.min(0.11, (1 - rz / 2.0) * 0.12));
-      if (alpha > 0.005 && radius < Math.max(width, height) * 1.4) {
+    // Ondes de profondeur concentriques : traversée continue d'un monde à l'autre
+    const ringCount = 5;
+    for (let ring = 0; ring < ringCount; ring += 1) {
+      const rz = ((ring * 0.38 - time * 0.14 - scrollBoost * 3.2) % 1.9 + 1.9) % 1.9 + 0.14;
+      const radius = (0.76 / rz) * fov;
+      const alpha = Math.max(0, Math.min(0.22, (1 - rz / 2.0) * (0.16 + portalSurge * 0.12)));
+      if (alpha > 0.008 && radius < Math.max(width, height) * 1.6) {
         ctx.beginPath();
         ctx.ellipse(
-          cx - pointerX * (160 / rz),
-          cy - pointerY * (140 / rz),
-          radius * 1.25,
-          radius * 0.68,
+          cx - pointerX * (180 / rz),
+          cy - pointerY * (150 / rz),
+          radius * 1.28,
+          radius * 0.66,
           0,
           0,
           Math.PI * 2,
         );
         ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${alpha.toFixed(3)})`;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = rz < 0.6 ? 1.35 : 1;
         ctx.stroke();
       }
     }
 
-    const zStep = reduced ? 0 : 0.0014 + scrollBoost;
+    const zStep = reduced ? 0 : 0.0018 + scrollBoost + portalSurge * 0.014;
     scrollBoost *= 0.91;
-    time += 0.012;
+    portalSurge *= 0.94;
+    time += 0.013;
 
     for (const p of particles) {
       p.z -= zStep;
@@ -156,13 +165,13 @@ export function initSpatialField(): void {
         p.z = 0.12;
       }
 
-      const waveY = Math.sin(time + p.phase) * 0.025;
+      const waveY = Math.sin(time + p.phase) * 0.028;
       const px = cx + ((p.x - pointerX) / p.z) * fov;
       const py = cy + ((p.y + waveY - pointerY) / p.z) * fov;
       if (px < -40 || px > width + 40 || py < -40 || py > height + 40) continue;
 
-      const depthAlpha = Math.max(0, Math.min(0.75, (1 - p.z / 2.0) * 0.72));
-      const r = Math.max(0.6, (p.size / p.z) * 1.15);
+      const depthAlpha = Math.max(0, Math.min(0.88, (1 - p.z / 2.0) * (0.78 + portalSurge * 0.2)));
+      const r = Math.max(0.75, (p.size / p.z) * 1.3);
 
       ctx.beginPath();
       ctx.arc(px, py, r, 0, Math.PI * 2);

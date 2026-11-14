@@ -47,7 +47,7 @@ const {
       width={width}
       height={height}
       class:list={['hscene__img', focal !== 'center' && `hscene__img--${focal}`]}
-      loading={priority ? 'eager' : 'lazy'}
+      loading="eager"
       fetchpriority={priority ? 'high' : undefined}
       decoding="async"
     />

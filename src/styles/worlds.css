@@ -173,15 +173,14 @@ footer {
   z-index: 1;
 }
 
-/* Sections spatiales 3D : immersion par vagues de profondeur et de lumière */
+/* Sections spatiales 3D : fond totalement ouvert sur le champ 3D + vagues de profondeur */
 .world {
   position: relative;
-  background-color: color-mix(in srgb, var(--paper) 74%, transparent);
+  background-color: transparent;
   background-image:
-    radial-gradient(ellipse 90% 52% at 50% 0%, var(--world-glow, transparent), transparent 72%),
-    radial-gradient(ellipse 75% 42% at 50% 100%, color-mix(in srgb, var(--paper) 82%, transparent), transparent 78%);
+    radial-gradient(ellipse 90% 48% at 50% 0%, var(--world-glow, transparent), transparent 72%);
   color: var(--ink);
-  padding-block: clamp(72px, 9.5vw, 136px);
+  padding-block: clamp(88px, 11vw, 152px);
   perspective: 1200px;
   isolation: isolate;
   overflow-x: clip;
@@ -194,19 +193,19 @@ footer {
   height: 1px;
   background: linear-gradient(
     90deg,
-    transparent 6%,
-    var(--line-strong) 25%,
+    transparent 4%,
+    var(--line-strong) 22%,
     var(--electric) 50%,
-    var(--line-strong) 75%,
-    transparent 94%
+    var(--line-strong) 78%,
+    transparent 96%
   );
-  opacity: 0.72;
+  opacity: 0.85;
   pointer-events: none;
 }
 
 .world--flush-top {
   padding-top: 0;
-  background-color: color-mix(in srgb, var(--paper) 58%, transparent);
+  background-color: transparent;
 }
 
 .world--flush-top::before {
