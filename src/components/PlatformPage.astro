@@ -8,6 +8,7 @@ import PageHead from './PageHead.astro';
 import SectionHead from './SectionHead.astro';
 import ClaimList from './ClaimList.astro';
 import ArchDiagram from './ArchDiagram.astro';
+import KeyDeviceShowcase from './KeyDeviceShowcase.astro';
 import DataTable from './DataTable.astro';
 import EvidenceScale from './EvidenceScale.astro';
 import LevelTag from './LevelTag.astro';
@@ -115,6 +116,11 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
     <div class="wrap">
       <SectionHead id="architecture-title" index={n('architecture')} kicker="Architecture" title="Comment elle est construite" />
       <ArchDiagram title={`Architecture de ${p.name}`} {...p.diagram} />
+      {p.slug === 'luxia-key' && (
+        <div class="key-showcase-slot">
+          <KeyDeviceShowcase showLink={false} />
+        </div>
+      )}
     </div>
   </section>
 
@@ -298,11 +304,11 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    border-radius: 0 var(--radius) var(--radius) 0;
+    border-radius: var(--radius);
     margin-top: clamp(40px, 5vw, 64px);
     padding: clamp(24px, 3vw, 40px);
     background-color: var(--surface);
-    border-left: 3px solid var(--blue);
+    border: 1px solid var(--line);
   }
 
   .principle__title {
@@ -340,5 +346,9 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
     padding-block: 14px;
     border-bottom: 1px solid var(--line);
     color: var(--ink);
+  }
+
+  .key-showcase-slot {
+    margin-top: clamp(28px, 4vw, 44px);
   }
 </style>

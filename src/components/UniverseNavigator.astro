@@ -343,7 +343,7 @@ const pos: Record<string, [number, number]> = {
     padding: 18px 20px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: rgb(17 24 39 / 0.7);
+    background: var(--surface);
   }
 
   .univ__preview-name {
@@ -428,10 +428,8 @@ const pos: Record<string, [number, number]> = {
     .univ__node a:hover .univ__dot,
     .univ__node a:focus-visible .univ__dot,
     .univ__node.is-lit .univ__dot {
-      scale: 1.35;
-      box-shadow:
-        0 0 0 6px color-mix(in srgb, var(--node) 22%, transparent),
-        0 0 28px 6px color-mix(in srgb, var(--node) 55%, transparent);
+      scale: 1.25;
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--node) 22%, transparent);
     }
 
     .univ__node--identity .univ__dot {

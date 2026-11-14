@@ -1,0 +1,603 @@
+---
+import { href } from '../i18n/routes';
+import { keyShowcase } from '../data/stack';
+import Icon from './Icon.astro';
+
+interface Props {
+  showLink?: boolean | undefined;
+}
+
+const { showLink = true } = Astro.props;
+const { headline, subheadline, enterprise, consumer } = keyShowcase;
+const { screenLogin, screenApproval, benefits } = consumer;
+---
+
+<div class="kds">
+  <div class="kds__narrative">
+    <div class="kds__header">
+      <h3 class="kds__title">{headline}</h3>
+      <p class="kds__sub">{subheadline}</p>
+    </div>
+
+    <div class="kds__bridge">
+      <div class="kds__bridge-head">
+        <Icon name="shield-check" size={18} stroke={1.8} />
+        <h4>{enterprise.title}</h4>
+      </div>
+      <p class="kds__copy">{enterprise.summary}</p>
+      <ul class="kds__points">
+        {
+          enterprise.points.map((pt) => (
+            <li>
+              <Icon name="check" size={14} stroke={2} />
+              <span>{pt}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="kds__consumer">
+      <h4 class="kds__consumer-title">{consumer.title}</h4>
+      <p class="kds__copy">{consumer.summary}</p>
+      <ul class="kds__benefits">
+        {
+          benefits.map((b) => (
+            <li>
+              <strong>{b.title}</strong>
+              <span>{b.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {
+      showLink && (
+        <div class="kds__actions">
+          <a class="btn btn--primary" href={href('key')}>
+            <span>Architecture LUXIA Key</span>
+            <Icon name="arrow-right" size={16} stroke={1.8} />
+          </a>
+          <a class="link" href={href('identity')}>
+            <span>Voir le socle LUXIA Identity</span>
+            <Icon name="chevron-right" size={15} stroke={1.8} />
+          </a>
+        </div>
+      )
+    }
+  </div>
+
+  <figure class="kds__stage" aria-label="Représentation des deux écrans principaux de LUXIA Key for User">
+    <div class="kds__devices">
+      <!-- Écran 1 : Connexion unifiée & Confidentialité par défaut -->
+      <div class="phone" aria-hidden="true">
+        <div class="phone__notch">
+          <span>9:41</span>
+          <span class="phone__pill"></span>
+          <span class="phone__sig">5G</span>
+        </div>
+
+        <div class="phone__screen phone__screen--login">
+          <div class="phone__brand">
+            <Icon name="key-round" size={18} stroke={1.8} />
+            <span>{screenLogin.brand}</span>
+          </div>
+          <p class="phone__prompt">{screenLogin.prompt}</p>
+
+          <div class="phone__visual">
+            <div class="phone__qr-box">
+              <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+                <rect x="4" y="4" width="14" height="14" stroke="currentColor" stroke-width="2" />
+                <rect x="9" y="9" width="4" height="4" fill="currentColor" />
+                <rect x="28" y="4" width="14" height="14" stroke="currentColor" stroke-width="2" />
+                <rect x="33" y="9" width="4" height="4" fill="currentColor" />
+                <rect x="4" y="28" width="14" height="14" stroke="currentColor" stroke-width="2" />
+                <rect x="9" y="33" width="4" height="4" fill="currentColor" />
+                <rect x="24" y="24" width="5" height="5" fill="currentColor" />
+                <rect x="33" y="24" width="9" height="4" fill="currentColor" />
+                <rect x="24" y="33" width="4" height="9" fill="currentColor" />
+                <rect x="33" y="33" width="9" height="9" stroke="currentColor" stroke-width="2" />
+              </svg>
+              <span>WebAuthn · Passkey</span>
+            </div>
+          </div>
+
+          <div class="phone__buttons">
+            <span class="phone__btn phone__btn--primary">{screenLogin.primaryAction}</span>
+            <span class="phone__btn phone__btn--secondary">{screenLogin.secondaryAction}</span>
+          </div>
+
+          <p class="phone__divider">{screenLogin.providersLabel}</p>
+          <div class="phone__providers">
+            {screenLogin.providers.map((prov) => <span class="phone__prov">{prov}</span>)}
+          </div>
+
+          <div class="phone__privacy">
+            <Icon name="lock" size={13} stroke={1.8} />
+            <span>{screenLogin.privacyNote}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Écran 2 : Validation des connexions sensibles -->
+      <div class="phone" aria-hidden="true">
+        <div class="phone__notch">
+          <span>9:41</span>
+          <span class="phone__pill"></span>
+          <span class="phone__sig">TLS 1.3</span>
+        </div>
+
+        <div class="phone__screen phone__screen--approve">
+          <div class="phone__service">
+            <span class="phone__svc-badge">IG</span>
+            <div>
+              <p class="phone__svc-name">{screenApproval.service}</p>
+              <p class="phone__svc-alert">{screenApproval.alert}</p>
+            </div>
+          </div>
+
+          <div class="phone__map">
+            <svg viewBox="0 0 220 96" width="100%" height="96" aria-hidden="true">
+              <line x1="0" y1="24" x2="220" y2="24" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="0" y1="48" x2="220" y2="48" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="0" y1="72" x2="220" y2="72" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="55" y1="0" x2="55" y2="96" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="110" y1="0" x2="110" y2="96" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="165" y1="0" x2="165" y2="96" stroke="currentColor" stroke-opacity="0.14" stroke-width="1" />
+              <line x1="18" y1="68" x2="202" y2="28" stroke="currentColor" stroke-opacity="0.22" stroke-width="1" stroke-dasharray="4 4" />
+              <circle cx="110" cy="48" r="18" fill="#2563eb" fill-opacity="0.18" stroke="#7cb3ff" stroke-opacity="0.5" stroke-width="1" />
+              <circle cx="110" cy="48" r="5" fill="#7cb3ff" />
+            </svg>
+            <span class="phone__coords">44.4268° N · 26.1025° E</span>
+          </div>
+
+          <dl class="phone__facts">
+            <div>
+              <dt>Localisation</dt>
+              <dd>{screenApproval.location}</dd>
+            </div>
+            <div>
+              <dt>Appareil</dt>
+              <dd>{screenApproval.device}</dd>
+            </div>
+            <div>
+              <dt>Détection</dt>
+              <dd>{screenApproval.timestamp}</dd>
+            </div>
+          </dl>
+
+          <div class="phone__decisions">
+            <span class="phone__btn phone__btn--approve">
+              <Icon name="check" size={14} stroke={2.4} />
+              <span>{screenApproval.approve}</span>
+            </span>
+            <span class="phone__btn phone__btn--deny">
+              <Icon name="x" size={14} stroke={2.4} />
+              <span>{screenApproval.deny}</span>
+            </span>
+          </div>
+
+          <p class="phone__inspect">{screenApproval.inspect}</p>
+        </div>
+      </div>
+    </div>
+
+    <figcaption class="kds__caption">
+      Aperçu des flux LUXIA Key : authentification sans mot de passe par passkey ou QR code, puis approbation géolocalisée des accès sensibles avant ouverture de session.
+    </figcaption>
+  </figure>
+</div>
+
+<style>
+  .kds {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px var(--gap);
+    padding: clamp(24px, 3.4vw, 40px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--paper-2);
+  }
+
+  .kds__narrative {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .kds__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .kds__title {
+    font-family: var(--display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.18;
+    color: var(--ink);
+  }
+
+  .kds__sub {
+    font-family: var(--mono);
+    font-size: var(--fs-small);
+    color: var(--link);
+  }
+
+  .kds__bridge,
+  .kds__consumer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .kds__bridge-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink);
+  }
+
+  .kds__bridge-head h4,
+  .kds__consumer-title {
+    font-family: var(--display);
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .kds__copy {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .kds__points {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .kds__points li {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .kds__points :global(svg) {
+    margin-top: 4px;
+    color: var(--link);
+  }
+
+  .kds__benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .kds__benefits li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 12px;
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .kds__benefits strong {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .kds__benefits span {
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .kds__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    padding-top: 8px;
+  }
+
+  .kds__stage {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .kds__devices {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  /* Châssis matériel précision titane */
+  .phone {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 22px;
+    background: linear-gradient(180deg, #171b22 0%, #0b0d12 100%);
+    box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.85);
+  }
+
+  .phone__notch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 10px 10px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-2);
+  }
+
+  .phone__pill {
+    width: 48px;
+    height: 10px;
+    border-radius: 999px;
+    background-color: #030405;
+    border: 1px solid var(--line);
+  }
+
+  .phone__sig {
+    color: var(--ink-3);
+  }
+
+  .phone__screen {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+    padding: 16px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background-color: #07090d;
+  }
+
+  .phone__brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .phone__brand :global(svg) {
+    color: var(--link);
+  }
+
+  .phone__prompt {
+    text-align: center;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+
+  .phone__visual {
+    display: grid;
+    place-items: center;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+  }
+
+  .phone__qr-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--link);
+  }
+
+  .phone__qr-box span {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-3);
+  }
+
+  .phone__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .phone__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .phone__btn--primary {
+    background-color: var(--blue);
+    color: var(--white);
+  }
+
+  .phone__btn--secondary {
+    border: 1px solid var(--line-strong);
+    background-color: var(--surface);
+    color: var(--ink);
+  }
+
+  .phone__divider {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+
+  .phone__providers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .phone__prov {
+    padding: 6px 4px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .phone__privacy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+
+  .phone__service {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phone__svc-badge {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background-color: var(--surface-2);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .phone__svc-name {
+    font-family: var(--display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .phone__svc-alert {
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+
+  .phone__map {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    color: var(--ink-3);
+  }
+
+  .phone__coords {
+    position: absolute;
+    right: 8px;
+    bottom: 6px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--ink-2);
+    background: rgb(6 7 9 / 0.85);
+    padding: 2px 5px;
+    border: 1px solid var(--line);
+  }
+
+  .phone__facts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 0;
+    border-block: 1px solid var(--line);
+  }
+
+  .phone__facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+
+  .phone__facts dt {
+    color: var(--ink-3);
+  }
+
+  .phone__facts dd {
+    font-family: var(--mono);
+    color: var(--ink);
+    text-align: right;
+  }
+
+  .phone__decisions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .phone__btn--approve {
+    background-color: #166534;
+    color: #ffffff;
+    border: 1px solid #22c55e;
+  }
+
+  .phone__btn--deny {
+    background-color: #280d12;
+    color: #fecaca;
+    border: 1px solid #991b1b;
+  }
+
+  .phone__inspect {
+    margin-top: auto;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .kds__caption {
+    font-size: var(--fs-meta);
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 640px) {
+    .kds__devices {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .kds {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+    }
+  }
+</style>

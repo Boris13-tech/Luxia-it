@@ -16,7 +16,7 @@ interface Props {
   scene?: Variant | undefined;
 }
 
-const { title, kicker, lead, crumbs = [], scene } = Astro.props;
+const { title, kicker: _kicker, lead, crumbs = [], scene } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
 const t = ui[locale];
 ---
@@ -38,7 +38,6 @@ const t = ui[locale];
         </nav>
       )
     }
-    {kicker && <p class="kicker phead__kicker">{kicker}</p>}
     <h1 class="t-h1 phead__title" id="page-title">{title}</h1>
     <div class="phead__body">
       {lead && <p class="t-lead">{lead}</p>}

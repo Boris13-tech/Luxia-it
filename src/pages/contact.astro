@@ -294,8 +294,9 @@ const { email, phone, phoneHref, responseTime } = facts.contact;
 
   .summary {
     margin-top: 20px;
-    padding: 14px 16px;
-    border-left: 3px solid var(--error);
+    padding: 16px 18px;
+    border: 1px solid var(--error);
+    border-radius: var(--radius);
     background-color: var(--terra-tint);
   }
 
@@ -319,11 +320,12 @@ const { email, phone, phoneHref, responseTime } = facts.contact;
     margin-bottom: 24px;
     padding: 18px 20px;
     background-color: var(--surface);
-    border-left: 3px solid var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
   }
 
   .notice--ok {
-    border-left-color: var(--success);
+    border-color: var(--success);
   }
 
   .notice__title {

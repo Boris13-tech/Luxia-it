@@ -71,8 +71,8 @@
 
 @keyframes word-focus {
   from {
-    filter: blur(12px);
-    transform: translateY(0.18em);
+    opacity: 0;
+    transform: translateY(0.12em);
   }
 }
 
@@ -137,10 +137,9 @@
     animation: reveal var(--t-slow) var(--ease-out) 200ms both;
   }
 
-  /* Titre de l'accueil : chaque mot se précise à son tour, sans changer
-     d'opacité (le texte reste lisible et mesuré dès le premier rendu) */
+  /* Titre de l'accueil : entrée franche et nette sans flou progressif */
   .hero__word {
-    animation: word-focus 900ms var(--ease-out) both;
+    animation: word-focus 420ms var(--ease-out) both;
   }
 
   .hero__word:nth-child(2) {
@@ -304,7 +303,7 @@
       position: absolute;
       inset: 0 0 -28px 0;
       z-index: -1;
-      background-image: linear-gradient(rgb(7 9 13 / 0.92), rgb(7 9 13 / 0));
+      background-image: linear-gradient(rgb(6 7 9 / 0.94), rgb(6 7 9 / 0));
       pointer-events: none;
       /* Propriétés séparées : la minification ne doit pas les fusionner dans
          le raccourci « animation », qui n'accepte pas animation-timeline. */

@@ -75,7 +75,7 @@ const steps: readonly { id: string; label: string; where: string; text: string; 
     steps.map((s) => (
       <section class="tabs__panel flow__panel" id={s.id}>
         <h3 class="tabs__panel-title flow__title">{s.label}</h3>
-        <p class="kicker">Composant : {s.where}</p>
+        <p class="t-meta flow__where">Composant : {s.where}</p>
         <p class="t-lead flow__text">{s.text}</p>
         <LevelTag level={s.level} />
       </section>
@@ -93,7 +93,14 @@ const steps: readonly { id: string; label: string; where: string; text: string; 
     padding: clamp(20px, 3vw, 32px);
     background-color: var(--surface);
     border: 1px solid var(--line);
-    border-left: 3px solid var(--blue);
+    border-radius: var(--radius);
+  }
+
+  .flow__where {
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
 
   .flow__title {

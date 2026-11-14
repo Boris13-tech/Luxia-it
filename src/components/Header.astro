@@ -82,15 +82,13 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
     display: flex;
     align-items: center;
     gap: 16px;
-    height: calc(var(--header-h) - 12px);
-    padding: 0 8px 0 18px;
-    border: 1px solid rgb(255 255 255 / 0.08);
-    border-radius: 999px;
-    background: rgb(13 18 30 / 0.72);
-    backdrop-filter: blur(14px) saturate(140%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.05),
-      0 12px 40px -18px rgb(0 0 0 / 0.8);
+    height: var(--header-h);
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: rgb(6 7 9 / 0.94);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset;
   }
 
   .hdr__brand {
@@ -116,7 +114,7 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
     align-items: center;
     min-height: 40px;
     padding: 0 14px;
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     font-size: 0.9375rem;
     font-weight: 500;
     color: var(--ink-2);
@@ -153,7 +151,7 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
     min-height: 44px;
     padding: 0 8px 0 16px;
     border: 1px solid var(--line-strong);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     font-size: 0.9375rem;
     font-weight: 500;
     color: var(--ink);

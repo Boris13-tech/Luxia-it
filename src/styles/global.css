@@ -43,35 +43,35 @@
 :root {
   color-scheme: dark;
 
-  /* Fonds */
-  --paper: #07090d;
-  --paper-2: #0b1019;
-  --surface: #111827;
-  --surface-2: #172033;
+  /* Fonds — Obsidian architectural (Palantir / Apple Pro) */
+  --paper: #060709;
+  --paper-2: #0a0c10;
+  --surface: #0f1218;
+  --surface-2: #151a22;
   --white: #ffffff;
-  --tint-blue: #08122a;
-  --tint-sage: #08150f;
-  --dark: #0a1122;
-  --dark-2: #111b30;
+  --tint-blue: #091326;
+  --tint-sage: #081410;
+  --dark: #070a10;
+  --dark-2: #0d121c;
 
-  /* Encre claire */
-  --ink: #eef2f8;
-  --ink-2: #b9c3d4;
-  --ink-3: #8d99ae;
+  /* Encre claire — Titane optique haute lisibilité */
+  --ink: #f4f6fa;
+  --ink-2: #b8c0cc;
+  --ink-3: #838e9e;
 
-  /* Filets */
-  --line: #1d2638;
-  --line-soft: #151c2a;
-  --line-strong: #5d6b86;
+  /* Filets — Grille orthogonale 1px */
+  --line: #1c222d;
+  --line-soft: #131820;
+  --line-strong: #4e596d;
 
-  /* Bleu Luxia et lumière électrique */
-  --blue: #2f6fe0;
-  --blue-hover: #3f7ef0;
-  --link: #8cb8ff;
-  --blue-tint: #13234a;
-  --blue-light: #5b9bff;
-  --electric: #5b9bff;
-  --glow: rgb(91 155 255 / 0.35);
+  /* Accent technique Luxia — Cobalt de précision */
+  --blue: #2563eb;
+  --blue-hover: #3b82f6;
+  --link: #7cb3ff;
+  --blue-tint: #0d1a33;
+  --blue-light: #7cb3ff;
+  --electric: #5fa0ff;
+  --glow: rgb(95 160 255 / 0.14);
 
   /* Violet, réservé à l'IA */
   --violet: #a78bfa;
@@ -111,14 +111,14 @@
   --fs-small: 0.9375rem;
   --fs-meta: 0.875rem;
 
-  /* Mise en page */
+  /* Mise en page — Grille technique orthogonale sans arrondis SaaS */
   --max: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
   --gap: clamp(20px, 2.6vw, 40px);
-  --header-h: 76px;
-  --section-y: clamp(64px, 9vw, 128px);
-  --radius: 14px;
-  --radius-sm: 10px;
+  --header-h: 64px;
+  --section-y: clamp(64px, 8vw, 112px);
+  --radius: 2px;
+  --radius-sm: 2px;
 
   /* Mouvement */
   --ease: cubic-bezier(0.25, 1, 0.5, 1);
@@ -167,9 +167,11 @@ body {
   line-height: 1.6;
   color: var(--ink-2);
   background-color: var(--paper);
-  /* Grain très léger : le noir n'est jamais un aplat mort */
-  background-image: radial-gradient(120rem 60rem at 50% -20%, rgb(47 111 224 / 0.07), transparent 60%);
-  background-repeat: no-repeat;
+  /* Trame orthogonale discrète : géométrie d'ingénierie sans halo néon */
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -455,10 +457,11 @@ main:focus {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 48px;
-  padding: 10px 24px;
+  min-height: 44px;
+  padding: 10px 22px;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 2px;
+  letter-spacing: 0.01em;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.3;
@@ -672,7 +675,7 @@ main:focus {
   min-height: 40px;
   padding: 6px 16px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   font-size: var(--fs-small);
   font-weight: 500;
@@ -906,7 +909,7 @@ main:focus {
   display: none;
   height: 4px;
   margin-top: 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background-color: var(--line);
   overflow: hidden;
 }
@@ -914,7 +917,7 @@ main:focus {
 .stepper-rail__fill {
   display: block;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background-image: linear-gradient(90deg, var(--blue), var(--blue-light));
   transform-origin: left;
   transform: scaleX(var(--progress, 0.125));

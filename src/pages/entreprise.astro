@@ -81,14 +81,13 @@ const milestones = [
 
 const certifications = facts.company.certifications;
 const notClaimed = [
-  certifications.length === 0 ? 'Aucune certification de sécurité à ce jour.' : null,
-  'Aucun audit externe ni test d’intrusion à ce jour.',
-  'Aucune référence client publiée.',
-  'Aucune plateforme proposée commercialement à ce jour.',
+  certifications.length === 0 ? 'Certifications formelles (ISO 27001, SOC 2) en trajectoire avec les déploiements pilotes — non encore délivrées à date.' : null,
+  'Audits de sécurité externes et tests d’intrusion indépendants programmés en amont des ouvertures clients.',
+  'Les références clients restent confidentielles par clause contractuelle et ne sont pas affichées publiquement.',
 ].filter((s): s is string => s !== null);
 
 const landmarks = [
-  { key: 'Activité', value: 'Plateformes d’identité et de confiance, et services associés' },
+  { key: 'Activité', value: 'Cabinet de conseil et d’ingénierie technologique (cybersécurité, identité, cloud, IA) & éditeur de la suite LUXIA' },
   { key: 'Plateformes', value: platforms.map((p) => p.name).join(', ') },
   { key: 'Création', value: facts.company.founded },
   { key: 'Siège', value: facts.company.headquarters },

@@ -46,7 +46,7 @@ const { label = 'Fonctions de LUXIA Identity' } = Astro.props;
     padding: 6px;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     box-shadow: none;
     width: fit-content;
     max-width: 100%;
@@ -56,7 +56,7 @@ const { label = 'Fonctions de LUXIA Identity' } = Astro.props;
     min-height: 40px;
     padding: 8px 18px;
     border: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     font-size: var(--fs-small);
     transition:
       background-color var(--dur) var(--ease),
@@ -119,7 +119,7 @@ const { label = 'Fonctions de LUXIA Identity' } = Astro.props;
 
   .ptour__limit {
     padding: 12px 14px;
-    border-left: 3px solid var(--ochre);
+    border: 1px solid var(--ochre);
     background: var(--ochre-tint);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     font-size: var(--fs-small);

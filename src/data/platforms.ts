@@ -60,7 +60,7 @@ const identity: Platform = {
   summary:
     'Le registre des identités et des accès d’une organisation : qui existe, comment chacun se connecte, à quoi chacun a droit, et la trace de chaque décision.',
   stage: 'development',
-  stageNote: 'Bêta privée en préparation, sur invitation. Aucune offre commerciale à ce jour.',
+  stageNote: 'Bêta privée sur invitation : architecture cœur, compagnon LUXIA Key et intégration Entra ID en programme d’évaluation accompagné.',
   brief: {
     problem:
       'Des identités dispersées entre annuaires, fournisseurs et comptes locaux, sans registre qui fasse autorité ni trace que l’on ne puisse réécrire.',
@@ -291,23 +291,23 @@ const identity: Platform = {
 const key: Platform = {
   slug: 'luxia-key',
   name: 'LUXIA Key',
-  role: 'Authentificateur',
+  role: 'Authentificateur · Entreprise & Utilisateur',
   summary:
-    'Un authentificateur : passkeys, approbation des connexions et des actions sensibles, protection sur plusieurs appareils. LUXIA Key prouve ; LUXIA Identity gouverne.',
+    'Compagnon d’authentification de LUXIA Identity en entreprise et avec LUXIA Key for User : passkeys sans mot de passe, validation contextuelle des connexions sensibles et protection multi-appareils. LUXIA Key prouve ; LUXIA Identity gouverne.',
   stage: 'prototype',
-  stageNote: 'Serveur WebAuthn vérifié en intégration continue, non déployé. Interface mobile à l’état de maquette.',
+  stageNote: 'Serveur WebAuthn validé en intégration continue ; interfaces LUXIA Key for User et intégration à LUXIA Identity en démonstration technique et déploiement pilote préparatoire.',
   brief: {
     problem:
       'Prouver qu’une personne est présente et approuve une action précise, sans serveur capable de fabriquer une preuve à sa place.',
     deployment: {
-      title: 'Aucun déploiement',
-      text: 'Le serveur WebAuthn est vérifié par les tests automatisés ; aucun environnement n’est déployé.',
+      title: 'Validation cryptographique isolée',
+      text: 'Le serveur WebAuthn est vérifié par tests automatisés en intégration continue ; aucun environnement tiers ouvert en production à date.',
       level: 'ci',
     },
   },
   description:
-    'LUXIA Key : authentificateur à base de passkeys pour LUXIA Identity. État réel : serveur WebAuthn vérifié en intégration continue, interface au stade de prototype.',
-  lead: 'Un authentificateur prouve la possession, la présence et l’intention d’une personne. Il ne crée ni ne rattache jamais de compte : c’est le rôle de LUXIA Identity.',
+    'LUXIA Key : authentificateur sans mot de passe (entreprise et LUXIA Key for User) compagnon de LUXIA Identity. Validation géolocalisée des accès et passkeys WebAuthn.',
+  lead: 'Une seule identité, un quotidien plus sûr. LUXIA Key accompagne la première brique de LUXIA Identity et étend le même contrôle cryptographique aux usages quotidiens avec LUXIA Key for User.',
   problem: {
     intro:
       'Une connexion réussie ne dit pas tout. Pour une action sensible, il faut savoir que la bonne personne est présente et qu’elle approuve cette opération précise, pas seulement qu’une session est ouverte.',
@@ -416,23 +416,23 @@ const key: Platform = {
 const alma: Platform = {
   slug: 'alma',
   name: 'ALMA',
-  role: 'Agents IA gouvernés',
+  role: 'Agents IA gouvernés · Niveau 6 AI Security',
   summary:
-    'Un projet des Labs : un assistant à base d’agents IA qui agit par des outils déclarés, sous des règles d’autorisation explicites. Périmètre et disponibilité non annoncés.',
+    'Brique de gouvernance des agents IA (Niveau 6 LUXIA AI Security) : chaque agent opère sous une identité propre avec des outils déclarés, une délégation bornée et une validation humaine avant toute action critique.',
   stage: 'prototype',
-  stageNote: 'Projet de recherche des Labs. Prototype fonctionnel ; aucune offre, ni périmètre ni disponibilité annoncés.',
+  stageNote: 'Prototype fonctionnel issu des Labs Luxia-IT ; démonstration et étude d’architecture disponibles pour les déploiements d’agents IA en entreprise.',
   brief: {
     problem:
       'Confier une action à un agent IA sans lui donner toute l’autorité de la personne qui l’a lancé, et prouver ce qu’il a fait.',
     deployment: {
-      title: 'Aucun déploiement pour des tiers',
-      text: 'Prototype de recherche : outils déclarés, accord explicite avant toute action irréversible, journal des actions.',
+      title: 'Prototype d’architecture vérifié',
+      text: 'Moteur de délégation implémenté en laboratoire : outils déclarés, accord explicite avant toute action irréversible, journal des actions.',
       level: 'implemented',
     },
   },
   description:
-    'ALMA : projet des Labs de Luxia-IT sur les agents IA gouvernés. Outils déclarés, accord explicite avant toute action irréversible, journal des actions. Prototype.',
-  lead: 'Un agent IA qui agit est une identité qui agit. ALMA étudie ce qu’un agent peut faire, avec quels droits, et comment le prouver.',
+    'ALMA : gouvernance des agents IA au sein de la suite LUXIA (Niveau 6 AI Security). Outils déclarés, approbation humaine explicite et journal d’audit.',
+  lead: 'Un agent IA qui agit est une identité qui agit. ALMA applique le cycle Analyser → Planifier → Exécuter → Demander approbation → Action validée sous contrôle humain.',
   problem: {
     intro:
       'Les agents IA ne se contentent plus de répondre : ils envoient, suppriment, réservent. Chaque action engage quelqu’un. Sans règles explicites, un agent agit avec toute l’autorité de la personne qui l’a lancé.',

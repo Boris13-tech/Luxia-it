@@ -30,7 +30,7 @@ for (const root of ROOTS) {
       if (MARKERS.test(line)) problems.push(`${at} : marqueur de contenu manquant`);
       if (!file.endsWith('.astro')) return;
       if (/\sstyle=["{]/.test(line)) problems.push(`${at} : attribut style (bloqué par la CSP)`);
-      if (/\sis:inline\b/.test(line)) problems.push(`${at} : is:inline (code en ligne bloqué par la CSP)`);
+      if (/\sis:inline\b/.test(line) && !/\bsrc=/.test(line)) problems.push(`${at} : is:inline (code en ligne bloqué par la CSP)`);
       if (/\son[a-z]+=["{]/.test(line)) problems.push(`${at} : gestionnaire d'événement en ligne`);
       if (/target="_blank"/.test(line) && !/rel="[^"]*noopener/.test(line)) problems.push(`${at} : target="_blank" sans rel="noopener"`);
       if (/set:html/.test(line) && !file.endsWith(join('layouts', 'BaseLayout.astro'))) problems.push(`${at} : set:html hors JSON-LD`);

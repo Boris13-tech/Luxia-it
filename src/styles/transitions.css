@@ -161,47 +161,41 @@ html:active-view-transition .beam {
 @keyframes vt-out-left {
   to {
     opacity: 0;
-    transform: translateX(-28px);
-    filter: blur(6px);
+    transform: translateX(-20px);
   }
 }
 
 @keyframes vt-in-right {
   from {
     opacity: 0;
-    transform: translateX(36px);
-    filter: blur(8px);
+    transform: translateX(24px);
   }
 }
 
 @keyframes vt-through {
   to {
     opacity: 0;
-    transform: scale(1.04);
-    filter: blur(8px);
+    transform: scale(1.015);
   }
 }
 
 @keyframes vt-from-depth {
   from {
     opacity: 0;
-    transform: scale(0.965) translateY(18px);
-    filter: blur(10px);
+    transform: scale(0.985) translateY(10px);
   }
 }
 
 @keyframes vt-recede {
   to {
     opacity: 0;
-    transform: scale(0.965);
-    filter: blur(8px);
+    transform: scale(0.985);
   }
 }
 
 @keyframes vt-return {
   from {
     opacity: 0;
-    transform: scale(1.03);
-    filter: blur(8px);
+    transform: scale(1.015);
   }
 }

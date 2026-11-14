@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHead from '../../components/PageHead.astro';
 import SectionHead from '../../components/SectionHead.astro';
+import UnifiedStackMatrix from '../../components/UnifiedStackMatrix.astro';
 import EvidenceScale from '../../components/EvidenceScale.astro';
 import StageTag from '../../components/StageTag.astro';
 import CtaBlock from '../../components/CtaBlock.astro';
@@ -12,61 +13,76 @@ import { href } from '../../i18n/routes';
 
 const relations = [
   {
-    name: 'LUXIA Key prouve',
-    text: 'Un authentificateur établit la possession, la présence et l’intention d’une personne. Il ne crée ni ne rattache jamais de compte.',
+    name: 'LUXIA Key authentifie et valide',
+    text: 'Compagnon de LUXIA Identity sur le terrain : l’utilisateur prouve sa présence par passkey WebAuthn et approuve les accès sensibles en temps réel sur entreprise ou LUXIA Key for User.',
   },
   {
-    name: 'LUXIA Identity gouverne',
-    text: 'Le registre fait autorité : identités, droits, sessions et journal. Il vérifie lui-même chaque preuve qu’il reçoit.',
+    name: 'LUXIA Identity & Policy gouvernent',
+    text: 'Le registre central conserve les personnes, les rôles, les règles de séparation des tâches et les autorisations contextuelles pour les applications et API.',
   },
   {
-    name: 'ALMA étudie les agents',
-    text: 'Un agent IA qui agit est une identité qui agit. ALMA explore les règles qui permettent de lui confier une action, et de le prouver.',
+    name: 'Trust Graph, Runtime & Trust Ledger soutiennent l’échelle',
+    text: 'L’architecture étend la confiance aux partenaires externes, prépare l’exécution souveraine et scelle l’historique d’audit en ajout seul.',
+  },
+  {
+    name: 'ALMA / LUXIA AI Security encadre les agents',
+    text: 'Un agent IA agit comme une identité dédiée : outils déclarés, délégation bornée, approbation humaine avant toute action critique et trace complète.',
   },
 ];
 ---
 
 <BaseLayout
-  title="Plateformes"
-  description="LUXIA Identity, LUXIA Key et ALMA : rôle de chaque plateforme, étape réelle et niveau de preuve de leurs capacités."
+  title="Plateforme unifiée LUXIA en six niveaux"
+  description="Architecture complète de la suite LUXIA en six niveaux : LUXIA Identity, LUXIA Key, Policy, Trust Graph, Sovereign Runtime, Trust Ledger et AI Security (ALMA)."
   crumbs={[{ label: 'Plateformes' }]}
 >
   <PageHead
     crumbs={[{ label: 'Plateformes' }]}
-    kicker="Plateformes"
-    title="Trois plateformes, une étape réelle pour chacune"
-    lead="Luxia-IT développe une plateforme d’identités et d’accès, un authentificateur et un projet de recherche sur les agents IA. Aucune n’est proposée commercialement à ce jour ; leur étape est indiquée telle qu’elle est."
-  />
+    title="La plateforme unifiée LUXIA en six niveaux"
+    lead="De l’identité souveraine avec LUXIA Key jusqu’à la gouvernance opérationnelle des agents IA : une architecture cohérente dont chaque couche indique sans ambiguïté son état d’avancement et son niveau de preuve."
+  >
+    <p class="t-meta">Revue technique des preuves le <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
+  </PageHead>
 
-  <section class="section" aria-labelledby="etat-title">
+  <section class="section" id="architecture-unifiee" aria-labelledby="stack-full-title">
     <div class="wrap">
-      <SectionHead id="etat-title" index="01" kicker="État" title="Où en est chaque plateforme">
-        <p class="t-meta">Preuves lues le <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time></p>
-      </SectionHead>
+      <SectionHead
+        id="stack-full-title"
+        title="Cartographie complète des six niveaux et des trois piliers"
+        lead="Vue d’ensemble des briques technologiques, de leurs périmètres couverts et des capacités implémentées ou en conception."
+      />
+      <UnifiedStackMatrix />
+    </div>
+  </section>
+
+  <section class="section section--alt" id="etat" aria-labelledby="etat-title">
+    <div class="wrap">
+      <SectionHead
+        id="etat-title"
+        title="Fiches détaillées des trois produits phares"
+        lead="Accès aux spécifications complètes, limites connues et architecture interne de LUXIA Identity, LUXIA Key et ALMA."
+      />
+
       <ul class="plist">
         {
           platforms.map((p) => (
             <li class="plist__item">
-              <div class="plist__id">
-                <h3 class="t-h3">
-                  <a class="plist__link" href={platformHref(p.slug)}>
-                    {p.name}
-                  </a>
-                </h3>
-                <p class="kicker">{p.role}</p>
+              <div class="plist__head">
+                <a class="plist__link" href={platformHref(p.slug)}>
+                  <h3>{p.name}</h3>
+                  <Icon name="arrow-up-right" size={20} stroke={1.6} />
+                </a>
+                <StageTag stage={p.stage} />
               </div>
-              <div class="plist__body">
-                <p>{p.summary}</p>
-                <p class="plist__stage">
-                  <StageTag stage={p.stage} />
-                  <span class="t-small">{p.stageNote}</span>
-                </p>
+              <p class="plist__role">{p.role}</p>
+              <p class="plist__tagline">{p.summary}</p>
+              <p class="plist__note">{p.stageNote}</p>
+              <p class="plist__action">
                 <a class="more" href={platformHref(p.slug)}>
-                  Capacités, architecture et limites
-                  <span class="visually-hidden">de {p.name}</span>
+                  <span>Explorer {p.name}</span>
                   <Icon name="arrow-right" size={16} />
                 </a>
-              </div>
+              </p>
             </li>
           ))
         }
@@ -74,21 +90,19 @@ const relations = [
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="relations-title">
+  <section class="section" id="relations" aria-labelledby="relations-title">
     <div class="wrap">
       <SectionHead
         id="relations-title"
-        index="02"
-        kicker="Articulation"
-        title="Prouver, gouverner, étudier"
-        lead="Les plateformes partagent une règle : celui qui prouve une identité n’est pas celui qui décide de ses droits."
+        title="Comment les composants s’articulent"
+        lead="Séparation claire entre ce qui prouve, ce qui autorise, ce qui exécute et ce qui trace."
       />
-      <ul class="ruled ruled--3">
+      <ul class="rel-list ruled">
         {
           relations.map((r) => (
             <li>
-              <h3 class="ruled__title">{r.name}</h3>
-              <p class="ruled__text">{r.text}</p>
+              <h3>{r.name}</h3>
+              <p>{r.text}</p>
             </li>
           ))
         }
@@ -96,69 +110,137 @@ const relations = [
     </div>
   </section>
 
-  <section class="section" id="echelle" aria-labelledby="echelle-title">
+  <section class="section section--alt" id="echelle" aria-labelledby="echelle-title">
     <div class="wrap">
       <SectionHead
         id="echelle-title"
-        index="03"
-        kicker="Lecture"
-        title="Comment lire les étapes et les niveaux de preuve"
-        lead="Ces échelles reprennent celles de nos dépôts de code. Une capacité n’y monte qu’avec une preuve : un changement fusionné ne suffit pas."
+        title="Échelle de preuve et de maturité"
+        lead="Chaque affirmation technique sur ce site est qualifiée selon sa réalité opérationnelle mesurable."
       />
       <EvidenceScale />
     </div>
   </section>
 
   <CtaBlock
-    title="Une question sur une plateforme ?"
-    text="Nous présentons l’état réel de chaque plateforme, y compris ce qui n’est pas encore disponible."
+    title="Évaluer la suite sur votre périmètre"
+    text="Échangez avec nos architectes sur la brique LUXIA adaptée à votre contexte, en déploiement pilote ou en mission de conseil."
     href={`${href('contact')}?sujet=plateformes`}
-    label="Nous écrire"
+    label="Planifier un cadrage"
+    secondary={{ href: href('key'), label: 'Découvrir LUXIA Key' }}
   />
 </BaseLayout>
 
 <style>
   .plist {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .plist__item {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px var(--gap);
-    padding-block: 32px;
+    display: flex;
+    flex-direction: column;
     border-top: 1px solid var(--line);
   }
 
-  .plist__id {
+  .plist__item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    padding-block: clamp(24px, 3.2vw, 36px);
+    border-bottom: 1px solid var(--line);
   }
 
-  .plist__link:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  .plist__body {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    max-width: 46rem;
-  }
-
-  .plist__stage {
+  .plist__head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px 16px;
+    justify-content: space-between;
+    gap: 12px 20px;
   }
 
-  @media (min-width: 1024px) {
-    .plist__item {
-      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  .plist__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .plist__link h3 {
+    font-family: var(--display);
+    font-size: var(--fs-h2);
+    font-weight: 600;
+  }
+
+  .plist__link:hover {
+    color: var(--link);
+  }
+
+  .plist__role {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    color: var(--link);
+  }
+
+  .plist__tagline {
+    max-width: 56rem;
+    font-size: var(--fs-lead);
+    color: var(--ink);
+  }
+
+  .plist__note {
+    max-width: 56rem;
+    font-size: var(--fs-small);
+    color: var(--ink-2);
+  }
+
+  .plist__action {
+    margin-top: 6px;
+  }
+
+  .rel-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background-color: var(--paper-2);
+  }
+
+  .rel-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: clamp(20px, 2.5vw, 28px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rel-list li:last-child {
+    border-bottom: 0;
+  }
+
+  .rel-list h3 {
+    font-family: var(--display);
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .rel-list p {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 720px) {
+    .rel-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rel-list li {
+      border-right: 1px solid var(--line);
+    }
+
+    .rel-list li:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .rel-list li:nth-last-child(-n + 2) {
+      border-bottom: 0;
     }
   }
 </style>
