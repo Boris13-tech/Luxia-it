@@ -95,46 +95,26 @@ const worldChapters = [
   <section class="hero" data-world-section="command" aria-labelledby="hero-title">
     <div class="hero__stage">
       <ConstellationScene variant="identity" />
-      <div class="wrap hero__grid">
-        <div class="hero__text">
-          <h1 class="t-display hero__title" id="hero-title">
-            Sécurité critique, identités souveraines et systèmes d’IA sous contrôle.
-          </h1>
-          <p class="t-lead hero__lead">
-            Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux, de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
-            des agents IA. Notre cabinet d’architecture et d’ingénierie accompagne également les organisations en cybersécurité,
-            infrastructure cloud et intelligence artificielle.
-          </p>
-          <div class="actions hero__actions">
-            <a class="btn btn--primary" href={demo}>
-              <span>Demander un échange</span>
-              <Icon name="arrow-right" size={18} />
-            </a>
-            <a class="btn btn--secondary" href="#stack">Explorer les six niveaux</a>
-            <a class="link" href={href('services')}>
-              <span>Découvrir le cabinet de conseil</span>
-              <Icon name="chevron-right" size={16} />
-            </a>
-          </div>
+      <div class="wrap hero__text">
+        <h1 class="t-display hero__title" id="hero-title">
+          Sécurité critique, identités souveraines et systèmes d’IA sous contrôle.
+        </h1>
+        <p class="t-lead hero__lead">
+          Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux, de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
+          des agents IA. Notre cabinet d’architecture et d’ingénierie accompagne également les organisations en cybersécurité,
+          infrastructure cloud et intelligence artificielle.
+        </p>
+        <div class="actions hero__actions">
+          <a class="btn btn--primary" href={demo}>
+            <span>Demander un échange</span>
+            <Icon name="arrow-right" size={18} />
+          </a>
+          <a class="btn btn--secondary" href="#stack">Explorer les six niveaux</a>
+          <a class="link" href={href('services')}>
+            <span>Découvrir le cabinet de conseil</span>
+            <Icon name="chevron-right" size={16} />
+          </a>
         </div>
-
-        <figure class="hero__human">
-          <div class="hero__photo-wrap">
-            <img
-              src="/images/hero-command-briefing.jpg"
-              alt="Deux ingénieurs cybersécurité et infrastructure examinent ensemble la topologie d’accès en direct sur un écran de studio."
-              width="1408"
-              height="768"
-              class="hero__photo"
-              loading="eager"
-              fetchpriority="high"
-              decoding="async"
-            />
-          </div>
-          <figcaption class="hero__photo-caption">
-            Supervision opérationnelle : visualisation directe des identités actives, des fédérations d’accès et des droits critiques.
-          </figcaption>
-        </figure>
       </div>
     </div>
 
@@ -407,62 +387,28 @@ const worldChapters = [
     overflow: hidden;
   }
 
-  .hero__grid {
+  .hero__text {
     position: relative;
     z-index: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(28px, 4vw, 48px);
-    align-items: center;
-    padding-bottom: clamp(32px, 5vw, 56px);
-  }
-
-  .hero__text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 22px;
+    padding-bottom: clamp(32px, 5vw, 56px);
   }
 
   .hero__title {
-    max-width: 17ch;
+    max-width: 18ch;
   }
 
   .hero__lead {
-    max-width: 54ch;
+    max-width: 58ch;
   }
 
   .hero__actions {
-    margin-top: 4px;
+    margin-top: 6px;
     align-items: center;
-  }
-
-  .hero__human {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .hero__photo-wrap {
-    overflow: hidden;
-    border-radius: var(--radius);
-    background-color: var(--surface);
-    box-shadow: 0 28px 60px -30px rgb(0 0 0 / 0.85);
-  }
-
-  .hero__photo {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: center 22%;
-  }
-
-  .hero__photo-caption {
-    font-size: var(--fs-meta);
-    line-height: 1.5;
-    color: var(--ink-3);
+    gap: 12px 18px;
   }
 
   .world__band {
@@ -629,10 +575,6 @@ const worldChapters = [
   }
 
   @media (min-width: 1024px) {
-    .hero__grid {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    }
-
     .cases-matrix__item {
       grid-template-columns: 3.5rem minmax(0, 1fr) auto;
       align-items: start;

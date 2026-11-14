@@ -133,8 +133,8 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, site).href} />}
     <link rel="preload" href={robotoLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={interTightLatin} as="font" type="font/woff2" crossorigin />
-    <meta name="theme-color" content={resolvedWorld === 'key-studio' ? '#f3f6fa' : '#07090d'} />
-    <meta name="color-scheme" content={resolvedWorld === 'key-studio' ? 'light dark' : 'dark'} />
+    <meta name="theme-color" content="#07090d" />
+    <meta name="color-scheme" content="dark" />
     <!-- Sens des transitions de page : doit précéder le premier rendu -->
     <script is:inline src="/scripts/transitions.js"></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
