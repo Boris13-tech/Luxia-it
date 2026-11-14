@@ -1,0 +1,184 @@
+---
+/**
+ * Scène humaine éditoriale : photographie documentaire de spécialistes en
+ * situation réelle pour montrer concrètement chaque phase du produit sans
+ * texte artificiel ni effet décoratif générique.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number | undefined;
+  height?: number | undefined;
+  chapter?: string | undefined;
+  phaseTitle: string;
+  caption: string;
+  layout?: 'split' | 'wide' | 'lead' | undefined;
+  focal?: 'center' | 'top' | 'left' | undefined;
+  priority?: boolean | undefined;
+  ctaHref?: string | undefined;
+  ctaLabel?: string | undefined;
+  class?: string | undefined;
+}
+
+const {
+  src,
+  alt,
+  width = 1408,
+  height = 768,
+  chapter,
+  phaseTitle,
+  caption,
+  layout = 'split',
+  focal = 'center',
+  priority = false,
+  ctaHref,
+  ctaLabel,
+  class: className,
+} = Astro.props;
+---
+
+<figure class:list={['hscene', `hscene--${layout}`, className]}>
+  <div class="hscene__media">
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      class:list={['hscene__img', focal !== 'center' && `hscene__img--${focal}`]}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : undefined}
+      decoding="async"
+    />
+    <div class="hscene__vignette" aria-hidden="true"></div>
+  </div>
+
+  <figcaption class="hscene__body">
+    {chapter && <p class="hscene__chapter">{chapter}</p>}
+    <p class="hscene__title">{phaseTitle}</p>
+    <p class="hscene__caption">{caption}</p>
+    {
+      ctaHref && ctaLabel && (
+        <a class="link hscene__cta" href={ctaHref}>
+          <span>{ctaLabel}</span>
+          <Icon name="arrow-right" size={15} stroke={1.8} />
+        </a>
+      )
+    }
+  </figcaption>
+</figure>
+
+<style>
+  .hscene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px clamp(20px, 3.2vw, 44px);
+    align-items: center;
+  }
+
+  .hscene__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+  }
+
+  .hscene__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hscene__img--top {
+    object-position: center 22%;
+  }
+
+  .hscene__img--left {
+    object-position: left center;
+  }
+
+  .hscene__vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 58%, var(--paper) 100%);
+    opacity: 0.38;
+  }
+
+  .hscene__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hscene__chapter {
+    font-family: var(--mono);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--link);
+  }
+
+  .hscene__title {
+    font-family: var(--display);
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .hscene__caption {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 48ch;
+  }
+
+  .hscene__cta {
+    margin-top: 6px;
+  }
+
+  /* Mise en page large : image panoramique puis synthèse typographique en pied */
+  .hscene--wide .hscene__img {
+    aspect-ratio: 21 / 9;
+  }
+
+  .hscene--lead .hscene__media {
+    border-radius: var(--radius);
+  }
+
+  .hscene--lead .hscene__img {
+    aspect-ratio: 16 / 10;
+  }
+
+  @media (min-width: 860px) {
+    .hscene--split {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr);
+    }
+
+    .hscene--wide {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hscene--wide .hscene__body {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: baseline;
+      gap: 10px 28px;
+      padding-top: 4px;
+    }
+
+    .hscene--wide .hscene__chapter {
+      grid-column: 1 / -1;
+    }
+
+    .hscene--wide .hscene__caption {
+      max-width: none;
+    }
+  }
+</style>

@@ -6,7 +6,7 @@
  * Chaque section passée dans `toc` doit exister dans la page (h2 avec cet id) :
  * le test des liens internes le vérifie.
  */
-import BaseLayout from './BaseLayout.astro';
+import BaseLayout, { type WorldName } from './BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import { facts, formatDate } from '../data/facts';
 
@@ -20,13 +20,14 @@ interface Props {
   toc: readonly { id: string; label: string }[];
   /** Historique des modifications importantes, du plus récent au plus ancien. */
   history: readonly { date: string; text: string }[];
+  world?: WorldName | undefined;
 }
 
-const { title, description, kicker = 'Informations légales', lead, updated, toc, history } = Astro.props;
+const { title, description, kicker = 'Informations légales', lead, updated, toc, history, world = 'editorial' } = Astro.props;
 const { email, phone, phoneHref } = facts.contact;
 ---
 
-<BaseLayout title={title} description={description} crumbs={[{ label: title }]}>
+<BaseLayout title={title} description={description} crumbs={[{ label: title }]} world={world}>
   <PageHead crumbs={[{ label: title }]} kicker={kicker} title={title} lead={lead}>
     <p class="t-meta">Dernière mise à jour : <time datetime={updated}>{formatDate(updated)}</time></p>
   </PageHead>

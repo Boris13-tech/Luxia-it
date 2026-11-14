@@ -10,6 +10,7 @@ import robotoLatin from '@fontsource-variable/roboto/files/roboto-latin-wght-nor
 import interTightLatin from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/motion.css';
+import '../styles/worlds.css';
 import '../styles/transitions.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -23,6 +24,8 @@ export interface Crumb {
   href?: string | undefined;
 }
 
+export type WorldName = 'command' | 'architecture' | 'key-studio' | 'workbench' | 'vault' | 'ai-lab' | 'advisory' | 'editorial';
+
 interface Props {
   title: string;
   description: string;
@@ -35,6 +38,8 @@ interface Props {
   imageAlt?: string | undefined;
   /** Univers de couleur d'un produit (docs/CREATIVE_DIRECTION.md, section 4). */
   universe?: 'key' | 'alma' | undefined;
+  /** Monde visuel attribué à la page. */
+  world?: WorldName | undefined;
 }
 
 const {
@@ -44,7 +49,11 @@ const {
   noindex = false,
   image = '/og/luxia-it.png',
   imageAlt = 'LUXIA-IT, Identité & confiance : plateformes d’identité et de confiance pour les opérations critiques.',
+  world,
 } = Astro.props;
+
+const resolvedWorld: WorldName =
+  world ?? (Astro.props.universe === 'key' ? 'key-studio' : Astro.props.universe === 'alma' ? 'ai-lab' : 'editorial');
 
 const site = Astro.site ?? new URL(facts.brand.origin);
 const path = Astro.url.pathname;
@@ -124,8 +133,8 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     {xDefault && <link rel="alternate" hreflang="x-default" href={new URL(xDefault.path, site).href} />}
     <link rel="preload" href={robotoLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={interTightLatin} as="font" type="font/woff2" crossorigin />
-    <meta name="theme-color" content="#07090d" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content={resolvedWorld === 'key-studio' ? '#f3f6fa' : '#07090d'} />
+    <meta name="color-scheme" content={resolvedWorld === 'key-studio' ? 'light dark' : 'dark'} />
     <!-- Sens des transitions de page : doit précéder le premier rendu -->
     <script is:inline src="/scripts/transitions.js"></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -155,7 +164,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
 
     <script type="application/ld+json" set:html={jsonLd} />
   </head>
-  <body>
+  <body data-world={resolvedWorld}>
     <a class="skip-link" href="#contenu">{t.skip}</a>
     <div class="beam" aria-hidden="true"></div>
     <Header />
@@ -165,7 +174,9 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grap
     <Footer />
     <script>
       import { initTabs } from '../scripts/tabs';
+      import { initWorlds } from '../scripts/worlds';
       initTabs();
+      initWorlds();
     </script>
   </body>
 </html>

@@ -7,6 +7,13 @@ import { localeFromPath } from '../i18n/config';
 import { href } from '../i18n/routes';
 import { ui } from '../i18n/ui';
 
+export interface PagePhoto {
+  src: string;
+  alt: string;
+  caption?: string | undefined;
+  focal?: 'center' | 'top' | 'left' | undefined;
+}
+
 interface Props {
   title: string;
   kicker?: string | undefined;
@@ -14,14 +21,16 @@ interface Props {
   crumbs?: readonly Crumb[] | undefined;
   /** Constellation en décor, dans l'univers du produit. */
   scene?: Variant | undefined;
+  /** Photographie éditoriale d'ouverture incarnant l'univers de la page. */
+  photo?: PagePhoto | undefined;
 }
 
-const { title, kicker: _kicker, lead, crumbs = [], scene } = Astro.props;
+const { title, kicker: _kicker, lead, crumbs = [], scene, photo } = Astro.props;
 const locale = localeFromPath(Astro.url.pathname);
 const t = ui[locale];
 ---
 
-<section class:list={['phead', scene && 'phead--scene']} aria-labelledby="page-title">
+<section class:list={['phead', scene && 'phead--scene', photo && 'phead--photo']} aria-labelledby="page-title">
   {scene && <ConstellationScene variant={scene} />}
   <div class="wrap phead__inner">
     {
@@ -38,11 +47,33 @@ const t = ui[locale];
         </nav>
       )
     }
-    <h1 class="t-h1 phead__title" id="page-title">{title}</h1>
-    <div class="phead__body">
-      {lead && <p class="t-lead">{lead}</p>}
-      <slot />
-      {Astro.slots.has('actions') && <div class="actions phead__actions"><slot name="actions" /></div>}
+    <div class="phead__layout">
+      <div class="phead__copy">
+        <h1 class="t-h1 phead__title" id="page-title">{title}</h1>
+        <div class="phead__body">
+          {lead && <p class="t-lead">{lead}</p>}
+          <slot />
+          {Astro.slots.has('actions') && <div class="actions phead__actions"><slot name="actions" /></div>}
+        </div>
+      </div>
+
+      {
+        photo && (
+          <figure class="phead__media">
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              width="1408"
+              height="768"
+              class:list={['phead__img', photo.focal && photo.focal !== 'center' && `phead__img--${photo.focal}`]}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            {photo.caption && <figcaption class="phead__caption">{photo.caption}</figcaption>}
+          </figure>
+        )
+      }
     </div>
   </div>
 </section>
@@ -113,5 +144,49 @@ const t = ui[locale];
 
   .phead__actions {
     margin-top: 8px;
+  }
+
+  .phead__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 52px);
+    align-items: center;
+  }
+
+  .phead__media {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phead__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: center;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+  }
+
+  .phead__img--top {
+    object-position: center 22%;
+  }
+
+  .phead__img--left {
+    object-position: left center;
+  }
+
+  .phead__caption {
+    font-size: var(--fs-meta);
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+
+  @media (min-width: 960px) {
+    .phead--photo .phead__layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
   }
 </style>

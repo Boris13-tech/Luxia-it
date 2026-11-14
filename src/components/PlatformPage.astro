@@ -52,6 +52,26 @@ const sections = [
 ].filter((s) => s.show);
 const n = (id: string) => String(sections.findIndex((s) => s.id === id) + 1).padStart(2, '0');
 const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
+const worldForSlug = p.slug === 'alma' ? 'ai-lab' : p.slug === 'luxia-key' ? 'key-studio' : 'command';
+const headPhoto =
+  p.slug === 'luxia-key'
+    ? {
+        src: '/images/phase-key-human-studio.jpg',
+        alt: 'Mains tenant un smartphone affichant la validation cryptographique LUXIA Key à côté d’un lecteur de poste en aluminium brossé dans un studio lumineux.',
+        caption: 'Prise en main réelle de LUXIA Key : passkey et validation hors bande sans mot de passe transmis.',
+      }
+    : p.slug === 'alma'
+      ? {
+          src: '/images/phase-ai-governance-human.jpg',
+          alt: 'Une responsable sécurité et un ingénieur IA examinent ensemble un point de contrôle humain avant d’autoriser une action critique.',
+          caption: 'Chaque action à risque proposée par ALMA attend une validation humaine explicite.',
+          focal: 'top' as const,
+        }
+      : {
+          src: '/images/hero-command-briefing.jpg',
+          alt: 'Deux ingénieurs cybersécurité analysent la topologie d’accès en studio.',
+          focal: 'top' as const,
+        };
 ---
 
 <BaseLayout
@@ -59,6 +79,7 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
   description={p.description}
   crumbs={[{ label: 'Plateformes', href: href('platforms') }, { label: p.name }]}
   universe={p.slug === 'alma' ? 'alma' : p.slug === 'luxia-key' ? 'key' : undefined}
+  world={worldForSlug}
 >
   <PageHead
     kicker={p.role}
@@ -66,6 +87,7 @@ const alt = (id: string) => sections.findIndex((s) => s.id === id) % 2 === 1;
     lead={p.lead}
     crumbs={[{ label: 'Plateformes', href: href('platforms') }, { label: p.name }]}
     scene={p.slug === 'alma' ? 'alma' : p.slug === 'luxia-key' ? 'key' : 'identity'}
+    photo={headPhoto}
   >
     <dl class="pstate">
       <div>

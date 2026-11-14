@@ -94,12 +94,19 @@ const mission = [
   title="Services"
   description="Services Luxia-IT : cadrage, architecture, intégration, migration, exploitation et sécurité opérationnelle des identités. Livrables et responsabilités."
   crumbs={[{ label: 'Services' }]}
+  world="advisory"
 >
   <PageHead
     crumbs={[{ label: 'Services' }]}
     kicker="Services"
     title="Cabinet de conseil et d’ingénierie technologique"
     lead="Luxia-IT accompagne les entreprises sur l’ensemble de leurs enjeux critiques : cybersécurité, gouvernance des identités (Entra ID, IAM), architecture Cloud souveraine, usines DevSecOps et développement de solutions d’IA sur mesure."
+    photo={{
+      src: '/images/phase-advisory-studio.jpg',
+      alt: 'Deux architectes principaux analysent des schémas techniques et des dossiers d’architecture dans un bureau vitré.',
+      caption: 'Équipe d’architecture : cadrage technique, sécurité réseau, gouvernance IAM et déploiement encadré.',
+      focal: 'top',
+    }}
   >
     <Fragment slot="actions">
       <a class="btn btn--primary" href={`${href('contact')}?sujet=services`}>Décrire votre projet</a>

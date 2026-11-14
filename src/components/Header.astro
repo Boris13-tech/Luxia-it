@@ -87,8 +87,12 @@ const isCurrent = (target: string) => target !== home && path.startsWith(target)
     border: 0;
     border-bottom: 1px solid var(--line);
     border-radius: 0;
-    background: rgb(6 7 9 / 0.94);
-    backdrop-filter: blur(8px);
+    background: var(--hdr-bg, rgb(6 7 9 / 0.94));
+    backdrop-filter: blur(10px);
+    transition:
+      background-color 320ms var(--ease),
+      border-color 320ms var(--ease),
+      color 320ms var(--ease);
   }
 
   .hdr__brand {

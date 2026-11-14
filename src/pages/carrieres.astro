@@ -26,12 +26,19 @@ const applyHref = `mailto:${facts.contact.email}?subject=${encodeURIComponent('C
   title="Carrières"
   description="Travailler chez Luxia-IT : des systèmes d’identité dont d’autres dépendent, une méthode fondée sur la preuve. Postes publiés et candidatures spontanées."
   crumbs={[{ label: 'Entreprise', href: '/entreprise/' }, { label: 'Carrières' }]}
+  world="advisory"
 >
   <PageHead
     crumbs={[{ label: 'Entreprise', href: '/entreprise/' }, { label: 'Carrières' }]}
     kicker="Carrières"
     title="Travailler sur des systèmes dont d’autres dépendent"
     lead="Les postes ouverts sont publiés sur cette page lorsqu’il y en a. Les candidatures spontanées sont lues."
+    photo={{
+      src: '/images/hero-command-briefing.jpg',
+      alt: 'Deux ingénieurs travaillant ensemble devant une architecture d’accès sur grand écran.',
+      caption: 'Ingénierie rigoureuse : décider par écrit, prouver en situation réelle, prévoir le retour arrière.',
+      focal: 'top',
+    }}
   />
 
   <section class="section" aria-labelledby="principes-title">

@@ -123,12 +123,19 @@ const spec: { domain: string; items: { name: string; measure: string; why: strin
   title="Plateforme d’exécution"
   description="LUXIA Identity s’exécute sur une plateforme managée. Quand Kubernetes se justifie, et l’architecture Kubernetes visée, non disponible à ce jour."
   crumbs={[{ label: 'Architectures', href: href('architectures') }, { label: 'Plateforme d’exécution' }]}
+  world="architecture"
 >
   <PageHead
     crumbs={[{ label: 'Architectures', href: href('architectures') }, { label: 'Plateforme d’exécution' }]}
     kicker="Plateforme d’exécution"
     title="Kubernetes quand il se justifie, une plateforme managée quand elle suffit"
     lead="LUXIA Identity s’exécute aujourd’hui sur une plateforme managée. Cette page décrit cette exécution réelle, les critères qui justifieraient Kubernetes, et l’architecture visée pour les déploiements sur site et souverains."
+    photo={{
+      src: '/images/phase-vault-audit.jpg',
+      alt: 'Un ingénieur systèmes configure un poste durci devant des baies d’infrastructure sécurisées.',
+      caption: 'Isolation, continuité et critères de bascule entre infrastructure managée et grappes dédiées.',
+      focal: 'top',
+    }}
   >
     <p class="notice">
       <LevelTag level="target" />

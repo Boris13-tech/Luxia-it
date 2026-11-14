@@ -31,12 +31,19 @@ const sections = [
   title="Centre de confiance"
   description="Sécurité de LUXIA Identity : isolation des organisations, sessions, opérateur sans droit, sauvegardes et restauration vérifiées, hébergement, feuille de route et limites actuelles."
   crumbs={[{ label: 'Centre de confiance' }]}
+  world="vault"
 >
   <PageHead
     crumbs={[{ label: 'Centre de confiance' }]}
     kicker="Sécurité"
     title="Centre de confiance"
     lead="Comment LUXIA Identity protège vos identités et vos accès : ce qui est en service, ce qui est répété, ce qui est prévu. Chaque mesure indique où elle en est."
+    photo={{
+      src: '/images/phase-vault-audit.jpg',
+      alt: 'Un ingénieur systèmes insère une clé matérielle sur un poste d’administration dans une salle serveurs sécurisée.',
+      caption: 'Inspection physique et logique : isolation par ligne PostgreSQL, sauvegardes hors fournisseur restaurées et opérateur sans accès client.',
+      focal: 'top',
+    }}
   >
     <p class="t-meta">
       État au <time datetime={facts.evidenceAsOf}>{formatDate(facts.evidenceAsOf)}</time>

@@ -6,6 +6,7 @@ import KeyFacts from '../components/KeyFacts.astro';
 import ConstellationScene from '../components/ConstellationScene.astro';
 import UnifiedStackMatrix from '../components/UnifiedStackMatrix.astro';
 import KeyDeviceShowcase from '../components/KeyDeviceShowcase.astro';
+import HumanScene from '../components/HumanScene.astro';
 import SectionHead from '../components/SectionHead.astro';
 import CtaBlock from '../components/CtaBlock.astro';
 import Icon from '../components/Icon.astro';
@@ -63,35 +64,77 @@ const advisoryPillars = [
     anchor: '#securite-operationnelle',
   },
 ] as const;
+
+const worldChapters = [
+  { world: 'command', href: '#hero-title', label: '01 Commande' },
+  { world: 'architecture', href: '#stack-title', label: '02 Architecture' },
+  { world: 'key-studio', href: '#key-showcase-title', label: '03 LUXIA Key' },
+  { world: 'workbench', href: '#visite-title', label: '04 Opérations' },
+  { world: 'vault', href: '#confiance-title', label: '05 Confiance' },
+  { world: 'advisory', href: '#services-title', label: '06 Conseil' },
+] as const;
 ---
 
 <BaseLayout
   title="Plateforme unifiée de sécurité, identité et IA"
   description="Plateforme unifiée LUXIA en six niveaux : identités souveraines, LUXIA Key, gouvernance IA et cabinet d’ingénierie cybersécurité, cloud et DevSecOps."
+  world="command"
 >
-  <section class="hero" aria-labelledby="hero-title">
+  <nav class="world-rail" aria-label="Chapitres visuels de la page">
+    {
+      worldChapters.map((c, i) => (
+        <a href={c.href} data-world-link={c.world} aria-current={i === 0 ? 'true' : undefined}>
+          <span class="world-rail__label">{c.label}</span>
+          <span class="world-rail__dot" aria-hidden="true"></span>
+        </a>
+      ))
+    }
+  </nav>
+
+  <!-- Monde 01 : Centre de commande identitaire -->
+  <section class="hero" data-world-section="command" aria-labelledby="hero-title">
     <div class="hero__stage">
       <ConstellationScene variant="identity" />
-      <div class="wrap hero__text">
-        <h1 class="t-display hero__title" id="hero-title">
-          Sécurité critique, identités souveraines et systèmes d’IA sous contrôle.
-        </h1>
-        <p class="t-lead hero__lead">
-          Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux, de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
-          des agents IA. Notre cabinet d’architecture et d’ingénierie accompagne également les organisations en cybersécurité,
-          infrastructure cloud et intelligence artificielle.
-        </p>
-        <div class="actions hero__actions">
-          <a class="btn btn--primary" href={demo}>
-            <span>Demander un échange</span>
-            <Icon name="arrow-right" size={18} />
-          </a>
-          <a class="btn btn--secondary" href="#stack">Explorer les six niveaux</a>
-          <a class="link" href={href('services')}>
-            <span>Découvrir le cabinet de conseil</span>
-            <Icon name="chevron-right" size={16} />
-          </a>
+      <div class="wrap hero__grid">
+        <div class="hero__text">
+          <h1 class="t-display hero__title" id="hero-title">
+            Sécurité critique, identités souveraines et systèmes d’IA sous contrôle.
+          </h1>
+          <p class="t-lead hero__lead">
+            Luxia-IT conçoit la plateforme unifiée LUXIA en six niveaux, de LUXIA Identity et LUXIA Key jusqu’à la gouvernance
+            des agents IA. Notre cabinet d’architecture et d’ingénierie accompagne également les organisations en cybersécurité,
+            infrastructure cloud et intelligence artificielle.
+          </p>
+          <div class="actions hero__actions">
+            <a class="btn btn--primary" href={demo}>
+              <span>Demander un échange</span>
+              <Icon name="arrow-right" size={18} />
+            </a>
+            <a class="btn btn--secondary" href="#stack">Explorer les six niveaux</a>
+            <a class="link" href={href('services')}>
+              <span>Découvrir le cabinet de conseil</span>
+              <Icon name="chevron-right" size={16} />
+            </a>
+          </div>
         </div>
+
+        <figure class="hero__human">
+          <div class="hero__photo-wrap">
+            <img
+              src="/images/hero-command-briefing.jpg"
+              alt="Deux ingénieurs cybersécurité et infrastructure examinent ensemble la topologie d’accès en direct sur un écran de studio."
+              width="1408"
+              height="768"
+              class="hero__photo"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <figcaption class="hero__photo-caption">
+            Supervision opérationnelle : visualisation directe des identités actives, des fédérations d’accès et des droits critiques.
+          </figcaption>
+        </figure>
       </div>
     </div>
 
@@ -105,10 +148,17 @@ const advisoryPillars = [
     </div>
   </section>
 
-  <KeyFacts />
+  <div data-world-section="command">
+    <KeyFacts />
+  </div>
 
-  <section class="section" id="stack" aria-labelledby="stack-title">
-    <div class="wrap">
+  <!-- Monde 02 : Blueprint Architectural en 6 Niveaux -->
+  <section class="world" data-world-section="architecture" id="stack" aria-labelledby="stack-title">
+    <div class="wrap world__stage">
+      <div class="world__threshold">
+        <span class="world__code">Monde 02 · Architecture</span>
+        <span>Plateforme unifiée en six niveaux</span>
+      </div>
       <SectionHead
         id="stack-title"
         title="La plateforme unifiée LUXIA en six niveaux d’architecture"
@@ -124,8 +174,13 @@ const advisoryPillars = [
     </div>
   </section>
 
-  <section class="section section--alt" id="luxia-key" aria-labelledby="key-showcase-title">
-    <div class="wrap">
+  <!-- Monde 03 : Studio Matériel Clair Apple (LUXIA Key) -->
+  <section class="world" data-world-section="key-studio" id="luxia-key" aria-labelledby="key-showcase-title">
+    <div class="wrap world__stage">
+      <div class="world__threshold">
+        <span class="world__code">Monde 03 · Identité matérielle</span>
+        <span>Studio LUXIA Key · Connexion et approbation sur le terrain</span>
+      </div>
       <SectionHead
         id="key-showcase-title"
         title="LUXIA Key : compagnon d’entreprise et expérience utilisateur"
@@ -135,76 +190,95 @@ const advisoryPillars = [
     </div>
   </section>
 
-  <section class="section" id="visite" aria-labelledby="visite-title">
-    <div class="wrap">
+  <!-- Monde 04 : Atelier d'Exploitation Quotidienne -->
+  <section class="world" data-world-section="workbench" id="visite" aria-labelledby="visite-title">
+    <div class="wrap world__stage">
+      <div class="world__threshold">
+        <span class="world__code">Monde 04 · Exploitation</span>
+        <span>Cycle de vie des accès, situations métier et responsabilités</span>
+      </div>
       <SectionHead
         id="visite-title"
         title="Tout le cycle de vie d’un accès, dans une seule console"
         lead="Parcourez les vues opérationnelles de LUXIA Identity : pilotage des habilitations, revues d’accès, séparation des tâches, connexion sans mot de passe et journal d’audit."
       />
       <ProductTour />
-    </div>
-  </section>
 
-  <section class="section section--alt" id="cas" aria-labelledby="cas-title">
-    <div class="wrap">
-      <div class="head-bar">
-        <SectionHead
-          id="cas-title"
-          title="Cinq situations opérationnelles maîtrisées dès le socle"
-          lead="Arrivées, départs, accès tiers, incompatibilités métier et contrôle a posteriori : chaque règle repose sur des faits vérifiables."
-        />
-        <a class="more" href={href('solutions')}>
-          <span>Toutes les situations</span>
-          <Icon name="arrow-right" size={16} />
-        </a>
+      <div class="world__band" id="cas">
+        <div class="head-bar">
+          <SectionHead
+            id="cas-title"
+            title="Cinq situations opérationnelles maîtrisées dès le socle"
+            lead="Arrivées, départs, accès tiers, incompatibilités métier et contrôle a posteriori : chaque règle repose sur des faits vérifiables."
+          />
+          <a class="more" href={href('solutions')}>
+            <span>Toutes les situations</span>
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+
+        <ol class="cases-matrix">
+          {
+            useCases.map((c, i) => (
+              <li class="cases-matrix__item">
+                <span class="cases-matrix__num">{String(i + 1).padStart(2, '0')}</span>
+                <div class="cases-matrix__body">
+                  <h3 class="t-h4">{c.title}</h3>
+                  <p class="cases-matrix__sit">{c.situation}</p>
+                  <p class="cases-matrix__ans">{c.answer[0]}</p>
+                </div>
+                <div class="cases-matrix__link">
+                  <a class="link" href={`${href('solutions')}#${c.id}`}>
+                    <span>Détails</span>
+                    <Icon name="chevron-right" size={15} />
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
       </div>
 
-      <ol class="cases-matrix">
-        {
-          useCases.map((c, i) => (
-            <li class="cases-matrix__item">
-              <span class="cases-matrix__num">{String(i + 1).padStart(2, '0')}</span>
-              <div class="cases-matrix__body">
-                <h3 class="t-h4">{c.title}</h3>
-                <p class="cases-matrix__sit">{c.situation}</p>
-                <p class="cases-matrix__ans">{c.answer[0]}</p>
-              </div>
-              <div class="cases-matrix__link">
-                <a class="link" href={`${href('solutions')}#${c.id}`}>
-                  <span>Détails</span>
-                  <Icon name="chevron-right" size={15} />
-                </a>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
+      <div class="world__band" id="roles">
+        <SectionHead
+          id="roles-title"
+          title="Un seul système de vérité pour quatre métiers"
+          lead="Chaque équipe lit la même donnée sous l’angle de sa responsabilité, sans exporter de feuilles de calcul ni perdre la source."
+        />
+        <ul class="roles-list ruled">
+          {
+            roles.map((r) => (
+              <li class="roles-list__item">
+                <h3 class="t-h4">{r.title}</h3>
+                <p>{r.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="roles" aria-labelledby="roles-title">
-    <div class="wrap">
-      <SectionHead
-        id="roles-title"
-        title="Un seul système de vérité pour quatre métiers"
-        lead="Chaque équipe lit la même donnée sous l’angle de sa responsabilité, sans exporter de feuilles de calcul ni perdre la source."
-      />
-      <ul class="roles-list ruled">
-        {
-          roles.map((r) => (
-            <li class="roles-list__item">
-              <h3 class="t-h4">{r.title}</h3>
-              <p>{r.text}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <!-- Monde 05 : Coffre Cryptographique & Audit -->
+  <section class="world" data-world-section="vault" id="confiance" aria-labelledby="confiance-title">
+    <div class="wrap world__stage">
+      <div class="world__threshold">
+        <span class="world__code">Monde 05 · Preuves et contrôle</span>
+        <span>Durcissement matériel, isolation et vérifications publiées</span>
+      </div>
 
-  <section class="section section--dark" id="confiance" aria-labelledby="confiance-title">
-    <div class="wrap">
+      <div class="trust-human">
+        <HumanScene
+          src="/images/phase-vault-audit.jpg"
+          alt="Un ingénieur systèmes insère une clé de sécurité matérielle sur un poste d’administration dans une salle serveurs sécurisée."
+          chapter="Contrôle physique et logique"
+          phaseTitle="Ce que la plateforme promet doit pouvoir être vérifié sur pièces"
+          caption="Isolation par ligne PostgreSQL, sauvegardes chiffrées hors du fournisseur principal avec restauration chronométrée et politique stricte sans traceur."
+          layout="split"
+          focal="top"
+        />
+      </div>
+
       <div class="trust-layout">
         <div class="trust-layout__intro">
           <h2 class="t-h2" id="confiance-title">Sécurité conçue pour l’inspection technique</h2>
@@ -234,18 +308,34 @@ const advisoryPillars = [
     </div>
   </section>
 
-  <section class="section" id="services" aria-labelledby="services-title">
-    <div class="wrap">
+  <!-- Monde 06 : Cabinet de Conseil & Ingénierie -->
+  <section class="world" data-world-section="advisory" id="services" aria-labelledby="services-title">
+    <div class="wrap world__stage">
+      <div class="world__threshold">
+        <span class="world__code">Monde 06 · Conseil et architecture</span>
+        <span>Accompagnement terrain de la conception jusqu’à la mise en production</span>
+      </div>
+
+      <div class="advisory-human">
+        <HumanScene
+          src="/images/phase-advisory-studio.jpg"
+          alt="Deux architectes principaux analysent ensemble des schémas techniques et des dossiers d’architecture dans un bureau vitré."
+          chapter="Ingénierie et conseil"
+          phaseTitle="Des architectes qui conçoivent, rédigent et déploient à vos côtés"
+          caption="Chaque mission s’appuie sur un cadrage chiffré, une architecture vérifiée en revue par les pairs et un passage en production documenté."
+          layout="wide"
+          focal="top"
+          ctaHref={href('services')}
+          ctaLabel="Explorer tous les services"
+        />
+      </div>
+
       <div class="head-bar">
         <SectionHead
           id="services-title"
           title="Cabinet de conseil et d’ingénierie technologique"
           lead="Au-delà de nos plateformes, nos architectes et ingénieurs conçoivent, sécurisent et déploient vos solutions globales en entreprise."
         />
-        <a class="more" href={href('services')}>
-          <span>Explorer tous les services</span>
-          <Icon name="arrow-right" size={16} />
-        </a>
       </div>
 
       <ol class="advisory-list ruled">
@@ -262,53 +352,54 @@ const advisoryPillars = [
           ))
         }
       </ol>
-    </div>
-  </section>
 
-  <section class="section section--alt" id="ressources" aria-labelledby="ressources-title">
-    <div class="wrap">
-      <div class="head-bar">
-        <SectionHead
-          id="ressources-title"
-          title="Notes techniques et guides de mise en œuvre"
-          lead="Guides pragmatiques rédigés à partir de déploiements et de revues d’architecture réels."
-        />
-        <a class="more" href={href('resources')}>
-          <span>Tous les guides</span>
-          <Icon name="arrow-right" size={16} />
-        </a>
+      <div class="world__band" id="ressources">
+        <div class="head-bar">
+          <SectionHead
+            id="ressources-title"
+            title="Notes techniques et guides de mise en œuvre"
+            lead="Guides pragmatiques rédigés à partir de déploiements et de revues d’architecture réels."
+          />
+          <a class="more" href={href('resources')}>
+            <span>Tous les guides</span>
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+
+        <ul class="guides-list ruled">
+          {
+            guides.slice(0, 3).map((g) => (
+              <li class="guides-list__item">
+                <p class="guides-list__meta">{readingMinutes(g)} min de lecture</p>
+                <h3 class="t-h4">
+                  <a href={guideHref(g.slug)}>{g.title}</a>
+                </h3>
+                <p>{g.description}</p>
+              </li>
+            ))
+          }
+        </ul>
       </div>
-
-      <ul class="guides-list ruled">
-        {
-          guides.slice(0, 3).map((g) => (
-            <li class="guides-list__item">
-              <p class="guides-list__meta">{readingMinutes(g)} min de lecture</p>
-              <h3 class="t-h4">
-                <a href={guideHref(g.slug)}>{g.title}</a>
-              </h3>
-              <p>{g.description}</p>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </section>
 
-  <CtaBlock
-    title="Évaluer un projet ou planifier une démonstration"
-    text="Décrivez votre environnement (identités, réseau, infrastructure ou besoins IA) pour obtenir une étude technique ou une démonstration ciblée."
-    href={demo}
-    label="Demander un échange technique"
-    secondary={{ href: href('platforms'), label: 'Plateforme unifiée en 6 niveaux' }}
-  />
+  <div data-world-section="advisory">
+    <CtaBlock
+      title="Évaluer un projet ou planifier une démonstration"
+      text="Décrivez votre environnement (identités, réseau, infrastructure ou besoins IA) pour obtenir une étude technique ou une démonstration ciblée."
+      href={demo}
+      label="Demander un échange technique"
+      secondary={{ href: href('platforms'), label: 'Plateforme unifiée en 6 niveaux' }}
+    />
+  </div>
 </BaseLayout>
 
 <style>
   .hero {
     position: relative;
-    padding-block: calc(var(--header-h) + clamp(36px, 5vw, 72px)) clamp(40px, 6vw, 72px);
-    border-bottom: 1px solid var(--line);
+    padding-block: calc(var(--header-h) + clamp(32px, 4.8vw, 68px)) clamp(40px, 6vw, 72px);
+    background-color: var(--paper);
+    color: var(--ink);
   }
 
   .hero__stage {
@@ -316,27 +407,75 @@ const advisoryPillars = [
     overflow: hidden;
   }
 
-  .hero__text {
+  .hero__grid {
     position: relative;
     z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 48px);
+    align-items: center;
+    padding-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .hero__text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 22px;
-    padding-bottom: clamp(32px, 5vw, 56px);
   }
 
   .hero__title {
-    max-width: 18ch;
+    max-width: 17ch;
   }
 
   .hero__lead {
-    max-width: 58ch;
+    max-width: 54ch;
   }
 
   .hero__actions {
     margin-top: 4px;
     align-items: center;
+  }
+
+  .hero__human {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero__photo-wrap {
+    overflow: hidden;
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: 0 28px 60px -30px rgb(0 0 0 / 0.85);
+  }
+
+  .hero__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: center 22%;
+  }
+
+  .hero__photo-caption {
+    font-size: var(--fs-meta);
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+
+  .world__band {
+    margin-top: clamp(48px, 7vw, 88px);
+    padding-top: clamp(36px, 5vw, 64px);
+    border-top: 1px solid var(--line);
+  }
+
+  .trust-human,
+  .advisory-human {
+    margin-bottom: clamp(32px, 4.5vw, 56px);
+    padding-bottom: clamp(24px, 3.5vw, 42px);
+    border-bottom: 1px solid var(--line);
   }
 
   .section__footer {
@@ -356,7 +495,6 @@ const advisoryPillars = [
     margin-bottom: 0;
   }
 
-  /* Lignes techniques ouvertes sans cases carrées */
   .cases-matrix,
   .roles-list,
   .advisory-list,
@@ -491,6 +629,10 @@ const advisoryPillars = [
   }
 
   @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+
     .cases-matrix__item {
       grid-template-columns: 3.5rem minmax(0, 1fr) auto;
       align-items: start;

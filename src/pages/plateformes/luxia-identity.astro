@@ -9,6 +9,7 @@ import ProductScreen from '../../components/ProductScreen.astro';
 import ProductTour from '../../components/ProductTour.astro';
 import KeyFacts from '../../components/KeyFacts.astro';
 import IdentityFlow from '../../components/IdentityFlow.astro';
+import HumanScene from '../../components/HumanScene.astro';
 import LevelTag from '../../components/LevelTag.astro';
 import CtaBlock from '../../components/CtaBlock.astro';
 import Icon from '../../components/Icon.astro';
@@ -48,7 +49,7 @@ const faq = [
 ];
 ---
 
-<BaseLayout title={p.name} description={p.description} crumbs={crumbs}>
+<BaseLayout title={p.name} description={p.description} crumbs={crumbs} world="command">
   <section class="phero" aria-labelledby="page-title">
     <div class="wrap">
       <nav class="crumbs" aria-label="Fil d’Ariane">
@@ -88,6 +89,15 @@ const faq = [
 
   <section class="section" id="fonctions" aria-labelledby="fonctions-title">
     <div class="wrap">
+      <HumanScene
+        src="/images/hero-command-briefing.jpg"
+        alt="Deux ingénieurs cybersécurité et infrastructure examinent ensemble la topologie d’accès sur un écran de studio."
+        chapter="Exploitation en production"
+        phaseTitle="Une vue claire de chaque identité, session et autorisation"
+        caption="Les responsables sécurité et les administrateurs examinent le même registre sans exporter de feuilles de calcul ni perdre la piste d’audit."
+        layout="wide"
+        focal="top"
+      />
       <div class="head">
         <p class="kicker">Visite du produit</p>
         <h2 class="t-h2" id="fonctions-title">Une console pour tout le cycle de vie des accès</h2>

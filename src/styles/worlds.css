@@ -1,0 +1,389 @@
+/*
+ * Mondes spatiaux et transitions d'atmosphère.
+ * Chaque produit, phase et page plonge le visiteur dans un environnement visuel
+ * cohérent (lumière, palette, seuil architectural, présence humaine).
+ * Compatibilité complète sans JavaScript (CSS pur) et sous prefers-reduced-motion.
+ */
+
+/* --- Palettes par monde (page entière [data-world] et section [data-world-section]) --- */
+
+[data-world='command'],
+[data-world-section='command'] {
+  --paper: #06080d;
+  --paper-2: #0b1019;
+  --surface: #0e1524;
+  --surface-2: #131c30;
+  --ink: #f4f7fb;
+  --ink-2: #c6d0df;
+  --ink-3: #8c9bb3;
+  --line: #1e293b;
+  --line-strong: #32435d;
+  --link: #7cb3ff;
+  --blue: #2563eb;
+  --electric: #5b9bff;
+  --blue-tint: rgb(37 99 235 / 0.14);
+  --hdr-bg: rgb(6 8 13 / 0.92);
+}
+
+[data-world='architecture'],
+[data-world-section='architecture'] {
+  --paper: #0b1220;
+  --paper-2: #101a2e;
+  --surface: #132038;
+  --surface-2: #182745;
+  --ink: #f2f6fc;
+  --ink-2: #cbd5e1;
+  --ink-3: #94a3b8;
+  --line: #233352;
+  --line-strong: #39507a;
+  --link: #93c5fd;
+  --blue: #3b82f6;
+  --electric: #60a5fa;
+  --blue-tint: rgb(59 130 246 / 0.15);
+  --hdr-bg: rgb(11 18 32 / 0.92);
+}
+
+/* Studio clair type matériel Apple : contraste maximal après les couches sombres */
+[data-world='key-studio'],
+[data-world-section='key-studio'] {
+  --paper: #f3f6fa;
+  --paper-2: #e6ecf4;
+  --surface: #ffffff;
+  --surface-2: #edf1f7;
+  --ink: #090d16;
+  --ink-2: #243044;
+  --ink-3: #4b5a73;
+  --line: rgb(15 23 42 / 0.14);
+  --line-strong: rgb(15 23 42 / 0.28);
+  --link: #1d4ed8;
+  --blue: #1d4ed8;
+  --electric: #1d4ed8;
+  --blue-tint: rgb(29 78 216 / 0.09);
+  --green: #047857;
+  --green-tint: rgb(4 120 87 / 0.1);
+  --amber: #b45309;
+  --amber-tint: rgb(180 83 9 / 0.1);
+  --tag-accent: #4338ca;
+  --tag-accent-tint: rgb(67 56 202 / 0.1);
+  --hdr-bg: rgb(243 246 250 / 0.9);
+  color-scheme: light;
+}
+
+[data-world='workbench'],
+[data-world-section='workbench'] {
+  --paper: #10151e;
+  --paper-2: #161d29;
+  --surface: #1b2433;
+  --surface-2: #212b3d;
+  --ink: #f4f6fa;
+  --ink-2: #cbd2df;
+  --ink-3: #929eb3;
+  --line: #273245;
+  --line-strong: #3c4b66;
+  --link: #7cb3ff;
+  --blue: #2563eb;
+  --electric: #5b9bff;
+  --blue-tint: rgb(37 99 235 / 0.14);
+  --hdr-bg: rgb(16 21 30 / 0.92);
+}
+
+[data-world='vault'],
+[data-world-section='vault'] {
+  --paper: #020306;
+  --paper-2: #06090f;
+  --surface: #0a0f18;
+  --surface-2: #0e1522;
+  --ink: #f8fafc;
+  --ink-2: #cbd5e1;
+  --ink-3: #8998ad;
+  --line: #182130;
+  --line-strong: #2c3952;
+  --link: #93c5fd;
+  --blue: #2563eb;
+  --electric: #60a5fa;
+  --blue-tint: rgb(37 99 235 / 0.15);
+  --hdr-bg: rgb(2 3 6 / 0.94);
+}
+
+[data-world='ai-lab'],
+[data-world-section='ai-lab'] {
+  --paper: #040c12;
+  --paper-2: #071520;
+  --surface: #0a1c2b;
+  --surface-2: #0e2436;
+  --ink: #f1f8fc;
+  --ink-2: #c4dce8;
+  --ink-3: #7ea3b8;
+  --line: #173142;
+  --line-strong: #274f69;
+  --link: #5eead4;
+  --blue: #0d9488;
+  --electric: #2dd4bf;
+  --blue-tint: rgb(20 184 166 / 0.14);
+  --hdr-bg: rgb(4 12 18 / 0.92);
+}
+
+[data-world='advisory'],
+[data-world-section='advisory'] {
+  --paper: #131722;
+  --paper-2: #191f2d;
+  --surface: #1f2637;
+  --surface-2: #252e42;
+  --ink: #f5f7fb;
+  --ink-2: #d2d9e6;
+  --ink-3: #99a5ba;
+  --line: #2d3648;
+  --line-strong: #46546e;
+  --link: #93c5fd;
+  --blue: #2563eb;
+  --electric: #60a5fa;
+  --blue-tint: rgb(37 99 235 / 0.14);
+  --hdr-bg: rgb(19 23 34 / 0.92);
+}
+
+[data-world='editorial'],
+[data-world-section='editorial'] {
+  --paper: #07090e;
+  --paper-2: #0d111a;
+  --surface: #131824;
+  --surface-2: #192030;
+  --hdr-bg: rgb(7 9 14 / 0.94);
+}
+
+/* Corps principal : hérite de la couleur de fond du monde actif */
+body[data-world] {
+  background-color: var(--paper);
+  color: var(--ink);
+  transition: background-color 420ms var(--ease), color 320ms var(--ease);
+}
+
+/* Sections-mondes à part entière */
+.world {
+  position: relative;
+  background-color: var(--paper);
+  color: var(--ink);
+  padding-block: clamp(56px, 8vw, 112px);
+  border-top: 1px solid var(--line);
+  isolation: isolate;
+}
+
+.world--flush-top {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* Transition chromatique douce en tête de monde pour marquer le franchissement */
+.world__threshold {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: clamp(18px, 2.4vw, 28px);
+  margin-bottom: clamp(28px, 4vw, 48px);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.world__code {
+  color: var(--link);
+  font-weight: 600;
+}
+
+.world__stage {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .world__stage {
+      animation: world-portal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 28%;
+      transform-origin: center top;
+    }
+
+    @keyframes world-portal-in {
+      from {
+        opacity: 0.55;
+        transform: scale(0.97) translateY(28px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  }
+}
+
+/* Contraste studio clair (key-studio) pour boutons, badges et en-tête */
+[data-world='key-studio'] .btn--primary,
+[data-world-section='key-studio'] .btn--primary,
+body[data-active-world='key-studio'] .hdr .btn--primary {
+  background-color: #090d16;
+  border-color: #090d16;
+  color: #ffffff;
+}
+
+[data-world='key-studio'] .btn--primary:hover,
+[data-world-section='key-studio'] .btn--primary:hover,
+body[data-active-world='key-studio'] .hdr .btn--primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+[data-world='key-studio'] .btn--secondary,
+[data-world-section='key-studio'] .btn--secondary {
+  background-color: rgb(255 255 255 / 0.85);
+  border-color: rgb(15 23 42 / 0.28);
+  color: #090d16;
+}
+
+[data-world='key-studio'] .btn--secondary:hover,
+[data-world-section='key-studio'] .btn--secondary:hover {
+  background-color: #ffffff;
+  border-color: #090d16;
+}
+
+/* Adaptation dynamique de l'en-tête et du logo au monde traversé */
+body[data-active-world='architecture'] { --hdr-bg: rgb(11 18 32 / 0.92); }
+body[data-active-world='workbench'] { --hdr-bg: rgb(16 21 30 / 0.92); }
+body[data-active-world='vault'] { --hdr-bg: rgb(2 3 6 / 0.94); }
+body[data-active-world='advisory'] { --hdr-bg: rgb(19 23 34 / 0.92); }
+body[data-active-world='ai-lab'] { --hdr-bg: rgb(4 12 18 / 0.92); }
+
+body[data-active-world='key-studio'],
+body[data-world='key-studio'] {
+  --hdr-bg: rgb(243 246 250 / 0.92);
+}
+
+body[data-active-world='key-studio'] .hdr,
+body[data-world='key-studio'] .hdr {
+  --ink: #090d16;
+  --ink-2: #243044;
+  --ink-3: #4b5a73;
+  --line: rgb(15 23 42 / 0.14);
+  --line-strong: rgb(15 23 42 / 0.28);
+  --link: #1d4ed8;
+  --electric: #1d4ed8;
+}
+
+body[data-active-world='key-studio'] .hdr .logo,
+body[data-world='key-studio'] .hdr .logo {
+  --logo-dark: #090d16;
+  --logo-light: #2563eb;
+}
+
+body[data-active-world='key-studio'] .hdr__link:hover,
+body[data-world='key-studio'] .hdr__link:hover {
+  background-color: rgb(15 23 42 / 0.06);
+}
+
+/* Rail latéral discret de navigation entre mondes (grands écrans uniquement) */
+.world-rail {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .world-rail {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 10px;
+  }
+
+  .world-rail a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    text-decoration: none;
+    transition: color 220ms var(--ease);
+  }
+
+  .world-rail__label {
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    white-space: nowrap;
+  }
+
+  .world-rail:hover .world-rail__label,
+  .world-rail a[aria-current='true'] .world-rail__label,
+  .world-rail a:focus-visible .world-rail__label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .world-rail__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--line-strong);
+    transition: transform 220ms var(--ease), background-color 220ms var(--ease);
+  }
+
+  .world-rail a[aria-current='true'],
+  .world-rail a:hover {
+    color: var(--ink);
+  }
+
+  .world-rail a[aria-current='true'] .world-rail__dot {
+    background-color: var(--link);
+    transform: scale(1.45);
+  }
+
+  body[data-active-world='key-studio'] .world-rail {
+    color: #090d16;
+  }
+
+  body[data-active-world='key-studio'] .world-rail a {
+    color: #4b5a73;
+  }
+
+  body[data-active-world='key-studio'] .world-rail__dot {
+    background-color: rgb(15 23 42 / 0.28);
+  }
+
+  body[data-active-world='key-studio'] .world-rail a[aria-current='true'] {
+    color: #090d16;
+  }
+
+  body[data-active-world='key-studio'] .world-rail a[aria-current='true'] .world-rail__dot {
+    background-color: #1d4ed8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-world],
+  .world__stage,
+  .world-rail a,
+  .world-rail__label,
+  .world-rail__dot {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Constellation sur fond clair (studio LUXIA Key) : traits bleutés discrets et lisibles */
+[data-world='key-studio'] .cscene {
+  opacity: 0.22;
+  filter: invert(0.86) hue-rotate(192deg) saturate(1.3);
+}
+
+[data-world='key-studio'] .phead--scene::after {
+  background: linear-gradient(180deg, transparent 55%, var(--paper) 100%);
+}

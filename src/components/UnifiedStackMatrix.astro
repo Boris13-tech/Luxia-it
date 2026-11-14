@@ -5,12 +5,14 @@ import { stackLayers, strategicPillars, unifiedCore, type StackLayer } from '../
 import Icon from './Icon.astro';
 import LevelTag from './LevelTag.astro';
 import StageTag from './StageTag.astro';
+import HumanScene from './HumanScene.astro';
 
 interface Props {
   compact?: boolean | undefined;
+  showHuman?: boolean | undefined;
 }
 
-const { compact = false } = Astro.props;
+const { compact = false, showHuman = true } = Astro.props;
 
 const upperLayers = stackLayers.slice(0, 3); // Niveaux 06, 05, 04
 const lowerLayers = stackLayers.slice(3, 6); // Niveaux 03, 02, 01
@@ -23,6 +25,22 @@ function layerHref(layer: StackLayer): string {
 ---
 
 <div class:list={['usm', compact && 'usm--compact']} data-stack-matrix>
+  {
+    showHuman && (
+      <div class="usm__human-brief">
+        <HumanScene
+          src="/images/phase-architecture-team.jpg"
+          alt="Un architecte principal présente le découpage en couches techniques sur grand écran à deux ingénieurs autour d’une table de travail."
+          chapter="Conception et intégration"
+          phaseTitle="Une seule architecture cohérente, de l’infrastructure jusqu’aux agents d’IA"
+          caption="Chaque niveau répond au suivant : le socle exécute, l’annuaire porte les identités, les politiques bornent les droits et la couche IA s’appuie sur cet historique sans bricolage parallèle."
+          layout="wide"
+          focal="top"
+        />
+      </div>
+    )
+  }
+
   <div class="usm__tier" role="list" aria-label="Niveaux supérieurs : IA, preuves et souveraineté d’exécution">
     {
       upperLayers.map((layer) => (
@@ -48,8 +66,8 @@ function layerHref(layer: StackLayer): string {
               <ol class="usm__flow" aria-label="Chaîne de gouvernance des agents IA">
                 {layer.workflow.map((step, i) => (
                   <li class:list={['usm__step', i === layer.workflow!.length - 1 && 'usm__step--done']}>
-                    <span class="usm__step-idx">{String(i + 1).padStart(2, '0')}</span>
                     <span>{step}</span>
+                    {i < layer.workflow!.length - 1 && <Icon name="arrow-right" size={12} stroke={1.8} />}
                   </li>
                 ))}
               </ol>
@@ -82,6 +100,24 @@ function layerHref(layer: StackLayer): string {
       ))
     }
   </div>
+
+  {
+    showHuman && (
+      <div class="usm__human-guard">
+        <HumanScene
+          src="/images/phase-ai-governance-human.jpg"
+          alt="Une responsable sécurité et un ingénieur IA examinent ensemble un point de contrôle humain sur un poste avant d’autoriser une action critique."
+          chapter="LUXIA AI Security et ALMA"
+          phaseTitle="L’humain garde la main avant toute action sensible"
+          caption="Un agent autonome peut analyser et préparer une modification, jamais l’appliquer en silence : le point de blocage demande une validation explicite et laisse une trace datée."
+          layout="split"
+          focal="top"
+          ctaHref="/plateformes/alma/"
+          ctaLabel="Voir ALMA en détail"
+        />
+      </div>
+    )
+  }
 
   <div class="usm__spine" aria-label="Noyau d’intégration LUXIA">
     <div class="usm__spine-brand">
@@ -245,52 +281,59 @@ function layerHref(layer: StackLayer): string {
     color: var(--ink-2);
   }
 
+  .usm__human-brief {
+    padding-block: clamp(22px, 3vw, 34px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .usm__human-guard {
+    padding-block: clamp(26px, 3.6vw, 42px);
+    border-bottom: 1px solid var(--line);
+  }
+
   .usm__flow {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    margin-top: 2px;
+    gap: 8px 10px;
+    margin-top: 6px;
+    padding-block: 10px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
 
   .usm__step {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    background-color: var(--paper);
+    gap: 10px;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.78125rem;
     color: var(--ink-2);
   }
 
-  .usm__step--done {
-    border-color: var(--blue);
-    background-color: var(--blue-tint);
-    color: var(--ink);
+  .usm__step :global(svg) {
+    color: var(--ink-3);
   }
 
-  .usm__step-idx {
-    color: var(--ink-3);
+  .usm__step--done {
+    color: var(--link);
+    font-weight: 600;
   }
 
   .usm__scopes {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px 0;
     margin-top: 4px;
-  }
-
-  .usm__scopes li {
-    padding: 3px 9px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    background-color: var(--paper);
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--ink-2);
+    color: var(--ink-3);
+  }
+
+  .usm__scopes li + li::before {
+    content: ' · ';
+    margin-inline: 8px;
+    color: var(--line-strong);
   }
 
   .usm__spec {
