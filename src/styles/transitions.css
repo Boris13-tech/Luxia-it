@@ -162,65 +162,65 @@ html:active-view-transition .beam {
 @keyframes vt-out-left {
   from {
     opacity: 1;
-    transform: perspective(1400px) translateZ(0);
+    transform: perspective(1400px) translateZ(0) scale(1);
   }
   to {
     opacity: 0;
-    transform: perspective(1400px) translateZ(-48px) translateX(-12px);
+    transform: perspective(1400px) translateZ(-120px) translateX(-28px) scale(0.94);
   }
 }
 
 @keyframes vt-in-right {
   from {
     opacity: 0;
-    transform: perspective(1400px) translateZ(36px) translateX(16px);
+    transform: perspective(1400px) translateZ(80px) translateX(28px) scale(1.03);
   }
   to {
     opacity: 1;
-    transform: perspective(1400px) translateZ(0) translateX(0);
+    transform: perspective(1400px) translateZ(0) translateX(0) scale(1);
   }
 }
 
 @keyframes vt-through {
   from {
     opacity: 1;
-    transform: perspective(1400px) translateZ(0);
+    transform: perspective(1400px) translateZ(0) scale(1);
   }
   to {
     opacity: 0;
-    transform: perspective(1400px) translateZ(48px);
+    transform: perspective(1400px) translateZ(140px) scale(1.06);
   }
 }
 
 @keyframes vt-from-depth {
   from {
     opacity: 0;
-    transform: perspective(1400px) translateZ(-56px) translateY(12px);
+    transform: perspective(1400px) translateZ(-160px) translateY(24px) scale(0.92);
   }
   to {
     opacity: 1;
-    transform: perspective(1400px) translateZ(0) translateY(0);
+    transform: perspective(1400px) translateZ(0) translateY(0) scale(1);
   }
 }
 
 @keyframes vt-recede {
   from {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: perspective(1400px) translateZ(0) scale(1);
   }
   to {
     opacity: 0;
-    transform: scale(0.985);
-    clip-path: inset(100% 0 0 0);
+    transform: perspective(1400px) translateZ(-140px) scale(0.92);
   }
 }
 
 @keyframes vt-return {
   from {
     opacity: 0;
-    transform: translateY(-14px);
-    clip-path: inset(0 0 100% 0);
+    transform: perspective(1400px) translateZ(110px) scale(1.04);
   }
   to {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: perspective(1400px) translateZ(0) scale(1);
   }
 }

@@ -22,7 +22,7 @@
   --blue: #2563eb;
   --electric: #5b9bff;
   --blue-tint: rgb(37 99 235 / 0.14);
-  --world-glow: rgb(59 130 246 / 0.12);
+  --world-glow: rgb(59 130 246 / 0.22);
   --hdr-bg: rgb(6 8 13 / 0.92);
 }
 
@@ -41,7 +41,7 @@
   --blue: #3b82f6;
   --electric: #60a5fa;
   --blue-tint: rgb(59 130 246 / 0.15);
-  --world-glow: rgb(96 165 250 / 0.13);
+  --world-glow: rgb(59 130 246 / 0.26);
   --hdr-bg: rgb(8 14 26 / 0.92);
 }
 
@@ -61,7 +61,7 @@
   --blue: #2563eb;
   --electric: #60a5fa;
   --blue-tint: rgb(59 130 246 / 0.16);
-  --world-glow: rgb(147 197 253 / 0.16);
+  --world-glow: rgb(147 197 253 / 0.28);
   --hdr-bg: rgb(11 17 30 / 0.92);
 }
 
@@ -80,7 +80,7 @@
   --blue: #2563eb;
   --electric: #5b9bff;
   --blue-tint: rgb(37 99 235 / 0.14);
-  --world-glow: rgb(100 116 139 / 0.11);
+  --world-glow: rgb(148 163 184 / 0.2);
   --hdr-bg: rgb(9 13 20 / 0.92);
 }
 
@@ -99,7 +99,7 @@
   --blue: #2563eb;
   --electric: #60a5fa;
   --blue-tint: rgb(37 99 235 / 0.15);
-  --world-glow: rgb(59 130 246 / 0.08);
+  --world-glow: rgb(59 130 246 / 0.18);
   --hdr-bg: rgb(3 5 8 / 0.94);
 }
 
@@ -118,7 +118,7 @@
   --blue: #0d9488;
   --electric: #2dd4bf;
   --blue-tint: rgb(20 184 166 / 0.14);
-  --world-glow: rgb(45 212 191 / 0.12);
+  --world-glow: rgb(45 212 191 / 0.24);
   --hdr-bg: rgb(5 11 16 / 0.92);
 }
 
@@ -137,7 +137,7 @@
   --blue: #2563eb;
   --electric: #60a5fa;
   --blue-tint: rgb(37 99 235 / 0.14);
-  --world-glow: rgb(148 163 184 / 0.11);
+  --world-glow: rgb(125 211 252 / 0.22);
   --hdr-bg: rgb(11 16 26 / 0.92);
 }
 
@@ -157,21 +157,45 @@ body[data-world] {
   transition: background-color 600ms var(--ease), color 420ms var(--ease);
 }
 
-/* Sections spatiales 3D : lueur d'ambiance douce + plan en profondeur Z */
+/* Sections spatiales 3D : seuil lumineux architectural + mise en scène Z continue */
 .world {
   position: relative;
   background-color: var(--paper);
-  background-image: radial-gradient(ellipse 75% 42% at 50% 0%, var(--world-glow, transparent), transparent 70%);
+  background-image:
+    radial-gradient(ellipse 85% 48% at 50% 0%, var(--world-glow, transparent), transparent 72%),
+    radial-gradient(ellipse 60% 35% at 50% 100%, rgb(0 0 0 / 0.38), transparent 75%);
   color: var(--ink);
-  padding-block: clamp(56px, 8vw, 112px);
+  padding-block: clamp(64px, 8.5vw, 120px);
   border-top: 1px solid var(--line);
-  perspective: 1600px;
+  perspective: 1400px;
   isolation: isolate;
+  overflow-x: clip;
+}
+
+.world::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 4%,
+    var(--line-strong) 24%,
+    var(--electric) 50%,
+    var(--line-strong) 76%,
+    transparent 96%
+  );
+  opacity: 0.78;
+  pointer-events: none;
 }
 
 .world--flush-top {
   border-top: 0;
   padding-top: 0;
+}
+
+.world--flush-top::before {
+  display: none;
 }
 
 .world__threshold {
@@ -197,26 +221,51 @@ body[data-world] {
 .world__stage {
   position: relative;
   transform-style: preserve-3d;
+  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .world__stage {
-      animation: world-depth-in linear both;
+    .world:not(.world--flush-top) .world__stage {
+      animation: world-chamber linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 36%;
-      transform-origin: center top;
+      animation-range: cover 0% cover 100%;
+      transform-origin: center center;
     }
 
-    @keyframes world-depth-in {
-      from {
-        opacity: 0.72;
-        transform: perspective(1600px) translateZ(-64px) rotateX(1.6deg) translateY(22px);
+    @keyframes world-chamber {
+      0% {
+        opacity: 0.14;
+        transform: perspective(1400px) translate3d(0, 68px, -180px) scale(0.9) rotateX(5deg);
       }
-      to {
+      22% {
         opacity: 1;
-        transform: perspective(1600px) translateZ(0) rotateX(0deg) translateY(0);
+        transform: perspective(1400px) translate3d(0, 0, 0) scale(1) rotateX(0deg);
       }
+      78% {
+        opacity: 1;
+        transform: perspective(1400px) translate3d(0, 0, 0) scale(1) rotateX(0deg);
+      }
+      100% {
+        opacity: 0.22;
+        transform: perspective(1400px) translate3d(0, -44px, -150px) scale(0.92) rotateX(-4deg);
+      }
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    html[data-worlds-ready='true'] .world:not(.world--flush-top) .world__stage {
+      transition: transform 820ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms ease;
+    }
+
+    html[data-worlds-ready='true'] .world[data-world-state='upcoming'] .world__stage {
+      opacity: 0.18;
+      transform: perspective(1400px) translate3d(0, 56px, -140px) scale(0.92) rotateX(4deg);
+    }
+
+    html[data-worlds-ready='true'] .world[data-world-state='past'] .world__stage {
+      opacity: 0.26;
+      transform: perspective(1400px) translate3d(0, -36px, -120px) scale(0.94) rotateX(-3deg);
     }
   }
 
@@ -374,7 +423,15 @@ body[data-active-world='ai-lab'] { --hdr-bg: rgb(5 11 16 / 0.92); }
 
 .flip-card:hover .flip-card__face--front {
   border-color: var(--line-strong);
-  box-shadow: 0 22px 44px -28px rgb(0 0 0 / 0.85);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -26px rgb(0 0 0 / 0.88), 0 0 0 1px rgb(96 165 250 / 0.14);
+}
+
+.flip-card__face--back {
+  border-color: color-mix(in srgb, var(--electric) 45%, var(--line));
+  background:
+    radial-gradient(ellipse 90% 45% at 50% 0%, var(--world-glow, transparent), transparent 72%),
+    linear-gradient(160deg, var(--surface-2) 0%, var(--paper-2) 100%);
 }
 
 .flip-card__hint {

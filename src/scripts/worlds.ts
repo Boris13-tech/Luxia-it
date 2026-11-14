@@ -4,16 +4,17 @@
  */
 const WORLD_THEME: Record<string, string> = {
   command: '#06080d',
-  architecture: '#0b1220',
-  'key-studio': '#f3f6fa',
-  workbench: '#10151e',
-  vault: '#020306',
-  'ai-lab': '#040c12',
-  advisory: '#131722',
+  architecture: '#080e1a',
+  'key-studio': '#0b111e',
+  workbench: '#090d14',
+  vault: '#030508',
+  'ai-lab': '#050b10',
+  advisory: '#0b101a',
   editorial: '#07090e',
 };
 
 export function initWorlds(): void {
+  document.documentElement.dataset.worldsReady = 'true';
   const initialWorld = document.body.dataset.world ?? 'editorial';
   if (!document.body.dataset.activeWorld) {
     document.body.dataset.activeWorld = initialWorld;
@@ -24,6 +25,20 @@ export function initWorlds(): void {
 
   const railLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-world-link]')];
   const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+
+  const syncSectionStates = () => {
+    const vh = window.innerHeight || 900;
+    for (const section of sections) {
+      const rect = section.getBoundingClientRect();
+      if (rect.bottom < 80) {
+        section.dataset.worldState = 'past';
+      } else if (rect.top > vh * 0.88) {
+        section.dataset.worldState = 'upcoming';
+      } else {
+        section.dataset.worldState = 'active';
+      }
+    }
+  };
 
   const setActive = (worldName: string) => {
     if (!worldName || document.body.dataset.activeWorld === worldName) return;
@@ -40,6 +55,7 @@ export function initWorlds(): void {
 
   const firstSection = sections[0];
   setActive(firstSection?.dataset.worldSection ?? initialWorld);
+  syncSectionStates();
 
   if (!('IntersectionObserver' in window)) return;
 
@@ -50,6 +66,7 @@ export function initWorlds(): void {
         const el = entry.target as HTMLElement;
         ratios.set(el, entry.isIntersecting ? entry.intersectionRatio : 0);
       }
+      syncSectionStates();
       let best: HTMLElement | null = null;
       let bestScore = 0;
       for (const section of sections) {
@@ -64,8 +81,8 @@ export function initWorlds(): void {
       }
     },
     {
-      threshold: [0, 0.15, 0.35, 0.55, 0.75],
-      rootMargin: '-18% 0px -32% 0px',
+      threshold: [0, 0.1, 0.25, 0.45, 0.65],
+      rootMargin: '-12% 0px -20% 0px',
     },
   );
 
