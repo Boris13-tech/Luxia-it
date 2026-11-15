@@ -333,13 +333,12 @@ const worldChapters = [
         />
       </div>
 
-      <ol class="flip-grid flip-grid--2">
+      <ul class="flip-grid flip-grid--2">
         {
-          advisoryPillars.map((s, i) => (
+          advisoryPillars.map((s) => (
             <li class="flip-card" data-flip-card data-flipped="false">
               <div class="flip-card__inner">
                 <div class="flip-card__face flip-card__face--front">
-                  <span class="role-card__num">0{i + 1}</span>
                   <h3 class="t-h4">{s.title}</h3>
                   <button type="button" class="flip-card__hint" data-flip-trigger aria-expanded="false">
                     <span>Retourner pour voir l’intervention</span>
@@ -363,7 +362,7 @@ const worldChapters = [
             </li>
           ))
         }
-      </ol>
+      </ul>
 
       <div class="world__band" id="ressources">
         <div class="head-bar">
